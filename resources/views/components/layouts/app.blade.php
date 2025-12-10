@@ -7,6 +7,10 @@
 
     <title>{{ config('app.name', 'Arvaya De Aure') }} - Dashboard</title>
 
+    {{-- <link rel="icon" href="/favicon.ico" sizes="any"> --}}
+    <link rel="icon" href="/logo.png" type="image/svg+xml">
+    <link rel="apple-touch-icon" href="/logo.png">
+
     <!-- Fonts (Sama seperti Landing Page) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -14,7 +18,6 @@
     
     <!-- Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-    <link rel="shortcut icon" href="logo.png" type="image/x-icon">
 
     <!-- Scripts & Styles -->
     @vite(['resources/css/app.css', 'resources/js/app.js'])
