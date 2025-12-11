@@ -187,7 +187,7 @@
     </nav>
 
     <!-- HERO SECTION -->
-    <header class="relative min-h-screen flex items-center justify-center pt-20 overflow-hidden">
+    <header class="relative min-h-svh flex items-center justify-center pt-20 overflow-hidden">
         <!-- Abstract Background Blobs -->
         <div
             class="absolute top-0 -left-4 w-96 h-96 bg-arvaya-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-blob">

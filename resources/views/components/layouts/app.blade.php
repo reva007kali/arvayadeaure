@@ -53,7 +53,7 @@
     </style>
 </head>
 
-<body class="font-sans h-screen flex antialiased bg-[#F9F7F2] text-[#5E4926] overflow-hidden" x-data="{ sidebarOpen: false }"
+<body class="font-sans h-svh flex antialiased bg-[#F9F7F2] text-[#5E4926] overflow-hidden" x-data="{ sidebarOpen: false }"
     x-cloak>
 
     <!-- MOBILE OVERLAY BACKDROP -->
@@ -197,7 +197,7 @@
          flex-col: Mengatur header dan konten secara vertikal.
          overflow-hidden: Agar scroll hanya terjadi di dalam area konten (bukan seluruh window).
     -->
-    <div class="flex-1 flex flex-col min-w-0 overflow-y-scroll h-screen bg-[#F9F7F2]">
+    <div class="flex-1 flex flex-col min-w-0 overflow-y-scroll h-svh bg-[#F9F7F2]">
 
         <!-- TOP HEADER -->
         <header
