@@ -2,17 +2,22 @@
 
 use App\Livewire\LandingPage;
 use Laravel\Fortify\Features;
+use App\Livewire\Admin\ManageUser;
 use App\Livewire\Settings\Profile;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\TwoFactor;
 use App\Livewire\Settings\Appearance;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\ManageInvitation;
+use App\Livewire\Frontend\ShowInvitation;
+use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Dashboard\Index as DashboardIndex;
-use App\Livewire\Dashboard\Invitation\Create as InvitationCreate;
-use App\Livewire\Dashboard\Invitation\Edit as InvitationEdit;
 use App\Livewire\Dashboard\Guest\Index as GuestManager;
 use App\Livewire\Dashboard\Message\Index as MessageManager;
-use App\Livewire\Frontend\ShowInvitation;
+use App\Livewire\Admin\ShowInvitation as AdminShowInvitation;
+use App\Livewire\Dashboard\Invitation\Edit as InvitationEdit;
+use App\Livewire\Dashboard\Invitation\Create as InvitationCreate;
+
 
 
 /*
@@ -53,6 +58,23 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
         Route::get('/messages', MessageManager::class)->name('messages.index');
         
     });
+
+});
+
+// routes admin
+
+Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
+    
+    // Dashboard Admin (Statistik)
+    Route::get('/', AdminDashboard::class)->name('index');
+    
+    // Manajemen User
+    Route::get('/users', ManageUser::class)->name('users');
+    
+    // Manajemen Undangan (Semua User)
+    Route::get('/invitations', ManageInvitation::class)->name('invitations');
+
+    Route::get('/invitations/{invitation}', AdminShowInvitation::class)->name('invitations.show');
 
 });
 
