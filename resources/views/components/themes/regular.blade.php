@@ -125,10 +125,14 @@
                             },
                             events: {
                                 'onReady': (event) => {
+                                    event.target.setPlaybackQuality('tiny');
                                     event.target.playVideo();
                                 },
                                 'onStateChange': (event) => {
                                     this.isPlaying = (event.data === YT.PlayerState.PLAYING);
+                                    if (event.data === YT.PlayerState.PLAYING) {
+                                        event.target.setPlaybackQuality('tiny');
+                                    }
                                 }
                             }
                         });
@@ -430,5 +434,6 @@
 
 </div>
 
-@section('scripts')
+@section('$script')
+    <script></script>
 @endsection

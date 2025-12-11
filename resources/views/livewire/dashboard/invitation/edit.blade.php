@@ -1,8 +1,9 @@
 <div class="py-2 animate-fade-in-up">
 
-    {{-- HEADER HEADER --}}
+    {{-- ================= HEADER SECTION ================= --}}
     <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-8 gap-4">
         <div>
+            {{-- Breadcrumb --}}
             <div class="flex items-center gap-2 text-[#9A7D4C] text-xs font-bold uppercase tracking-widest mb-1">
                 <a href="{{ route('dashboard.index') }}" class="hover:text-[#5E4926] transition flex items-center gap-1">
                     <i class="fa-solid fa-arrow-left"></i> Dashboard
@@ -15,6 +16,7 @@
                     class="font-semibold italic">{{ $invitation->title }}</span></p>
         </div>
 
+        {{-- Action Buttons --}}
         <div class="flex gap-3">
             <a href="{{ route('invitation.show', $invitation->slug) }}" target="_blank"
                 class="px-5 py-2.5 bg-white border border-[#E6D9B8] text-[#7C6339] rounded-xl hover:bg-[#F9F7F2] hover:text-[#B89760] transition font-bold text-xs uppercase tracking-wide flex items-center gap-2 shadow-sm">
@@ -22,15 +24,17 @@
             </a>
             <button wire:click="save"
                 class="px-6 py-2.5 bg-[#B89760] text-white rounded-xl hover:bg-[#9A7D4C] transition font-bold text-xs uppercase tracking-wide flex items-center shadow-lg shadow-[#B89760]/30 transform hover:-translate-y-0.5">
-                <span wire:loading.remove wire:target="save" class="flex items-center gap-2"><i
-                        class="fa-solid fa-cloud-arrow-up"></i> Simpan Perubahan</span>
-                <span wire:loading wire:target="save" class="flex items-center gap-2"><i
-                        class="fa-solid fa-circle-notch fa-spin"></i> Menyimpan...</span>
+                <span wire:loading.remove wire:target="save" class="flex items-center gap-2">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Simpan Perubahan
+                </span>
+                <span wire:loading wire:target="save" class="flex items-center gap-2">
+                    <i class="fa-solid fa-circle-notch fa-spin"></i> Menyimpan...
+                </span>
             </button>
         </div>
     </div>
 
-    {{-- ALERT MESSAGE --}}
+    {{-- Flash Message --}}
     @if (session('message'))
         <div
             class="mb-6 bg-[#F2ECDC] border border-[#B89760] text-[#7C6339] px-6 py-4 rounded-xl flex items-center gap-3 shadow-sm relative overflow-hidden">
@@ -40,9 +44,10 @@
         </div>
     @endif
 
+    {{-- ================= MAIN GRID ================= --}}
     <div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
 
-        {{-- SIDEBAR NAVIGASI TAB --}}
+        {{-- 1. SIDEBAR NAVIGATION --}}
         <div class="lg:col-span-1">
             <div
                 class="bg-white rounded-2xl shadow-[0_4px_20px_rgb(230,217,184,0.3)] border border-[#E6D9B8]/60 overflow-hidden sticky top-24">
@@ -74,10 +79,10 @@
             </div>
         </div>
 
-        {{-- AREA KONTEN UTAMA --}}
+        {{-- 2. CONTENT AREA --}}
         <div class="lg:col-span-3">
             <div
-                class="bg-white rounded-3xl shadow-[0_10px_40px_-10px_rgba(184,151,96,0.1)] border border-[#E6D9B8]/60 p-6 md:p-8 min-h-[500px] relative">
+                class="bg-white rounded-3xl shadow-[0_10px_40px_-10px_rgba(184,151,96,0.1)] border border-[#E6D9B8]/60 p-6 md:p-8 min-h-[600px] relative">
 
                 {{-- Decorative Background --}}
                 <div
@@ -85,110 +90,91 @@
                 </div>
 
                 <div class="relative z-10">
-                    {{-- TAB COUPLE --}}
+
+                    {{-- ########### TAB: COUPLE ########### --}}
                     @if ($activeTab === 'couple')
                         <h3 class="font-serif font-bold text-2xl text-[#5E4926] mb-6 pb-2 border-b border-[#F2ECDC]">
                             Data Pengantin</h3>
 
-                        {{-- === AI ASSISTANT SECTION START (GOLD THEME) === --}}
+                        {{-- AI Assistant --}}
                         <div
                             class="bg-gradient-to-br from-[#FFFBF2] to-[#F9F7F2] p-6 rounded-2xl border border-[#E6D9B8] mb-8 relative overflow-hidden group">
                             <div
                                 class="absolute top-0 right-0 -mt-4 -mr-4 text-[#E6D9B8] opacity-30 group-hover:opacity-50 transition transform group-hover:scale-110">
                                 <i class="fa-solid fa-wand-magic-sparkles text-8xl"></i>
                             </div>
-
                             <div class="relative z-10">
                                 <h4 class="font-bold text-[#5E4926] flex items-center gap-2 mb-2 text-lg">
-                                    <i class="fa-solid fa-robot text-[#B89760]"></i>
-                                    AI Writer Assistant
+                                    <i class="fa-solid fa-robot text-[#B89760]"></i> AI Writer Assistant
                                 </h4>
                                 <p class="text-xs text-[#9A7D4C] mb-5 max-w-lg leading-relaxed">
-                                    Bingung merangkai kata puitis? Biarkan AI kami membuatkan kata pengantar yang indah,
-                                    menyentuh, dan sesuai dengan gayamu.
+                                    Biarkan AI membuatkan kata pengantar yang indah dan menyentuh untuk undanganmu.
                                 </p>
-
                                 <div class="flex flex-col md:flex-row gap-4 items-end">
                                     <div class="w-full md:w-1/3">
                                         <label
-                                            class="text-[10px] font-bold text-[#7C6339] uppercase tracking-wider mb-1.5 block">Gaya
-                                            Bahasa</label>
-                                        <div class="relative">
-                                            <select wire:model="aiTone"
-                                                class="w-full appearance-none rounded-lg bg-white border-[#E6D9B8] text-[#5E4926] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
-                                                <option value="islami">Islami & Penuh Doa</option>
-                                                <option value="modern">Modern & Casual</option>
-                                                <option value="formal">Formal & Puitis</option>
-                                            </select>
-                                            <div
-                                                class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-3 text-[#9A7D4C]">
-                                                <i class="fa-solid fa-chevron-down text-xs"></i>
-                                            </div>
-                                        </div>
+                                            class="text-[10px] font-bold text-[#7C6339] uppercase tracking-wider mb-1.5 block">Tone</label>
+                                        <select wire:model="aiTone"
+                                            class="w-full rounded-lg bg-white border-[#E6D9B8] text-[#5E4926] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                                            <option value="islami">Islami & Penuh Doa</option>
+                                            <option value="modern">Modern & Casual</option>
+                                            <option value="formal">Formal & Puitis</option>
+                                        </select>
                                     </div>
-
                                     <button wire:click="generateQuote" wire:loading.attr="disabled"
                                         class="px-5 py-2.5 bg-[#5E4926] text-white rounded-lg text-sm font-bold hover:bg-[#403013] shadow-md flex items-center gap-2 disabled:opacity-50 disabled:cursor-wait transition">
-                                        <span wire:loading.remove wire:target="generateQuote"
-                                            class="flex items-center gap-2"><i
-                                                class="fa-solid fa-bolt text-[#F2ECDC]"></i> Generate Sekarang</span>
-                                        <span wire:loading wire:target="generateQuote"
-                                            class="flex items-center gap-2"><i
-                                                class="fa-solid fa-circle-notch fa-spin"></i> Berpikir...</span>
+                                        <span wire:loading.remove wire:target="generateQuote"><i
+                                                class="fa-solid fa-bolt text-[#F2ECDC] mr-1"></i> Generate</span>
+                                        <span wire:loading wire:target="generateQuote"><i
+                                                class="fa-solid fa-circle-notch fa-spin mr-1"></i> Berpikir...</span>
                                     </button>
                                 </div>
                             </div>
                         </div>
-                        {{-- === AI ASSISTANT SECTION END === --}}
 
+                        {{-- Quote Input --}}
                         <div class="mb-8">
-                            <label class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-2">Quote /
-                                Kata Pengantar Undangan</label>
+                            <label class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-2">Kata
+                                Pengantar</label>
                             <textarea wire:model="couple.quote" rows="4"
                                 class="w-full rounded-xl bg-[#F9F7F2] border-[#E6D9B8] text-[#5E4926] focus:border-[#B89760] focus:ring-1 focus:ring-[#B89760] shadow-sm transition placeholder-[#C6AC80]"
                                 placeholder="Hasil generate AI akan muncul di sini..."></textarea>
                         </div>
 
+                        {{-- Groom & Bride Form --}}
                         <div class="grid md:grid-cols-2 gap-8">
-                            {{-- Form Pria --}}
-                            <div class="space-y-4">
-                                <h4 class="font-serif font-bold text-xl text-[#5E4926] border-b border-[#E6D9B8] pb-2">
-                                    Mempelai Pria</h4>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Panggilan</label><input
-                                        type="text" wire:model="couple.groom.nickname"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Lengkap</label><input
-                                        type="text" wire:model="couple.groom.fullname"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Ayah</label><input
-                                        type="text" wire:model="couple.groom.father"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Ibu</label><input
-                                        type="text" wire:model="couple.groom.mother"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                            </div>
-
-                            {{-- Form Wanita --}}
-                            <div class="space-y-4">
-                                <h4 class="font-serif font-bold text-xl text-[#B89760] border-b border-[#E6D9B8] pb-2">
-                                    Mempelai Wanita</h4>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Panggilan</label><input
-                                        type="text" wire:model="couple.bride.nickname"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Lengkap</label><input
-                                        type="text" wire:model="couple.bride.fullname"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Ayah</label><input
-                                        type="text" wire:model="couple.bride.father"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                                <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Ibu</label><input
-                                        type="text" wire:model="couple.bride.mother"
-                                        class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm"></div>
-                            </div>
+                            @foreach (['groom' => 'Mempelai Pria', 'bride' => 'Mempelai Wanita'] as $type => $label)
+                                <div class="space-y-4">
+                                    <h4
+                                        class="font-serif font-bold text-xl {{ $type == 'groom' ? 'text-[#5E4926]' : 'text-[#B89760]' }} border-b border-[#E6D9B8] pb-2">
+                                        {{ $label }}</h4>
+                                    <div><label class="text-xs text-[#9A7D4C] font-bold">Panggilan</label><input
+                                            type="text" wire:model="couple.{{ $type }}.nickname"
+                                            class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                                    </div>
+                                    <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Lengkap</label><input
+                                            type="text" wire:model="couple.{{ $type }}.fullname"
+                                            class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                                    </div>
+                                    <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Ayah</label><input
+                                            type="text" wire:model="couple.{{ $type }}.father"
+                                            class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                                    </div>
+                                    <div><label class="text-xs text-[#9A7D4C] font-bold">Nama Ibu</label><input
+                                            type="text" wire:model="couple.{{ $type }}.mother"
+                                            class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                                    </div>
+                                    <div><label class="text-xs text-[#9A7D4C] font-bold">Username
+                                            Instagram</label><input type="text"
+                                            wire:model="couple.{{ $type }}.instagram" placeholder="@username"
+                                            class="w-full rounded-lg bg-[#F9F7F2] border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                                    </div>
+                                </div>
+                            @endforeach
                         </div>
                     @endif
 
-                    {{-- TAB EVENTS --}}
+                    {{-- ########### TAB: EVENTS ########### --}}
                     @if ($activeTab === 'events')
                         <div class="flex justify-between items-center mb-6 pb-2 border-b border-[#F2ECDC]">
                             <h3 class="font-serif font-bold text-2xl text-[#5E4926]">Rangkaian Acara</h3>
@@ -222,8 +208,8 @@
                                                 class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
                                         </div>
                                         <div class="md:col-span-2">
-                                            <label class="text-xs font-bold text-[#9A7D4C] uppercase mb-1 block">Lokasi
-                                                (Gedung/Hotel)</label>
+                                            <label
+                                                class="text-xs font-bold text-[#9A7D4C] uppercase mb-1 block">Lokasi</label>
                                             <input type="text" wire:model="events.{{ $index }}.location"
                                                 class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
                                         </div>
@@ -234,8 +220,8 @@
                                                 class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]"></textarea>
                                         </div>
                                         <div class="md:col-span-2">
-                                            <label class="text-xs font-bold text-[#9A7D4C] uppercase mb-1 block">Link
-                                                Google Maps</label>
+                                            <label class="text-xs font-bold text-[#9A7D4C] uppercase mb-1 block">Google
+                                                Maps Link</label>
                                             <div class="relative">
                                                 <span
                                                     class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-[#C6AC80]"><i
@@ -251,113 +237,246 @@
                         </div>
                     @endif
 
-                    {{-- TAB GALLERY --}}
+                    {{-- ########### TAB: GALLERY ########### --}}
                     @if ($activeTab === 'gallery')
                         <h3 class="font-serif font-bold text-2xl text-[#5E4926] mb-6 pb-2 border-b border-[#F2ECDC]">
                             Galeri Foto</h3>
 
-                        <div
-                            class="mb-8 p-8 border-2 border-dashed border-[#E6D9B8] rounded-2xl bg-[#F9F7F2]/50 text-center hover:bg-[#F9F7F2] transition">
-                            <div
-                                class="w-12 h-12 bg-[#E6D9B8] text-white rounded-full flex items-center justify-center mx-auto mb-3">
-                                <i class="fa-solid fa-cloud-arrow-up text-xl"></i>
-                            </div>
-                            <label class="cursor-pointer">
-                                <span class="font-bold text-[#B89760] hover:text-[#9A7D4C] hover:underline">Klik untuk
-                                    upload</span>
-                                <span class="text-[#7C6339]"> atau drag foto ke sini</span>
-                                <input type="file" wire:model="newGalleryImages" multiple class="hidden" />
-                            </label>
-                            <p class="text-xs text-[#9A7D4C] mt-2">Mendukung format JPG/PNG. Maks 2MB per foto.</p>
-                        </div>
+                        <div class="space-y-8">
+                            {{-- Specific Uploads (Cover, Groom, Bride) --}}
+                            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                                @foreach (['cover' => 'Foto Sampul', 'groom' => 'Mempelai Pria', 'bride' => 'Mempelai Wanita'] as $key => $label)
+                                    <div>
+                                        <label
+                                            class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-2">{{ $label }}</label>
+                                        {{-- Image Container Ratio 9:16 for Cover, Square for Profile --}}
+                                        <div
+                                            class="relative group {{ $key == 'cover' ? 'aspect-[9/16]' : 'aspect-square' }} bg-[#F9F7F2] border-2 border-dashed border-[#E6D9B8] rounded-xl overflow-hidden hover:border-[#B89760] transition">
 
-                        @if ($newGalleryImages)
-                            <div class="mb-6">
-                                <p class="text-xs font-bold text-[#7C6339] mb-2 uppercase">Akan diupload:</p>
-                                <div class="flex gap-3 overflow-x-auto pb-2">
-                                    @foreach ($newGalleryImages as $img)
-                                        <img src="{{ $img->temporaryUrl() }}"
-                                            class="h-20 w-20 object-cover rounded-lg shadow-sm border border-[#E6D9B8]">
+                                            {{-- Logic: Show New Temp -> Show Existing -> Show Placeholder --}}
+                                            @php
+                                                $newVar = 'new' . ucfirst($key);
+                                                $hasExisting = !empty($gallery[$key]);
+                                            @endphp
+
+                                            @if ($$newVar)
+                                                <img src="{{ $$newVar->temporaryUrl() }}"
+                                                    class="w-full h-full object-cover">
+                                            @elseif ($hasExisting)
+                                                <img src="{{ asset($gallery[$key]) }}"
+                                                    class="w-full h-full object-cover">
+                                                <button wire:click="removeSpecific('{{ $key }}')"
+                                                    class="absolute top-2 right-2 bg-red-500 text-white w-6 h-6 rounded-full flex items-center justify-center shadow-md z-20"><i
+                                                        class="fa-solid fa-times text-xs"></i></button>
+                                            @else
+                                                <div
+                                                    class="absolute inset-0 flex flex-col items-center justify-center text-[#C6AC80]">
+                                                    <i class="fa-solid fa-cloud-arrow-up text-2xl mb-2"></i>
+                                                    <span class="text-[10px]">Upload</span>
+                                                </div>
+                                            @endif
+
+                                            {{-- Input Overlay --}}
+                                            <input type="file" wire:model="{{ $newVar }}"
+                                                class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                                            {{-- Loading --}}
+                                            <div wire:loading wire:target="{{ $newVar }}"
+                                                class="absolute inset-0 bg-white/80 flex items-center justify-center z-30">
+                                                <i class="fa-solid fa-circle-notch fa-spin text-[#B89760]"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                @endforeach
+                            </div>
+
+                            <hr class="border-[#F2ECDC] border-dashed">
+
+                            {{-- Moments (Bulk Upload) --}}
+                            <div>
+                                <div class="flex justify-between items-center mb-4">
+                                    <label
+                                        class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider">Galeri
+                                        Momen</label>
+                                    <span class="text-[10px] text-[#9A7D4C]">Total:
+                                        {{ count($gallery['moments'] ?? []) }} Foto</span>
+                                </div>
+
+                                <div
+                                    class="mb-6 p-6 border-2 border-dashed border-[#E6D9B8] rounded-2xl bg-[#F9F7F2]/50 text-center hover:bg-[#F9F7F2] transition relative">
+                                    <input type="file" wire:model="newMoments" multiple
+                                        class="absolute inset-0 w-full h-full opacity-0 cursor-pointer" />
+                                    <div class="pointer-events-none">
+                                        <i class="fa-solid fa-images text-2xl text-[#E6D9B8] mb-2"></i>
+                                        <p class="text-sm font-bold text-[#B89760]">Klik untuk upload foto momen</p>
+                                        <p class="text-xs text-[#9A7D4C]">Bisa pilih banyak sekaligus</p>
+                                    </div>
+                                </div>
+
+                                {{-- Previews --}}
+                                @if ($newMoments)
+                                    <div class="mb-4 flex gap-2 overflow-x-auto pb-2">
+                                        @foreach ($newMoments as $img)
+                                            <img src="{{ $img->temporaryUrl() }}"
+                                                class="h-16 w-16 object-cover rounded-lg border border-[#E6D9B8]">
+                                        @endforeach
+                                    </div>
+                                @endif
+
+                                <div class="grid grid-cols-3 md:grid-cols-5 gap-4">
+                                    @foreach ($gallery['moments'] as $index => $path)
+                                        <div class="relative group rounded-lg overflow-hidden shadow-sm aspect-square">
+                                            <img src="{{ asset($path) }}" class="w-full h-full object-cover">
+                                            <div
+                                                class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                                                <button wire:click="removeMoment({{ $index }})"
+                                                    class="text-white hover:text-red-400 transition">
+                                                    <i class="fa-solid fa-trash-can"></i>
+                                                </button>
+                                            </div>
+                                        </div>
                                     @endforeach
                                 </div>
                             </div>
-                        @endif
-
-                        <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            @foreach ($existingGallery as $index => $path)
-                                <div
-                                    class="relative group rounded-xl overflow-hidden shadow-sm border border-[#E6D9B8]">
-                                    <img src="{{ asset($path) }}" class="w-full h-32 object-cover">
-                                    <div
-                                        class="absolute inset-0 bg-[#5E4926]/60 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
-                                        <button wire:click="removeGalleryImage({{ $index }})"
-                                            class="bg-white text-red-500 px-3 py-1.5 rounded-lg text-xs font-bold shadow-md hover:bg-red-50 transition">
-                                            Hapus
-                                        </button>
-                                    </div>
-                                </div>
-                            @endforeach
                         </div>
                     @endif
 
-                    {{-- TAB THEME --}}
+                    {{-- ########### TAB: THEME (SLIDER) ########### --}}
                     @if ($activeTab === 'theme')
                         <h3 class="font-serif font-bold text-2xl text-[#5E4926] mb-6 pb-2 border-b border-[#F2ECDC]">
                             Tampilan & Musik</h3>
 
-                        <div class="grid md:grid-cols-2 gap-8">
+                        <div class="space-y-10">
+                            {{-- Template Slider --}}
                             <div>
-                                <label
-                                    class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-2">Pilih
-                                    Template</label>
-                                <div class="relative">
-                                    <select wire:model="theme_template"
-                                        class="w-full appearance-none rounded-xl bg-[#F9F7F2] border-[#E6D9B8] text-[#5E4926] p-3 text-sm focus:border-[#B89760] focus:ring-[#B89760]">
-                                        <option value="regular">Default White</option>
-                                        <option value="rustic">Rustic Garden (Arvaya Special)</option>
-                                        <option value="elegant">Elegant Gold</option>
-                                    </select>
+                                <div class="flex justify-between items-end mb-4 px-1">
+                                    <label
+                                        class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider">Pilih
+                                        Desain</label>
+                                    <span class="text-[10px] text-[#9A7D4C] italic">Geser untuk melihat opsi lainnya
+                                        &rarr;</span>
+                                </div>
+
+                                <div class="relative group/slider">
+                                    {{-- Fade Overlay --}}
                                     <div
-                                        class="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-[#9A7D4C]">
-                                        <i class="fa-solid fa-paintbrush"></i>
+                                        class="absolute left-0 top-0 bottom-0 w-8 bg-gradient-to-r from-white to-transparent z-10 pointer-events-none">
+                                    </div>
+                                    <div
+                                        class="absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 pointer-events-none">
+                                    </div>
+
+                                    {{-- Scroll Container --}}
+                                    <div
+                                        class="flex gap-5 overflow-x-auto pb-6 pt-2 px-1 snap-x snap-mandatory scroll-smooth hide-scrollbar">
+                                        @foreach ($availableTemplates as $tpl)
+                                            <label class="cursor-pointer relative flex-shrink-0 snap-center group">
+                                                <input type="radio" wire:model.live="theme_template"
+                                                    value="{{ $tpl->slug }}" class="peer sr-only">
+
+                                                <div
+                                                    class="w-48 transition-all duration-300 transform {{ $theme_template == $tpl->slug ? 'scale-105' : 'scale-100 hover:scale-105 opacity-80 hover:opacity-100' }}">
+                                                    {{-- Card Image --}}
+                                                    <div
+                                                        class="aspect-[9/16] rounded-2xl overflow-hidden shadow-md relative border-4 transition-all duration-300
+                                                        {{ $theme_template == $tpl->slug ? 'border-[#B89760] shadow-lg ring-4 ring-[#B89760]/20' : 'border-transparent shadow-sm' }}">
+
+                                                        @if ($tpl->thumbnail)
+                                                            <img src="{{ asset('storage/' . $tpl->thumbnail) }}"
+                                                                class="w-full h-full object-cover"
+                                                                alt="{{ $tpl->name }}">
+                                                        @else
+                                                            <div
+                                                                class="w-full h-full bg-[#F9F7F2] flex flex-col items-center justify-center text-[#C6AC80] gap-2">
+                                                                <i class="fa-regular fa-image text-3xl"></i>
+                                                                <span class="text-[10px]">No Preview</span>
+                                                            </div>
+                                                        @endif
+
+                                                        {{-- Premium Badge --}}
+                                                        @if ($tpl->type == 'premium')
+                                                            <div
+                                                                class="absolute top-2 left-2 bg-[#2D2418] text-[#B89760] text-[8px] font-bold px-2 py-1 rounded-full uppercase tracking-wider shadow-sm z-20">
+                                                                Premium</div>
+                                                        @endif
+
+                                                        {{-- Checked Overlay --}}
+                                                        <div
+                                                            class="absolute inset-0 bg-[#B89760]/20 z-10 transition-opacity duration-300 {{ $theme_template == $tpl->slug ? 'opacity-100' : 'opacity-0' }}">
+                                                            <div
+                                                                class="absolute bottom-3 right-3 bg-[#B89760] text-white w-8 h-8 rounded-full flex items-center justify-center shadow-lg animate-bounce">
+                                                                <i class="fa-solid fa-check"></i>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    <div class="text-center mt-3">
+                                                        <p
+                                                            class="font-serif font-bold text-[#5E4926] text-sm {{ $theme_template == $tpl->slug ? 'text-[#B89760]' : '' }}">
+                                                            {{ $tpl->name }}</p>
+                                                    </div>
+                                                </div>
+                                            </label>
+                                        @endforeach
                                     </div>
                                 </div>
                             </div>
 
-                            <div>
-                                <label
-                                    class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-2">Warna
-                                    Aksen</label>
-                                <div class="flex items-center gap-3">
-                                    <div
-                                        class="relative w-12 h-10 rounded-lg overflow-hidden border border-[#E6D9B8] shadow-sm">
-                                        <input type="color" wire:model="theme.primary_color"
-                                            class="absolute -top-2 -left-2 w-20 h-20 cursor-pointer p-0 border-0">
-                                    </div>
-                                    <input type="text" wire:model="theme.primary_color"
-                                        class="w-full rounded-xl bg-[#F9F7F2] border-[#E6D9B8] text-[#5E4926] text-sm uppercase">
-                                </div>
-                            </div>
+                            <hr class="border-[#F2ECDC] border-dashed">
 
-                            <div class="md:col-span-2">
-                                <label
-                                    class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-2">Musik
-                                    Latar (YouTube URL)</label>
-                                <div class="relative">
-                                    <span
-                                        class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-red-500"><i
-                                            class="fa-brands fa-youtube"></i></span>
-                                    <input type="text" wire:model="theme.music_url"
-                                        placeholder="https://youtube.com/watch?v=..."
-                                        class="w-full pl-9 rounded-xl bg-[#F9F7F2] border-[#E6D9B8] text-[#5E4926] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                            {{-- Config Grid --}}
+                            <div class="grid md:grid-cols-2 gap-8">
+                                {{-- Warna --}}
+                                <div class="bg-[#F9F7F2]/50 p-5 rounded-2xl border border-[#E6D9B8]/50">
+                                    <label
+                                        class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-3">Warna
+                                        Aksen</label>
+                                    <div class="flex items-center gap-4">
+                                        <div
+                                            class="relative w-16 h-16 rounded-2xl overflow-hidden border-2 border-white shadow-md ring-1 ring-[#E6D9B8] cursor-pointer">
+                                            <input type="color" wire:model="theme.primary_color"
+                                                class="absolute -top-1/2 -left-1/2 w-[200%] h-[200%] cursor-pointer p-0 border-0">
+                                        </div>
+                                        <div class="flex-1">
+                                            <input type="text" wire:model="theme.primary_color"
+                                                class="w-full rounded-xl bg-white border-[#E6D9B8] text-[#5E4926] font-mono text-sm uppercase focus:border-[#B89760] focus:ring-[#B89760]">
+                                        </div>
+                                    </div>
                                 </div>
-                                <p class="text-xs text-[#9A7D4C] mt-2">Paste link YouTube video. Musik akan diputar
-                                    otomatis (sesuai kebijakan browser).</p>
+
+                                {{-- Musik --}}
+                                <div class="bg-[#F9F7F2]/50 p-5 rounded-2xl border border-[#E6D9B8]/50">
+                                    <label
+                                        class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-3">Musik
+                                        Latar (YouTube)</label>
+                                    <div class="relative">
+                                        <span
+                                            class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-red-500"><i
+                                                class="fa-brands fa-youtube text-lg"></i></span>
+                                        <input type="text" wire:model="theme.music_url" placeholder="..."
+                                            class="w-full pl-10 rounded-xl bg-white border-[#E6D9B8] text-[#5E4926] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                                    </div>
+                                    @if (!empty($theme['music_url']))
+                                        <div
+                                            class="mt-2 flex items-center gap-2 text-[10px] text-green-600 bg-green-50 px-3 py-1.5 rounded-lg border border-green-100">
+                                            <i class="fa-solid fa-circle-check"></i> Musik terdeteksi.</div>
+                                    @endif
+                                </div>
                             </div>
                         </div>
+
+                        {{-- Hide Scrollbar CSS --}}
+                        <style>
+                            .hide-scrollbar::-webkit-scrollbar {
+                                display: none;
+                            }
+
+                            .hide-scrollbar {
+                                -ms-overflow-style: none;
+                                scrollbar-width: none;
+                            }
+                        </style>
                     @endif
 
-                    {{-- TAB GIFTS --}}
+                    {{-- ########### TAB: GIFTS ########### --}}
                     @if ($activeTab === 'gifts')
                         <div class="flex justify-between items-center mb-6 pb-2 border-b border-[#F2ECDC]">
                             <h3 class="font-serif font-bold text-2xl text-[#5E4926]">Kado Digital</h3>
@@ -372,26 +491,19 @@
                                 <div
                                     class="bg-gradient-to-br from-[#F9F7F2] to-white p-5 rounded-2xl border border-[#E6D9B8] relative shadow-sm group hover:shadow-md transition">
                                     <button wire:click="removeGift({{ $index }})"
-                                        class="absolute top-3 right-3 text-[#C6AC80] hover:text-red-500 w-6 h-6 flex items-center justify-center transition"
-                                        title="Hapus">
-                                        <i class="fa-solid fa-xmark"></i>
-                                    </button>
-
+                                        class="absolute top-3 right-3 text-[#C6AC80] hover:text-red-500 w-6 h-6 flex items-center justify-center transition"><i
+                                            class="fa-solid fa-xmark"></i></button>
                                     <div class="space-y-3 pr-6">
                                         <div>
                                             <label
                                                 class="text-[10px] font-bold text-[#9A7D4C] uppercase mb-1 block">Bank
                                                 / E-Wallet</label>
                                             <select wire:model="gifts.{{ $index }}.bank_name"
-                                                class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm py-1.5 font-bold text-[#5E4926]">
+                                                class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm py-1.5 font-bold text-[#5E4926] focus:border-[#B89760] focus:ring-[#B89760]">
                                                 <option value="">Pilih...</option>
-                                                <option value="BCA">BCA</option>
-                                                <option value="BRI">BRI</option>
-                                                <option value="Mandiri">Mandiri</option>
-                                                <option value="BNI">BNI</option>
-                                                <option value="Dana">Dana</option>
-                                                <option value="Gopay">Gopay</option>
-                                                <option value="Lainnya">Lainnya</option>
+                                                @foreach (['BCA', 'BRI', 'Mandiri', 'BNI', 'Dana', 'Gopay', 'OVO', 'Lainnya'] as $bank)
+                                                    <option value="{{ $bank }}">{{ $bank }}</option>
+                                                @endforeach
                                             </select>
                                         </div>
                                         <div>
@@ -401,14 +513,14 @@
                                             <input type="number"
                                                 wire:model="gifts.{{ $index }}.account_number"
                                                 placeholder="123xxx"
-                                                class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm py-1.5 font-mono">
+                                                class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm py-1.5 font-mono focus:border-[#B89760] focus:ring-[#B89760]">
                                         </div>
                                         <div>
                                             <label
                                                 class="text-[10px] font-bold text-[#9A7D4C] uppercase mb-1 block">Atas
                                                 Nama</label>
                                             <input type="text" wire:model="gifts.{{ $index }}.account_name"
-                                                class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm py-1.5">
+                                                class="w-full rounded-lg bg-white border-[#E6D9B8] text-sm py-1.5 focus:border-[#B89760] focus:ring-[#B89760]">
                                         </div>
                                     </div>
                                 </div>
@@ -417,8 +529,6 @@
                                     class="col-span-full text-center py-10 bg-[#F9F7F2] rounded-xl border-2 border-dashed border-[#E6D9B8]">
                                     <i class="fa-solid fa-gift text-3xl text-[#E6D9B8] mb-3"></i>
                                     <p class="text-[#7C6339] text-sm font-medium">Belum ada data rekening.</p>
-                                    <p class="text-[#9A7D4C] text-xs">Tambahkan jika ingin menerima transfer hadiah
-                                        dari tamu.</p>
                                 </div>
                             @endforelse
                         </div>

@@ -12,6 +12,16 @@ class ManageInvitation extends Component
 
     public $search = '';
 
+    public function approve($id)
+    {
+        $invitation = Invitation::findOrFail($id);
+        $invitation->update([
+            'payment_status' => 'paid',
+            'is_active' => true
+        ]);
+        $this->dispatch('notify', message: 'Undangan diaktifkan!', type: 'success');
+    }
+
     public function render()
     {
         $invitations = Invitation::with('user') // Eager load user

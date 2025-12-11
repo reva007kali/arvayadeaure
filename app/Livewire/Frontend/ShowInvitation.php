@@ -2,11 +2,12 @@
 
 namespace App\Livewire\Frontend;
 
-use Livewire\Component;
-use Livewire\Attributes\Layout;
-use Livewire\Attributes\Url;
-use App\Models\Invitation;
 use App\Models\Guest;
+use Livewire\Component;
+use App\Models\Invitation;
+use Livewire\Attributes\Url;
+use Livewire\Attributes\Layout;
+use Illuminate\Support\Facades\Auth;
 
 
 #[Layout('components.layouts.guest')]
@@ -20,15 +21,31 @@ class ShowInvitation extends Component
 
     public function mount($slug)
     {
-        // 1. Cari Undangan berdasarkan Slug
-        $this->invitation = Invitation::where('slug', $slug)
-            ->where('is_active', true)
-            ->firstOrFail();
+        // 1. Ambil Data
+        $this->invitation = Invitation::where('slug', $slug)->firstOrFail();
 
-        // 2. Hitung statistik pengunjung
+        // 2. LOGIC PROTEKSI (PAYMENT GATEKEEPER)
+        // ----------------------------------------
+        $user = Auth::user(); // User yang sedang login (bisa null)
+        
+        // Cek apakah yang akses adalah Pemilik?
+        $isOwner = $user && $user->id === $this->invitation->user_id;
+        
+        // Cek apakah yang akses adalah Admin?
+        $isAdmin = $user && $user->role === 'admin';
+        
+        // Cek apakah sudah lunas?
+        $isPaid = $this->invitation->payment_status === 'paid';
+
+        // Jika BELUM LUNAS, dan BUKAN PEMILIK, dan BUKAN ADMIN -> TENDANG!
+        if (!$isPaid && !$isOwner && !$isAdmin) {
+            // Kita arahkan ke tampilan khusus "Belum Aktif" biar lebih cantik daripada error 403 biasa
+            return redirect()->route('invitation.inactive'); 
+        }
+        // ----------------------------------------
+
         $this->invitation->increment('visit_count');
 
-        // 3. Cek apakah ada parameter tamu (?to=slug-tamu)
         if ($this->guestSlug) {
             $this->guest = $this->invitation->guests()
                 ->where('slug', $this->guestSlug)
@@ -36,7 +53,7 @@ class ShowInvitation extends Component
         }
     }
 
-    
+
     public function render()
     {
         // Tentukan nama komponen tema, default ke 'themes.default'

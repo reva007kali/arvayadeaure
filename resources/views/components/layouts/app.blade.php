@@ -53,7 +53,7 @@
     </style>
 </head>
 
-<body class="font-sans h-svh flex antialiased bg-[#F9F7F2] text-[#5E4926] overflow-hidden" x-data="{ sidebarOpen: false }"
+<body class="font-sans h-svh flex antialiased bg-[#F9F7F2] text-[#5E4926]" x-data="{ sidebarOpen: false }"
     x-cloak>
 
     <!-- MOBILE OVERLAY BACKDROP -->
@@ -102,32 +102,92 @@
             {{-- ================= MENU ADMIN ================= --}}
             @if (auth()->user()->role === 'admin')
 
+                <a href="{{ route('dashboard.index') }}" wire:navigate
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
+           {{ request()->routeIs('dashboard.index') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
+                    <div class="w-6 text-center"><i class="fa-solid fa-house"></i></div>
+                    <span class="font-medium text-sm tracking-wide">Dashboard</span>
+                </a>
+
                 <p class="px-4 text-[10px] font-bold text-[#C6AC80] uppercase tracking-widest mb-2">Administrator</p>
 
-                <a href="{{ route('admin.index') }}"
+                <a href="{{ route('admin.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
            {{ request()->routeIs('admin.index') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-chart-line"></i></div>
                     <span class="font-medium text-sm tracking-wide">Overview</span>
                 </a>
 
-                <a href="{{ route('admin.users') }}"
+                <a href="{{ route('admin.users') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
            {{ request()->routeIs('admin.users') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-users-gear"></i></div>
                     <span class="font-medium text-sm tracking-wide">Kelola User</span>
                 </a>
 
-                <a href="{{ route('admin.invitations') }}"
+                <a href="{{ route('admin.invitations') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
            {{ request()->routeIs('admin.invitations') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-list-check"></i></div>
                     <span class="font-medium text-sm tracking-wide">Semua Undangan</span>
                 </a>
 
+                <a href="{{ route('admin.templates') }}" wire:navigate
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
+   {{ request()->routeIs('admin.templates') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
+                    <div class="w-6 text-center"><i class="fa-solid fa-swatchbook"></i></div>
+                    <span class="font-medium text-sm tracking-wide">Kelola Template</span>
+                </a>
+
+                <a href="{{ route('admin.transactions') }}" wire:navigate
+                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
+   {{ request()->routeIs('admin.transactions') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
+                    <div class="w-6 text-center"><i class="fa-solid fa-file-invoice-dollar"></i></div>
+                    <span class="font-medium text-sm tracking-wide">Transaksi</span>
+
+                    {{-- Badge Notifikasi jika ada Pending --}}
+                    @if (\App\Models\Invitation::where('payment_status', 'pending')->count() > 0)
+                        <span wire:poll.5s
+                            class="ml-auto bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
+                            {{ \App\Models\Invitation::where('payment_status', 'pending')->count() }}
+                        </span>
+                    @endif
+                </a>
+
+                @if (request()->route('invitation'))
+                    {{-- Menu Edit Undangan (Sama seperti kode sebelumnya) --}}
+                    <p class="px-4 text-[10px] font-bold text-[#C6AC80] uppercase tracking-widest mb-2">Manage Undangan
+                    </p>
+
+
+                    <a href="{{ route('dashboard.invitation.edit', request()->route('invitation')) }}" wire:navigate
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('dashboard.invitation.edit') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
+                        <div class="w-6 text-center"><i class="fa-solid fa-pen-to-square"></i></div>
+                        <span class="font-medium text-sm tracking-wide">Edit Informasi</span>
+                    </a>
+
+                    <a href="{{ route('dashboard.guests.index', request()->route('invitation')) }}" wire:navigate
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('dashboard.guests.*') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
+                        <div class="w-6 text-center"><i class="fa-solid fa-users"></i></div>
+                        <span class="font-medium text-sm tracking-wide">Data Tamu</span>
+                    </a>
+
+                    <a href="{{ route('dashboard.messages.index', request()->route('invitation')) }}" wire:navigate
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('dashboard.messages.*') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
+                        <div class="w-6 text-center"><i class="fa-solid fa-envelope-open-text"></i></div>
+                        <span class="font-medium text-sm tracking-wide">Ucapan & Doa</span>
+                    </a>
+                @else
+                    <a href="{{ route('dashboard.create') }}" wire:navigate
+                        class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-white/60 hover:text-[#9A7D4C] text-[#7C6339]">
+                        <div class="w-6 text-center"><i
+                                class="fa-solid fa-plus text-[#C6AC80] group-hover:text-[#B89760]"></i></div>
+                        <span class="font-medium text-sm tracking-wide">Buat Undangan Baru</span>
+                    </a>
+                @endif
                 {{-- ================= MENU USER BIASA ================= --}}
             @else
-                <a href="{{ route('dashboard.index') }}"
+                <a href="{{ route('dashboard.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
            {{ request()->routeIs('dashboard.index') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-house"></i></div>
@@ -140,25 +200,25 @@
 
                 @if (request()->route('invitation'))
                     {{-- Menu Edit Undangan (Sama seperti kode sebelumnya) --}}
-                    <a href="{{ route('dashboard.invitation.edit', request()->route('invitation')) }}"
+                    <a href="{{ route('dashboard.invitation.edit', request()->route('invitation')) }}" wire:navigate
                         class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('dashboard.invitation.edit') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
                         <div class="w-6 text-center"><i class="fa-solid fa-pen-to-square"></i></div>
                         <span class="font-medium text-sm tracking-wide">Edit Informasi</span>
                     </a>
 
-                    <a href="{{ route('dashboard.guests.index', request()->route('invitation')) }}"
+                    <a href="{{ route('dashboard.guests.index', request()->route('invitation')) }}" wire:navigate
                         class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('dashboard.guests.*') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
                         <div class="w-6 text-center"><i class="fa-solid fa-users"></i></div>
                         <span class="font-medium text-sm tracking-wide">Data Tamu</span>
                     </a>
 
-                    <a href="{{ route('dashboard.messages.index', request()->route('invitation')) }}"
+                    <a href="{{ route('dashboard.messages.index', request()->route('invitation')) }}" wire:navigate
                         class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('dashboard.messages.*') ? 'bg-white shadow-sm border border-[#E6D9B8] text-[#9A7D4C]' : 'text-[#7C6339] hover:bg-white/60 hover:text-[#9A7D4C]' }}">
                         <div class="w-6 text-center"><i class="fa-solid fa-envelope-open-text"></i></div>
                         <span class="font-medium text-sm tracking-wide">Ucapan & Doa</span>
                     </a>
                 @else
-                    <a href="{{ route('dashboard.create') }}"
+                    <a href="{{ route('dashboard.create') }}" wire:navigate
                         class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group hover:bg-white/60 hover:text-[#9A7D4C] text-[#7C6339]">
                         <div class="w-6 text-center"><i
                                 class="fa-solid fa-plus text-[#C6AC80] group-hover:text-[#B89760]"></i></div>

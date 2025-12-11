@@ -22,6 +22,11 @@ class Invitation extends Model
         'ai_wishes_summary',
         'is_active',
         'visit_count',
+        'package_type',
+        'amount',
+        'payment_status',
+        'payment_proof',
+        'active_until',
     ];
 
     /**
@@ -35,6 +40,22 @@ class Invitation extends Model
         'gallery_data' => 'array',
         'gifts_data' => 'array',
         'is_active' => 'boolean',
+    ];
+
+    // // Definisi Paket (Bisa ditaruh di Config, tapi di sini biar cepat)
+    const PACKAGES = [
+        'basic' => [
+            'name' => 'Arvaya Basic',
+            'price' => 49000,
+            'features' => ['rsvp', 'guest_book'], // Fitur yang didapat
+            'limitations' => ['music', 'gallery'] // Fitur yang DIKUNCI
+        ],
+        'premium' => [
+            'name' => 'Arvaya Premium',
+            'price' => 99000,
+            'features' => ['rsvp', 'guest_book', 'gallery', 'music'],
+            'limitations' => []
+        ],
     ];
 
     // --- Relationships ---
@@ -55,9 +76,6 @@ class Invitation extends Model
     }
 
     // --- Helpers / Accessors ---
-
-    // Contoh: Ambil nama panggilan mempelai pria untuk judul singkat
-    // Cara pakai: $invitation->groom_nickname
     public function getGroomNicknameAttribute()
     {
         return $this->couple_data['groom']['nickname'] ?? 'Groom';
@@ -67,5 +85,17 @@ class Invitation extends Model
     public function getBrideNicknameAttribute()
     {
         return $this->couple_data['bride']['nickname'] ?? 'Bride';
+    }
+
+    // Helper Cek Fitur
+    public function hasFeature($featureName)
+    {
+        // Jika paketnya basic, cek apakah fitur ini ada di limitations
+        $package = self::PACKAGES[$this->package_type] ?? self::PACKAGES['basic'];
+
+        if (in_array($featureName, $package['limitations'])) {
+            return false;
+        }
+        return true;
     }
 }

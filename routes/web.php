@@ -4,12 +4,15 @@ use App\Livewire\LandingPage;
 use Laravel\Fortify\Features;
 use App\Livewire\Admin\ManageUser;
 use App\Livewire\Settings\Profile;
+use App\Livewire\Admin\Transaction;
 use App\Livewire\Settings\Password;
 use App\Livewire\Settings\TwoFactor;
 use App\Livewire\Settings\Appearance;
 use Illuminate\Support\Facades\Route;
+use App\Livewire\Admin\ManageTemplates;
 use App\Livewire\Admin\ManageInvitation;
 use App\Livewire\Frontend\ShowInvitation;
+use App\Livewire\Dashboard\Payment\Checkout;
 use App\Livewire\Admin\Dashboard as AdminDashboard;
 use App\Livewire\Dashboard\Index as DashboardIndex;
 use App\Livewire\Dashboard\Guest\Index as GuestManager;
@@ -32,23 +35,25 @@ Route::get('/', function () {
     return view('welcome');
 })->name('home');
 
+Route::get('/invitation/inactive', function () {
+    return view('errors.invitation-inactive');
+})->name('invitation.inactive');
+
 
 
 // 3. DASHBOARD USER (Area Tertutup / Protected)
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
 
-    // Halaman Utama Dashboard: Menampilkan List Undangan Saya
     Route::get('/', DashboardIndex::class)->name('index');
 
-    // Buat Undangan Baru
     Route::get('/create', InvitationCreate::class)->name('create');
 
-    // Grouping berdasarkan ID Undangan (Route Model Binding)
-    // URL: /dashboard/1/edit, /dashboard/1/guests
+    Route::get('/{invitation}/checkout', Checkout::class)->name('invitation.checkout');
+
+
+
     Route::prefix('{invitation}')->group(function () {
-        
-        // Edit Detail Undangan (Pengantin, Acara, Tema, Foto)
-        // Kita bisa buat satu halaman panjang atau tabulasi di dalam component ini
+
         Route::get('/edit', InvitationEdit::class)->name('invitation.edit');
 
         // Manajemen Tamu (List, Tambah, Hapus, Kirim WA)
@@ -56,7 +61,7 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
 
         // Manajemen Pesan / Ucapan (Lihat, Reply, Hapus)
         Route::get('/messages', MessageManager::class)->name('messages.index');
-        
+
     });
 
 });
@@ -64,17 +69,23 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
 // routes admin
 
 Route::middleware(['auth', 'verified', 'admin'])->prefix('admin')->name('admin.')->group(function () {
-    
+
     // Dashboard Admin (Statistik)
     Route::get('/dashboard', AdminDashboard::class)->name('index');
-    
+
     // Manajemen User
     Route::get('/users', ManageUser::class)->name('users');
-    
+
     // Manajemen Undangan (Semua User)
     Route::get('/invitations', ManageInvitation::class)->name('invitations');
 
     Route::get('/invitations/{invitation}', AdminShowInvitation::class)->name('invitations.show');
+
+    Route::get('/transactions', Transaction::class)->name('transactions');
+
+    Route::get('/templates', ManageTemplates::class)->name('templates');
+
+
 
 });
 
@@ -89,7 +100,7 @@ Route::middleware(['auth'])->group(function () {
         ->middleware(
             when(
                 Features::canManageTwoFactorAuthentication()
-                    && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
+                && Features::optionEnabled(Features::twoFactorAuthentication(), 'confirmPassword'),
                 ['password.confirm'],
                 [],
             ),
@@ -101,5 +112,5 @@ Route::middleware(['auth'])->group(function () {
 // Parameter tamu (?to=bapak-budi) ditangani via Query String, bukan route parameter,
 // jadi tidak perlu didefinisikan di sini.
 Route::get('/{slug}', ShowInvitation::class)
-    ->where('slug', '[a-zA-Z0-9\-]+') 
+    ->where('slug', '[a-zA-Z0-9\-]+')
     ->name('invitation.show');

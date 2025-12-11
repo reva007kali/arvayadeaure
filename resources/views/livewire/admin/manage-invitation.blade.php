@@ -29,6 +29,7 @@
                         <th class="px-6 py-4">Statistik</th>
                         <th class="px-6 py-4">Status</th>
                         <th class="px-6 py-4 text-right">Aksi</th>
+                        <th class="px-6 py-4 text-right">Payment Status</th>
                     </tr>
                 </thead>
                 <tbody class="divide-y divide-[#F2ECDC]">
@@ -74,6 +75,33 @@
                                         title="Hapus Paksa">
                                         <i class="fa-solid fa-trash-can"></i>
                                     </button>
+                                </div>
+                            </td>
+                            {{-- Di dalam Tabel --}}
+                            <td class="px-6 py-4">
+                                <div class="flex flex-col gap-1">
+                                    {{-- Status Aktif Web --}}
+                                    <span
+                                        class="w-fit px-2 py-0.5 rounded text-[10px] font-bold border 
+            {{ $invitation->is_active ? 'bg-green-50 text-green-700 border-green-200' : 'bg-gray-50 text-gray-600 border-gray-200' }}">
+                                        WEB: {{ $invitation->is_active ? 'ON' : 'OFF' }}
+                                    </span>
+
+                                    {{-- Status Bayar --}}
+                                    @if ($invitation->payment_status == 'paid')
+                                        <span class="text-[10px] text-green-600 font-bold"><i
+                                                class="fa-solid fa-check"></i> Paid</span>
+                                    @elseif($invitation->payment_status == 'pending')
+                                        <a href="{{ route('admin.transactions', ['statusFilter' => 'pending']) }}"
+                                            class="text-[10px] text-yellow-600 font-bold hover:underline cursor-pointer">
+                                            <i class="fa-solid fa-clock"></i> Verifikasi!
+                                        </a>
+                                    @elseif($invitation->payment_status == 'rejected')
+                                        <span class="text-[10px] text-red-500 font-bold"><i class="fa-solid fa-ban"></i>
+                                            Rejected</span>
+                                    @else
+                                        <span class="text-[10px] text-gray-400">Unpaid</span>
+                                    @endif
                                 </div>
                             </td>
                         </tr>
