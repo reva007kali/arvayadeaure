@@ -49,7 +49,7 @@
                                 class="group relative rounded-[2rem] overflow-hidden bg-gray-800 border border-arvaya-800 shadow-2xl transition duration-500 hover:-translate-y-3">
                                 <!-- Image -->
                                 <div class="aspect-[9/16] overflow-hidden relative">
-                                    <img src="{{ $template->thumbnail ?? 'https://placehold.co/400x700/1a1a1a/FFF?text=Theme+Preview' }}"
+                                    <img src="{{ asset($template->thumbnail) ?? 'https://placehold.co/400x700/1a1a1a/FFF?text=Theme+Preview' }}"
                                         alt="{{ $template->name }}"
                                         class="object-cover w-full h-full transform group-hover:scale-105 transition duration-700">
 
