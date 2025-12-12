@@ -25,49 +25,98 @@
         </div>
     </div>
 
+    @php
+        // Helper untuk menormalkan data galeri
+        $gallery = $invitation->gallery_data ?? [];
+        $moments = $gallery['moments'] ?? [];
+        
+        // Cek jika struktur data masih format lama (array indexed)
+        if (isset($gallery[0])) {
+            $moments = $gallery;
+            $gallery['cover'] = null;
+            $gallery['groom'] = null;
+            $gallery['bride'] = null;
+        }
+    @endphp
+
     <div class="space-y-8">
 
-        {{-- SECTION 1: GALERI FOTO (PRIORITAS UTAMA) --}}
+        {{-- SECTION 1: GALERI UTAMA (Cover & Profile) --}}
         <div class="bg-white rounded-3xl shadow-[0_10px_40px_-10px_rgba(184,151,96,0.15)] border border-[#E6D9B8] overflow-hidden">
             <div class="p-6 border-b border-[#F2ECDC] flex justify-between items-center bg-[#F9F7F2]/50">
                 <h3 class="font-serif font-bold text-xl text-[#5E4926] flex items-center gap-2">
-                    <i class="fa-solid fa-images text-[#B89760]"></i> Aset Foto Galeri
+                    <i class="fa-solid fa-images text-[#B89760]"></i> Aset Foto Utama
+                </h3>
+            </div>
+            
+            <div class="p-8">
+                @if(empty($gallery['cover']) && empty($gallery['groom']) && empty($gallery['bride']))
+                    <div class="text-center py-6 border-2 border-dashed border-[#E6D9B8] rounded-xl text-[#9A7D4C]">
+                        User belum mengupload foto utama (Cover/Profil).
+                    </div>
+                @else
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        @foreach(['cover' => 'Foto Sampul', 'groom' => 'Mempelai Pria', 'bride' => 'Mempelai Wanita'] as $key => $label)
+                            @if(!empty($gallery[$key]))
+                                <div>
+                                    <p class="text-xs font-bold text-[#9A7D4C] uppercase tracking-wider mb-2">{{ $label }}</p>
+                                    <div class="group relative rounded-xl overflow-hidden border border-[#E6D9B8] shadow-sm bg-gray-100 {{ $key == 'cover' ? 'aspect-[9/16]' : 'aspect-square' }}">
+                                        <img src="{{ asset($gallery[$key]) }}" class="w-full h-full object-cover">
+                                        
+                                        <div class="absolute inset-0 bg-[#5E4926]/70 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2 backdrop-blur-sm">
+                                            <a href="{{ asset($gallery[$key]) }}" target="_blank" 
+                                               class="px-3 py-1 bg-white text-[#5E4926] text-[10px] font-bold uppercase rounded hover:bg-[#B89760] hover:text-white transition">
+                                                Lihat
+                                            </a>
+                                            <a href="{{ asset($gallery[$key]) }}" download
+                                               class="px-3 py-1 bg-[#B89760] text-white text-[10px] font-bold uppercase rounded hover:bg-[#9A7D4C] transition">
+                                                Save
+                                            </a>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+                        @endforeach
+                    </div>
+                @endif
+            </div>
+        </div>
+
+        {{-- SECTION 2: GALERI MOMEN (Many Photos) --}}
+        <div class="bg-white rounded-3xl shadow-[0_10px_40px_-10px_rgba(184,151,96,0.15)] border border-[#E6D9B8] overflow-hidden">
+            <div class="p-6 border-b border-[#F2ECDC] flex justify-between items-center bg-[#F9F7F2]/50">
+                <h3 class="font-serif font-bold text-xl text-[#5E4926] flex items-center gap-2">
+                    <i class="fa-regular fa-images text-[#B89760]"></i> Galeri Momen
                 </h3>
                 <span class="text-xs font-bold text-[#9A7D4C] uppercase tracking-wider">
-                    Total: {{ count($invitation->gallery_data ?? []) }} Foto
+                    Total: {{ count($moments) }} Foto
                 </span>
             </div>
             
             <div class="p-8">
-                @if(empty($invitation->gallery_data))
+                @if(empty($moments))
                     <div class="text-center py-10 border-2 border-dashed border-[#E6D9B8] rounded-xl text-[#9A7D4C]">
-                        User belum mengupload foto galeri.
+                        User belum mengupload foto momen.
                     </div>
                 @else
-                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
-                        @foreach($invitation->gallery_data as $path)
-                            <div class="group relative rounded-xl overflow-hidden border border-[#E6D9B8] shadow-sm bg-gray-100">
-                                {{-- Thumbnail --}}
-                                <img src="{{ asset($path) }}" class="w-full h-40 object-cover transition duration-500 group-hover:scale-110">
-                                
-                                {{-- Overlay Actions --}}
-                                <div class="absolute inset-0 bg-[#5E4926]/70 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-3 backdrop-blur-sm">
-                                    {{-- Tombol View Full --}}
-                                    <a href="{{ asset($path) }}" target="_blank" 
-                                       class="px-4 py-1.5 bg-white text-[#5E4926] text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-[#B89760] hover:text-white transition">
-                                        <i class="fa-solid fa-expand"></i> Lihat
-                                    </a>
+                    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                        @foreach($moments as $path)
+                            @if(is_string($path)) {{-- Safety Check --}}
+                                <div class="group relative rounded-xl overflow-hidden border border-[#E6D9B8] shadow-sm bg-gray-100 aspect-square">
+                                    <img src="{{ asset($path) }}" class="w-full h-full object-cover transition duration-500 group-hover:scale-110">
                                     
-                                    {{-- Tombol Download --}}
-                                    <a href="{{ asset($path) }}" download="{{ basename($path) }}"
-                                       class="px-4 py-1.5 bg-[#B89760] text-white text-[10px] font-bold uppercase tracking-wider rounded-full hover:bg-[#9A7D4C] transition shadow-lg">
-                                        <i class="fa-solid fa-download"></i> Save
-                                    </a>
+                                    <div class="absolute inset-0 bg-[#5E4926]/70 opacity-0 group-hover:opacity-100 transition flex flex-col items-center justify-center gap-2 backdrop-blur-sm">
+                                        <a href="{{ asset($path) }}" target="_blank" 
+                                           class="px-3 py-1 bg-white text-[#5E4926] text-[10px] font-bold uppercase rounded hover:bg-[#B89760] hover:text-white transition">
+                                            Lihat
+                                        </a>
+                                        <a href="{{ asset($path) }}" download
+                                           class="px-3 py-1 bg-[#B89760] text-white text-[10px] font-bold uppercase rounded hover:bg-[#9A7D4C] transition">
+                                            Save
+                                        </a>
+                                    </div>
                                 </div>
-                                <div class="absolute bottom-0 left-0 right-0 bg-white/90 text-[8px] text-[#5E4926] p-1 text-center truncate font-mono">
-                                    {{ basename($path) }}
-                                </div>
-                            </div>
+                            @endif
                         @endforeach
                     </div>
                 @endif
@@ -76,7 +125,7 @@
 
         <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
             
-            {{-- SECTION 2: DATA MEMPELAI --}}
+            {{-- SECTION 3: DATA MEMPELAI --}}
             <div class="bg-white rounded-3xl shadow-sm border border-[#E6D9B8]">
                 <div class="p-6 border-b border-[#F2ECDC] bg-[#F9F7F2]/30">
                     <h3 class="font-serif font-bold text-xl text-[#5E4926] flex items-center gap-2">
@@ -162,7 +211,7 @@
                 </div>
             </div>
 
-            {{-- SECTION 3: DETAIL ACARA (EVENTS) --}}
+            {{-- SECTION 4: DETAIL ACARA (EVENTS) --}}
             <div class="space-y-8">
                 <div class="bg-white rounded-3xl shadow-sm border border-[#E6D9B8]">
                     <div class="p-6 border-b border-[#F2ECDC] bg-[#F9F7F2]/30">
@@ -224,7 +273,7 @@
                     </div>
                 </div>
 
-                {{-- SECTION 4: DATA REKENING (GIFTS) --}}
+                {{-- SECTION 5: DATA REKENING (GIFTS) --}}
                 <div class="bg-white rounded-3xl shadow-sm border border-[#E6D9B8]">
                     <div class="p-6 border-b border-[#F2ECDC] bg-[#F9F7F2]/30">
                         <h3 class="font-serif font-bold text-xl text-[#5E4926] flex items-center gap-2">
@@ -258,7 +307,7 @@
             </div>
         </div>
 
-        {{-- SECTION 5: RAW DATA INSPECTOR --}}
+        {{-- SECTION 6: RAW DATA INSPECTOR --}}
         <div class="bg-[#2D2418] rounded-3xl shadow-lg border border-[#5E4926] overflow-hidden" x-data="{ open: false }">
             <div @click="open = !open" class="p-4 cursor-pointer flex justify-between items-center hover:bg-white/5 transition">
                 <h3 class="font-mono font-bold text-[#E6D9B8] flex items-center gap-2">
