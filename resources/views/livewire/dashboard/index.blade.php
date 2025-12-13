@@ -147,18 +147,19 @@
                     </div>
 
                     {{-- ACTIONS --}}
-                    <div class="mt-auto grid grid-cols-4 gap-2 pt-4 border-t border-[#F2ECDC]">
+                    <div class="mt-auto grid grid-cols-2 gap-2 pt-4 border-t border-[#F2ECDC]">
                         <!-- Edit (Primary) -->
                         <a href="{{ route('dashboard.invitation.edit', $invitation->id) }}"
                             class="col-span-2 text-center py-2.5 bg-[#5E4926] hover:bg-[#403013] text-white text-xs font-bold rounded-lg transition shadow-md flex items-center justify-center gap-2">
-                            <i class="fa-solid fa-pen-nib"></i> Edit Undangan
+                            <i class="fa-solid fa-pen-nib"></i> Manage Undangan
                         </a>
 
                         <!-- Guest Manager -->
                         <a href="{{ route('dashboard.guests.index', $invitation->id) }}"
                             class="col-span-1 text-center py-2.5 bg-white border border-[#C6AC80] text-[#7C6339] hover:bg-[#F2ECDC] text-xs font-bold rounded-lg transition flex items-center justify-center"
                             title="Kelola Tamu">
-                            <i class="fa-solid fa-user-group text-sm"></i>
+                            <i class="fa-solid fa-user-group text-sm mr-2"></i>
+                            Kelola Tamu
                         </a>
 
                         <!-- Delete -->

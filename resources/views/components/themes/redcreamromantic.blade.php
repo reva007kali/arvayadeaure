@@ -70,10 +70,15 @@
 
     /* Animasi Loading Kopi */
     @keyframes fillCoffee {
-        0% { height: 0%; }
-        100% { height: 85%; }
+        0% {
+            height: 0%;
+        }
+
+        100% {
+            height: 85%;
+        }
     }
-    
+
     .coffee-liquid {
         animation: fillCoffee 2s ease-in-out forwards;
     }
@@ -82,8 +87,9 @@
 {{-- ======================================================================= --}}
 {{-- LOADING SCREEN SECTION --}}
 {{-- ======================================================================= --}}
-<div id="loading-overlay" class="fixed inset-0 z-[9999] bg-[#FFFBF2] flex flex-col items-center justify-center transition-opacity duration-700">
-    
+<div id="loading-overlay"
+    class="fixed inset-0 z-[9999] bg-[#FFFBF2] flex flex-col items-center justify-center transition-opacity duration-700">
+
     <!-- Logo Kopi Mengisi -->
     <div class="relative w-24 h-24 mb-6">
         <!-- SVG Coffee Cup Outline -->
@@ -91,28 +97,34 @@
             <!-- Defs untuk Masking Cairan -->
             <defs>
                 <clipPath id="cup-mask">
-                     <path d="M20,30 Q20,80 50,80 Q80,80 80,30 L80,20 L20,20 Z" />
+                    <path d="M20,30 Q20,80 50,80 Q80,80 80,30 L80,20 L20,20 Z" />
                 </clipPath>
             </defs>
 
             <!-- Gagang Cangkir (Belakang) -->
-            <path d="M80,35 Q95,35 95,50 Q95,65 80,65" stroke="#5C2828" stroke-width="6" fill="none" stroke-linecap="round"/>
+            <path d="M80,35 Q95,35 95,50 Q95,65 80,65" stroke="#5C2828" stroke-width="6" fill="none"
+                stroke-linecap="round" />
 
             <!-- Cairan Kopi (Animasi Height) -->
             <g clip-path="url(#cup-mask)">
                 <!-- Background Putih (Kosong) -->
                 <rect x="0" y="0" width="100" height="100" fill="#E6D9B8" opacity="0.2" />
                 <!-- Cairan Gelap (Isi) -->
-                <rect id="coffee-fill" x="0" y="0" width="100" height="100" fill="#5C2828" class="translate-y-full transition-transform duration-[2000ms] ease-out" />
+                <rect id="coffee-fill" x="0" y="0" width="100" height="100" fill="#5C2828"
+                    class="translate-y-full transition-transform duration-[2000ms] ease-out" />
             </g>
 
             <!-- Outline Cangkir Depan -->
-            <path d="M20,30 Q20,80 50,80 Q80,80 80,30 L80,20 L20,20 Z" stroke="#5C2828" stroke-width="4" fill="none" />
-            
+            <path d="M20,30 Q20,80 50,80 Q80,80 80,30 L80,20 L20,20 Z" stroke="#5C2828" stroke-width="4"
+                fill="none" />
+
             <!-- Asap (Opsional, animasi fade) -->
-            <path d="M40,10 Q40,0 30,5" stroke="#5C2828" stroke-width="2" stroke-linecap="round" class="animate-pulse" style="animation-delay: 0.2s"/>
-            <path d="M50,8 Q50,-2 40,3" stroke="#5C2828" stroke-width="2" stroke-linecap="round" class="animate-pulse" style="animation-delay: 0.5s"/>
-            <path d="M60,10 Q60,0 50,5" stroke="#5C2828" stroke-width="2" stroke-linecap="round" class="animate-pulse" style="animation-delay: 0.8s"/>
+            <path d="M40,10 Q40,0 30,5" stroke="#5C2828" stroke-width="2" stroke-linecap="round" class="animate-pulse"
+                style="animation-delay: 0.2s" />
+            <path d="M50,8 Q50,-2 40,3" stroke="#5C2828" stroke-width="2" stroke-linecap="round" class="animate-pulse"
+                style="animation-delay: 0.5s" />
+            <path d="M60,10 Q60,0 50,5" stroke="#5C2828" stroke-width="2" stroke-linecap="round" class="animate-pulse"
+                style="animation-delay: 0.8s" />
         </svg>
     </div>
 
@@ -124,7 +136,8 @@
         </p>
 
         <!-- Tombol Buka Undangan (Hidden Default) -->
-        <button id="open-invitation-btn" class="hidden transform scale-90 opacity-0 transition-all duration-500 bg-[#5C2828] text-[#FFFBF2] px-8 py-2 rounded-full font-sans font-bold shadow-lg hover:bg-[#7C3838] hover:scale-100 hover:shadow-xl uppercase tracking-wider flex items-center gap-2">
+        <button id="open-invitation-btn"
+            class="hidden transform scale-90 opacity-0 transition-all duration-500 bg-[#5C2828] text-[#FFFBF2] px-8 py-2 rounded-full font-sans font-bold shadow-lg hover:bg-[#7C3838] hover:scale-100 hover:shadow-xl uppercase tracking-wider items-center gap-2">
             <i class="fa-solid fa-envelope-open-text"></i> Buka Undangan
         </button>
     </div>
@@ -160,23 +173,23 @@
         btn.addEventListener('click', function() {
             // Fade out overlay
             overlay.style.opacity = '0';
-            
+
             // Buka Scroll Body
             document.body.style.overflow = 'auto';
 
             // Hapus overlay dari DOM setelah transisi selesai
             setTimeout(() => {
                 overlay.remove();
-                
+
                 // Trigger Scroll Animation (Sesuai Class ScrollAnimator sebelumnya)
                 if (typeof ScrollAnimator !== 'undefined') {
-                     // Re-scan elemen jika perlu, atau biarkan IntersectionObserver bekerja
-                     // Biasanya otomatis jalan saat elemen masuk viewport
+                    // Re-scan elemen jika perlu, atau biarkan IntersectionObserver bekerja
+                    // Biasanya otomatis jalan saat elemen masuk viewport
                 }
 
                 // Mainkan Musik (Trigger Event Alpine)
                 window.dispatchEvent(new CustomEvent('play-music'));
-                
+
             }, 700);
         });
     });
@@ -186,50 +199,190 @@
 <div
     class="text-[#5C2828] bg-white h-svh overflow-x-hidden selection:bg-[#c51e1e] selection:text-white font-sans relative">
 
-    {{-- MUSIC PLAYER (YOUTUBE INTEGRATION) --}}
+    {{-- MUSIC PLAYER (CLEAN VINYL WIDGET) --}}
     @if (!empty($theme['music_url']))
         <div x-data="youtubePlayer('{{ $theme['music_url'] }}')" x-init="initPlayer()" @play-music.window="playMusic()"
-            class="fixed bottom-6 right-6 z-50 font-sans">
+            class="fixed bottom-6 left-6 z-[999] font-sans select-none print:hidden">
 
-            {{-- POPUP CONTROLS --}}
-            <div x-show="isOpen" x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 translate-y-4" x-transition:enter-end="opacity-100 translate-y-0"
-                x-transition:leave="transition ease-in duration-200" x-transition:leave-start="opacity-100 translate-y-0"
-                x-transition:leave-end="opacity-0 translate-y-4"
-                class="mb-4 bg-white/90 backdrop-blur-md p-3 rounded-2xl shadow-[0_8px_30px_rgb(0,0,0,0.12)] border border-white/50 w-64"
-                style="display: none;">
+            <!-- 1. TOGGLE BUTTON (MUNCUL SAAT DITUTUP) -->
+            <button x-show="!isOpen" @click="isOpen = true" x-transition:enter="transition ease-out duration-300"
+                x-transition:enter-start="opacity-0 scale-50" x-transition:enter-end="opacity-100 scale-100"
+                class="w-12 h-12 bg-[#FDFBF7] text-[#AA8C49] rounded-full shadow-[0_4px_15px_rgba(0,0,0,0.1)] border border-[#AA8C49]/20 flex items-center justify-center hover:scale-110 transition-transform animate-[spin_10s_linear_infinite]">
+                <i class="fa-solid fa-compact-disc text-2xl"></i>
+            </button>
 
-                <div class="flex items-center justify-between mb-3 theme-text">
-                    <button @click="seek(-10)" class="hover:opacity-70 transition"><i
-                            class="fa-solid fa-backward-step text-lg"></i></button>
-                    <button @click="togglePlay"
-                        class="w-10 h-10 theme-bg text-white rounded-full flex items-center justify-center shadow-lg hover:opacity-90 transition">
-                        <i class="fa-solid" :class="isPlaying ? 'fa-pause' : 'fa-play pl-1'"></i>
-                    </button>
-                    <button @click="seek(10)" class="hover:opacity-70 transition"><i
-                            class="fa-solid fa-forward-step text-lg"></i></button>
+            <!-- 2. PLAYER WIDGET (DESAIN SEPERTI SCREENSHOT) -->
+            <div x-show="isOpen" x-transition:enter="transition ease-out duration-500"
+                x-transition:enter-start="opacity-0 translate-y-10 scale-90"
+                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
+                x-transition:leave="transition ease-in duration-300"
+                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
+                x-transition:leave-end="opacity-0 translate-y-10 scale-90"
+                class="relative w-[280px] bg-[#FDFBF7] rounded-3xl shadow-[0_20px_40px_-10px_rgba(0,0,0,0.2)] border border-white/50 overflow-hidden backdrop-blur-md">
+
+                <!-- Close Button (Pojok Kanan Atas Widget) -->
+                <button @click="isOpen = false"
+                    class="absolute top-4 right-4 text-gray-400 hover:text-[#AA8C49] z-20 transition">
+                    <i class="fa-solid fa-chevron-down"></i>
+                </button>
+
+                <!-- Background Gradient Halus -->
+                <div
+                    class="absolute inset-0 bg-gradient-to-b from-white via-[#FDFBF7] to-[#F3E5AB]/20 pointer-events-none">
                 </div>
 
-                <div class="relative w-full rounded-lg overflow-hidden bg-black aspect-video border border-gray-200">
-                    <div id="yt-player-container"></div>
-                    <div class="absolute inset-0 bg-transparent"></div>
+                <div class="relative z-10 p-6 flex flex-col items-center">
+
+                    <!-- CONTAINER VINYL AREA -->
+                    <div class="relative w-[200px] h-[200px] mb-4 flex items-center justify-center">
+
+                        <!-- 1. Tone Arm (Jarum) - Animasi Masuk saat Play -->
+                        <div class="absolute top-0 -left-2 w-16 h-24 z-20 origin-top-left transition-transform duration-700 ease-in-out"
+                            :class="isPlaying ? 'rotate-[-10deg]' : 'rotate-[23deg]'">
+                            <!-- Gambar SVG Jarum Sederhana -->
+                            <svg viewBox="0 0 50 100" class="w-full h-full drop-shadow-md">
+                                <path d="M5,5 C5,5 15,40 25,80 L35,85" stroke="#999" stroke-width="4" fill="none"
+                                    stroke-linecap="round" />
+                                <circle cx="5" cy="5" r="5" fill="#CCC" />
+                                <rect x="20" y="75" width="20" height="15" fill="#333" rx="2" />
+                            </svg>
+                        </div>
+
+                        <!-- 2. Piringan Hitam (Vinyl) -->
+                        <div class="relative w-full h-full rounded-full shadow-xl bg-[#1a1a1a] flex items-center justify-center border-4 border-white/80"
+                            :class="isPlaying ? 'animate-[spin_6s_linear_infinite]' : ''"
+                            style="background: repeating-radial-gradient(#111 0, #111 2px, #2a2a2a 3px, #2a2a2a 4px);">
+
+                            <!-- Cover Album Tengah (Besar) -->
+                            <div
+                                class="w-[55%] h-[55%] rounded-full overflow-hidden border-[3px] border-[#111] relative">
+                                <img src="{{ isset($galleryData['cover']) ? asset($galleryData['cover']) : 'https://images.unsplash.com/photo-1519741497674-611481863552?auto=format&fit=crop&w=300&q=80' }}"
+                                    class="w-full h-full object-cover grayscale-100">
+                                <!-- Kilauan Vinyl -->
+                                <div
+                                    class="absolute inset-0 bg-gradient-to-tr from-white/20 to-transparent pointer-events-none rounded-full">
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Shadow di bawah vinyl agar terlihat melayang -->
+                        <div class="absolute -bottom-4 w-[80%] h-4 bg-black/20 blur-xl rounded-full"></div>
+                    </div>
+
+                    <!-- INFO LAGU -->
+                    <div class="text-center mb-6 w-full">
+                        <!-- Judul (Marquee jika panjang) -->
+                        <div class="overflow-hidden w-full whitespace-nowrap">
+                            <h3 class="font-serif text-xl font-bold text-[#2C2C2C] truncate">
+                                The Wedding
+                            </h3>
+                        </div>
+                        <p class="font-sans text-xs text-[#AA8C49] tracking-widest uppercase mt-1">
+                            {{ $groom['nickname'] }} & {{ $bride['nickname'] }}
+                        </p>
+                    </div>
+
+                    <!-- PROGRESS BAR (VISUAL SAJA) -->
+                    <div class="w-full h-1 bg-gray-200 rounded-full mb-6 relative overflow-hidden">
+                        <div class="h-full bg-[#AA8C49]"
+                            :class="isPlaying ? 'w-full transition-all duration-[200s] ease-linear' : 'w-0'"></div>
+                    </div>
+
+                    <!-- CONTROLS -->
+                    <div class="flex items-center justify-between w-full px-4 text-[#AA8C49]">
+                        <!-- Prev -->
+                        <button @click="seek(-10)" class="hover:text-[#8C6E33] transition hover:scale-110">
+                            <i class="fa-solid fa-backward-step text-xl"></i>
+                        </button>
+
+                        <!-- Play/Pause Button (Besar & Solid seperti screenshot) -->
+                        <button @click="togglePlay"
+                            class="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_8px_20px_rgba(170,140,73,0.3)] hover:scale-105 transition-all duration-300"
+                            :class="isPlaying ? 'bg-[#AA8C49] text-white' : 'bg-[#AA8C49] text-white pl-1'">
+                            <i class="fa-solid text-2xl" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+                        </button>
+
+                        <!-- Next -->
+                        <button @click="seek(10)" class="hover:text-[#8C6E33] transition hover:scale-110">
+                            <i class="fa-solid fa-forward-step text-xl"></i>
+                        </button>
+                    </div>
+
                 </div>
             </div>
 
-            {{-- FLOATING BUTTON --}}
-            <button @click="isOpen = !isOpen"
-                class="w-12 h-12 bg-[#F9F7F2]/80 backdrop-blur rounded-full shadow-lg flex items-center justify-center theme-text border border-white/50 hover:bg-white transition animate-[bounce_3s_infinite]">
-                <template x-if="!isOpen && isPlaying">
-                    <i class="fa-solid fa-compact-disc fa-spin text-xl"></i>
-                </template>
-                <template x-if="isOpen || !isPlaying">
-                    <i class="fa-solid fa-music text-xl"></i>
-                </template>
-            </button>
+            <!-- Hidden Youtube Container -->
+            <div class="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
+                <div id="yt-player-container"></div>
+            </div>
         </div>
 
-        {{-- SCRIPT PLAYER --}}
-        <script></script>
+        {{-- SCRIPT YOUTUBE API --}}
+        <script>
+            var tag = document.createElement('script');
+            tag.src = "https://www.youtube.com/iframe_api";
+            var firstScriptTag = document.getElementsByTagName('script')[0];
+            firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
+
+            function youtubePlayer(url) {
+                return {
+                    isOpen: false,
+                    isPlaying: false,
+                    player: null,
+                    videoId: '',
+
+                    initPlayer() {
+                        const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+                        const match = url.match(regExp);
+                        this.videoId = (match && match[2].length === 11) ? match[2] : null;
+
+                        if (!this.videoId) return;
+
+                        window.onYouTubeIframeAPIReady = () => {
+                            this.player = new YT.Player('yt-player-container', {
+                                height: '0',
+                                width: '0',
+                                videoId: this.videoId,
+                                playerVars: {
+                                    'playsinline': 1,
+                                    'controls': 0,
+                                    'loop': 1,
+                                    'playlist': this.videoId
+                                },
+                                events: {
+                                    'onReady': (event) => {
+                                        /* Auto-play logic if needed */ },
+                                    'onStateChange': (event) => {
+                                        if (event.data === YT.PlayerState.PLAYING) {
+                                            this.isPlaying = true;
+                                            this.isOpen = true;
+                                        } else if (event.data === YT.PlayerState.PAUSED || event.data === YT
+                                            .PlayerState.ENDED) {
+                                            this.isPlaying = false;
+                                        }
+                                    }
+                                }
+                            });
+                        };
+                    },
+                    playMusic() {
+                        if (this.player && this.player.playVideo) {
+                            this.player.playVideo();
+                            this.isPlaying = true;
+                            this.isOpen = true;
+                        }
+                    },
+                    togglePlay() {
+                        if (!this.player) return;
+                        this.isPlaying ? this.player.pauseVideo() : this.player.playVideo();
+                    },
+                    seek(seconds) {
+                        if (!this.player) return;
+                        this.player.seekTo(this.player.getCurrentTime() + seconds, true);
+                    }
+                }
+            }
+        </script>
     @endif
 
     {{-- 1. HERO / COVER SECTION --}}
@@ -678,8 +831,7 @@
 
                 <!-- PLACEHOLDER LOGO (Ganti src dengan logo asli Anda) -->
                 <!-- Class 'p-1 bg-white' memberi jarak antara foto dan border -->
-                <img src="img/favicon/1.png"
-                    alt="Arvaya De Aure Logo"
+                <img src="img/favicon/1.png" alt="Arvaya De Aure Logo"
                     class="w-12 h-12 rounded-full object-cover p-1 bg-white shadow-sm relative z-10 group-hover:scale-105 transition-transform duration-300">
             </div>
 
