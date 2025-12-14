@@ -81,7 +81,7 @@
                         <input type="radio" wire:model="rsvp_status" value="2" class="peer sr-only">
                         <div class="p-3 rounded-xl border border-[#E6D9B8] bg-white text-center transition-all peer-checked:bg-[#9A7D4C] peer-checked:text-white peer-checked:border-[#9A7D4C] hover:bg-[#F9F7F2]">
                             <i class="fa-solid fa-circle-xmark mb-1 block text-lg"></i>
-                            <span class="text-sm font-bold">Maaf, Tidak</span>
+                            <span class="text-sm font-bold">Berhalangan</span>
                         </div>
                     </label>
                 </div>
