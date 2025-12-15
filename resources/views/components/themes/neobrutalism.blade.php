@@ -295,8 +295,8 @@
 
                 {{-- VS Graphic --}}
                 <div class="flex items-center justify-center">
-                    <div class="bg-black text-white font-head text-4xl p-4 rounded-full border-[3px] border-white animate-bounce">
-                        VS
+                    <div class="bg-black text-white font-head text-5xl p-4 rounded-full border-[3px] border-white animate-bounce">
+                        &
                     </div>
                 </div>
 
