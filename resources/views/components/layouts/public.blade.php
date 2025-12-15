@@ -100,7 +100,7 @@
             </div>
 
             <div class="mt-12 text-center text-xs text-arvaya-600">
-                &copy; {{ date('Y') }} Arvaya De Aure. All rights reserved. Made with <i
+                &copy; {{ date('Y') }} Arvaya. All rights reserved. Made with <i
                     class="fa-solid fa-heart text-arvaya-500 mx-1"></i> in Indonesia.
             </div>
         </div>
