@@ -34,11 +34,24 @@
                 </p>
 
                 <div class="flex flex-col sm:flex-row gap-4">
-                    <a href="{{ route('dashboard.index') }}"
-                        class="group px-8 py-4 bg-arvaya-900 text-white rounded-full font-medium hover:bg-arvaya-800 transition shadow-xl hover:shadow-2xl text-center flex items-center justify-center gap-2">
-                        Buat Undangan
-                        <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
-                    </a>
+                    @auth
+                        <a href="{{ route('dashboard.index') }}"
+                            class="group px-8 py-4 bg-arvaya-900 text-white rounded-full font-medium hover:bg-arvaya-800 transition shadow-xl hover:shadow-2xl text-center flex items-center justify-center gap-2">
+                            Buat Undangan
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                        </a>
+                    @endauth
+                    @guest
+                        <a href="{{ route('register') }}"
+                            class="group px-8 py-4 bg-arvaya-900 text-white rounded-full font-medium hover:bg-arvaya-800 transition shadow-xl hover:shadow-2xl text-center flex items-center justify-center gap-2">
+                            Daftar & Buat Undangan
+                            <i class="fa-solid fa-arrow-right group-hover:translate-x-1 transition"></i>
+                        </a>
+                        <a href="{{ route('login') }}"
+                            class="px-8 py-4 bg-white/50 backdrop-blur-sm border border-arvaya-200 text-arvaya-800 rounded-full font-medium hover:bg-white transition shadow-sm text-center flex items-center justify-center gap-3">
+                            Masuk
+                        </a>
+                    @endguest
                     <a href="#themes"
                         class="px-8 py-4 bg-white/50 backdrop-blur-sm border border-arvaya-200 text-arvaya-800 rounded-full font-medium hover:bg-white transition shadow-sm text-center flex items-center justify-center gap-3 group">
                         <span
@@ -173,9 +186,101 @@
         </div>
     </section>
 
-    <!-- LIVEWIRE TEMPLATE SLIDER SECTION -->
-    @livewire('template-showcase')
+    <!-- LIVEWIRE TEMPLATE SLIDER SECTION (removed as requested) -->
 
+    <!-- TEMPLATE GRID WITH SEARCH -->
+    <section id="themes" class="py-24 bg-white">
+        <div class="container mx-auto px-6">
+            <div class="flex flex-col md:flex-row md:items-end md:justify-between gap-6 mb-10">
+                <div>
+                    <h2 class="font-serif text-4xl font-bold text-arvaya-900">Jelajahi Tema</h2>
+                    <p class="text-gray-600">Cari tema sesuai vibe dan lihat fitur per tier.</p>
+                </div>
+
+                <div class="flex flex-col sm:flex-row gap-4">
+                    <div
+                        class="flex items-center gap-3 rounded-xl bg-[#F9F7F2] border border-[#E6D9B8] px-3 py-2 focus-within:border-[#B89760] focus-within:ring-1 focus-within:ring-[#B89760]">
+                        <i class="fa-solid fa-magnifying-glass text-[#B89760]"></i>
+                        <input type="text" wire:model.live="search" placeholder="Cari nama/slug/kategori..."
+                            class="flex-1 bg-transparent border-0 focus:ring-0 focus:outline-none text-sm text-[#5E4926]">
+                        <span wire:loading wire:target="search" class="text-[#B89760]">
+                            <i class="fa-solid fa-circle-notch fa-spin"></i>
+                        </span>
+                    </div>
+                    <select wire:model.live="tier"
+                        class="rounded-xl border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760]">
+                        <option value="all">Semua Tier</option>
+                        <option value="basic">Basic</option>
+                        <option value="premium">Premium</option>
+                        <option value="exclusive">Exclusive</option>
+                    </select>
+                </div>
+            </div>
+
+            @php $basicFeatures = $tiers['basic']['features'] ?? []; @endphp
+
+            <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-6">
+                @forelse ($templates as $tpl)
+                    @php
+                        $tierMeta = $tiers[$tpl->tier] ?? ['features' => []];
+                        $upgrades = array_values(array_diff($tierMeta['features'], $basicFeatures));
+                    @endphp
+                    <div class="group cursor-pointer">
+                        <div
+                            class="aspect-[9/16] rounded-3xl overflow-hidden relative border-2 border-[#E6D9B8] bg-white transition-all hover:border-[#B89760] hover:shadow-xl">
+                            @if ($tpl->thumbnail)
+                                <img src="{{ asset('storage/' . $tpl->thumbnail) }}" alt="{{ $tpl->name }}"
+                                    class="w-full h-full object-cover">
+                            @else
+                                <div
+                                    class="w-full h-full bg-[#F2ECDC] flex items-center justify-center text-[#C6AC80]">
+                                    <i class="fa-solid fa-image text-3xl mb-2"></i>
+                                </div>
+                            @endif
+                            <div class="absolute top-3 left-3 flex gap-2">
+                                <span
+                                    class="px-2 py-0.5 text-xs rounded-full bg-arvaya-500 text-white uppercase">{{ $tpl->tier }}</span>
+                                @if (count($upgrades))
+                                    <span
+                                        class="px-2 py-0.5 text-xs rounded-full bg-indigo-500 text-white">Upgrades</span>
+                                @endif
+                            </div>
+                            @if (count($upgrades))
+                                <div
+                                    class="absolute bottom-0 inset-x-0 p-3 bg-gradient-to-t from-black/60 to-transparent text-white opacity-0 group-hover:opacity-100 transition">
+                                    <div class="text-xs">Fitur tambahan:</div>
+                                    <div class="mt-2 flex flex-wrap gap-2">
+                                        @foreach ($upgrades as $f)
+                                            <span
+                                                class="px-2 py-0.5 text-[10px] rounded-full bg-white/20 backdrop-blur">{{ str_replace('_', ' ', $f) }}</span>
+                                        @endforeach
+                                    </div>
+                                </div>
+                            @endif
+                            <div
+                                class="absolute inset-0 opacity-0 group-hover:opacity-100 transition flex items-center justify-center gap-2">
+                                <a href="{{ route('invitation.show', $tpl->slug) }}"
+                                    class="px-4 py-2 bg-white text-arvaya-900 rounded-full text-sm font-bold shadow hover:bg-arvaya-400 hover:text-white transition">
+                                    <i class="fa-solid fa-eye mr-1"></i> Preview
+                                </a>
+                                <a href="{{ route('dashboard.create') }}"
+                                    class="px-4 py-2 border border-white text-white rounded-full text-sm font-bold hover:bg-white hover:text-arvaya-900 transition">
+                                    Pilih Tema
+                                </a>
+                            </div>
+                        </div>
+                        <div class="mt-3">
+                            <div class="font-serif font-bold text-[#2B1D0E]">{{ $tpl->name }}</div>
+                            <div class="text-sm text-[#7C6339]">{{ $tpl->category ?? 'Wedding' }}</div>
+                            <div class="text-xs text-[#9A7D4C]">Rp {{ number_format($tpl->price, 0, ',', '.') }}</div>
+                        </div>
+                    </div>
+                @empty
+                    <div class="col-span-full text-center text-gray-500">Tidak ada template ditemukan.</div>
+                @endforelse
+            </div>
+        </div>
+    </section>
     <!-- PRICING SECTION (New Addition for "The Best" feel) -->
     <section id="pricing" class="py-24 bg-white">
         <div class="container mx-auto px-6">
@@ -193,18 +298,30 @@
                     <ul class="space-y-4 text-gray-600 text-sm mb-8">
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Masa
                             Aktif 6 Bulan</li>
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> 500 Tamu
-                            Undangan</li>
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Berbagai Pilihan
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Unlimited
+                            Tamu Undangan</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Berbagai
+                            Pilihan
                             Tema Basic</li>
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Backsound
                             Musik</li>
 
-                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Fitur Reservasi</li>
+                        <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i> Fitur
+                            Reservasi</li>
                     </ul>
-                    <a href="#"
-                        class="block w-full py-3 rounded-full border border-arvaya-900 text-arvaya-900 font-bold text-center hover:bg-arvaya-50 transition">Pilih
-                        Paket</a>
+                    @auth
+                        <a href="{{ route('dashboard.index') }}"
+                            class="block w-full py-3 rounded-full border border-arvaya-900 text-arvaya-900 font-bold text-center hover:bg-arvaya-50 transition">Mulai
+                            di Dashboard</a>
+                    @endauth
+                    @guest
+                        <div class="flex gap-3">
+                            <a href="{{ route('register') }}"
+                                class="flex-1 py-3 rounded-full bg-arvaya-900 text-white font-bold text-center hover:bg-arvaya-800 transition">Daftar</a>
+                            <a href="{{ route('login') }}"
+                                class="flex-1 py-3 rounded-full border border-arvaya-900 text-arvaya-900 font-bold text-center hover:bg-arvaya-50 transition">Masuk</a>
+                        </div>
+                    @endguest
                 </div>
 
                 <!-- Pro Plan (Highlight) -->
@@ -228,9 +345,19 @@
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-arvaya-400"></i> Custom
                             Domain (Optional)</li>
                     </ul>
-                    <a href="#"
-                        class="block w-full py-3 rounded-full bg-arvaya-500 text-white font-bold text-center hover:bg-arvaya-400 transition shadow-lg shadow-arvaya-500/30">Pilih
-                        Paket</a>
+                    @auth
+                        <a href="{{ route('dashboard.index') }}"
+                            class="block w-full py-3 rounded-full bg-arvaya-500 text-white font-bold text-center hover:bg-arvaya-400 transition shadow-lg shadow-arvaya-500/30">Mulai
+                            di Dashboard</a>
+                    @endauth
+                    @guest
+                        <div class="flex gap-3">
+                            <a href="{{ route('register') }}"
+                                class="flex-1 py-3 rounded-full bg-arvaya-500 text-white font-bold text-center hover:bg-arvaya-400 transition">Daftar</a>
+                            <a href="{{ route('login') }}"
+                                class="flex-1 py-3 rounded-full bg-white text-arvaya-900 border border-arvaya-900 font-bold text-center hover:bg-arvaya-50 transition">Masuk</a>
+                        </div>
+                    @endguest
                 </div>
 
                 <!-- Custom Plan -->
@@ -246,14 +373,23 @@
                         <li class="flex items-center gap-3"><i class="fa-solid fa-check text-green-500"></i>
                             Pendampingan Input Data</li>
                     </ul>
-                    <a href="#"
-                        class="block w-full py-3 rounded-full border border-arvaya-900 text-arvaya-900 font-bold text-center hover:bg-arvaya-50 transition">Hubungi
-                        Sales</a>
+                    @auth
+                        <a href="{{ route('dashboard.index') }}"
+                            class="block w-full py-3 rounded-full border border-arvaya-900 text-arvaya-900 font-bold text-center hover:bg-arvaya-50 transition">Mulai
+                            di Dashboard</a>
+                    @endauth
+                    @guest
+                        <div class="flex gap-3">
+                            <a href="{{ route('register') }}"
+                                class="flex-1 py-3 rounded-full bg-arvaya-900 text-white font-bold text-center hover:bg-arvaya-800 transition">Daftar</a>
+                            <a href="{{ route('login') }}"
+                                class="flex-1 py-3 rounded-full border border-arvaya-900 text-arvaya-900 font-bold text-center hover:bg-arvaya-50 transition">Masuk</a>
+                        </div>
+                    @endguest
                 </div>
             </div>
         </div>
     </section>
-
     <!-- TESTIMONIALS (Marquee) -->
     <section id="testimonials" class="py-24 bg-arvaya-50 overflow-hidden border-t border-arvaya-100">
         <div class="text-center mb-12" data-aos="fade-up">
@@ -325,4 +461,47 @@
             </div>
         </div>
     </section>
+    <!-- CONTACT SECTION -->
+    <section id="contact" class="py-24 bg-white border-t border-arvaya-100">
+        <div class="container mx-auto px-6 max-w-6xl">
+            <div class="text-center mb-10">
+                <h2 class="font-serif text-3xl font-bold text-arvaya-900">Hubungi Kami</h2>
+                <p class="text-gray-600">Tim kami siap membantu kapan pun dibutuhkan.</p>
+            </div>
+            <div class="grid sm:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="p-6 bg-white border border-arvaya-100 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 mb-2"><i
+                            class="fa-solid fa-envelope text-arvaya-500"></i><span class="font-bold">Email</span>
+                    </div>
+                    <a href="mailto:admin@arvayadeaure.com" class="text-sm text-arvaya-900">admin@arvayadeaure.com</a>
+                </div>
+                <div class="p-6 bg-white border border-arvaya-100 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 mb-2"><i class="fa-solid fa-phone text-arvaya-500"></i><span
+                            class="font-bold">Telepon</span></div>
+                    <a href="https://wa.me/6282260894009" target="_blank"
+                        class="text-sm text-arvaya-900">082260894009</a>
+                </div>
+                <div class="p-6 bg-white border border-arvaya-100 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 mb-2"><i
+                            class="fa-solid fa-location-dot text-arvaya-500"></i><span class="font-bold">Alamat</span>
+                    </div>
+                    <p class="text-sm text-arvaya-900">Perum Dyah Residence I no D6, Tonjong, Kab. Bogor, Bogor</p>
+                </div>
+                <div class="p-6 bg-white border border-arvaya-100 rounded-2xl shadow-sm">
+                    <div class="flex items-center gap-3 mb-2"><i
+                            class="fa-brands fa-instagram text-arvaya-500"></i><span
+                            class="font-bold">Instagram</span></div>
+                    <a href="https://instagram.com/arvaya.id" target="_blank"
+                        class="text-sm text-arvaya-900">@arvaya.id</a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- FLOATING WHATSAPP BUTTON -->
+    <a href="https://wa.me/6282260894009" target="_blank"
+        class="fixed bottom-6 right-6 z-50 bg-green-500 text-white px-4 py-3 rounded-full shadow-xl border-2 border-white flex items-center gap-2 hover:bg-green-600 transition">
+        <i class="fa-brands fa-whatsapp text-xl"></i>
+        Chat Admin
+    </a>
 </div>
