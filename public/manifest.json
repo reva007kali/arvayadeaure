@@ -1,0 +1,43 @@
+{
+  "name": "Arvaya De Aure",
+  "short_name": "Arvaya",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFDF5",
+  "theme_color": "#23201A",
+  "description": "Undangan digital premium dengan AI, manajemen tamu dan desain elegan.",
+  "icons": [
+    {
+      "src": "/img/large-favicon/logo-transparent.png",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/large-favicon/5.png",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/large-favicon/6.png",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/large-favicon/7.png",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/img/favicon/1.png",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/favicon/2.png",
+      "type": "image/png"
+    },
+    {
+      "src": "/img/favicon/3.png",
+      "type": "image/png"
+    }
+  ]
+}

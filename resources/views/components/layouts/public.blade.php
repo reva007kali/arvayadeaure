@@ -6,9 +6,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arvaya De Aure | Undangan Digital Premium</title>
 
-    {{-- <link rel="icon" href="/favicon.ico" sizes="any"> --}}
-    <link rel="icon" href="/logo.png" type="image/svg+xml">
-    <link rel="apple-touch-icon" href="/logo.png">
+    <meta name="theme-color" content="#23201A">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" href="/img/favicon/1.png" type="image/png">
+    <link rel="icon" href="/img/favicon/2.png" type="image/png">
+    <link rel="icon" href="/img/favicon/3.png" type="image/png">
+    <link rel="apple-touch-icon" href="/img/large-favicon/logo-transparent.png">
 
     <!-- Fonts Global (Optional, biasanya tiap tema punya font sendiri) -->
     <!-- Fonts (Sama seperti Landing Page) -->
@@ -116,5 +119,14 @@
         });
     </script>
 </body>
+
+<script>
+    if ('serviceWorker' in navigator) {
+        window.addEventListener('load', function() {
+            navigator.serviceWorker.register('/service-worker.js')
+                .catch(function(e) { console.warn('SW registration failed', e) })
+        })
+    }
+</script>
 
 </html>
