@@ -22,6 +22,9 @@ class Invitation extends Model
         'gallery_data' => 'array',
         'gifts_data' => 'array',
         'is_active' => 'boolean',
+        'amount' => 'integer',
+        'due_amount' => 'integer',
+        'refund_amount' => 'integer',
     ];
 
     // // Definisi Paket (Bisa ditaruh di Config, tapi di sini biar cepat)

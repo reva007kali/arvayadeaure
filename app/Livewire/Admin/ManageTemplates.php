@@ -13,13 +13,14 @@ class ManageTemplates extends Component
     use WithFileUploads;
 
     public $templates;
-    
+
     // Form Inputs
     public $name, $slug, $description, $tier = 'basic';
     public $price = 0; // Tambahan: Harga Template
     public $thumbnail, $preview_video;
     public $templateId = null;
-    
+    public $is_active = true;
+
     // Modal State
     public $isOpen = false;
     public $isEdit = false;
@@ -34,7 +35,7 @@ class ManageTemplates extends Component
     {
         $this->resetValidation();
         // Reset form inputs termasuk price
-        $this->reset(['name', 'slug', 'description', 'tier', 'price', 'thumbnail', 'preview_video', 'templateId']);
+        $this->reset(['name', 'slug', 'description', 'tier', 'price', 'thumbnail', 'preview_video', 'templateId', 'is_active']);
         $this->isOpen = true;
         $this->isEdit = false;
     }
@@ -49,7 +50,8 @@ class ManageTemplates extends Component
         $this->description = $t->description;
         $this->tier = $t->tier;
         $this->price = $t->price; // Load harga
-        
+        $this->is_active = (bool) $t->is_active;
+
         $this->isOpen = true;
         $this->isEdit = true;
     }
@@ -61,6 +63,7 @@ class ManageTemplates extends Component
             'slug' => 'required|alpha_dash|unique:templates,slug,' . $this->templateId,
             'tier' => 'required|in:basic,premium,exclusive',
             'price' => 'required|numeric|min:0', // Validasi harga
+            'is_active' => 'boolean',
         ];
 
         if (!$this->isEdit) {
@@ -75,6 +78,7 @@ class ManageTemplates extends Component
             'description' => $this->description,
             'tier' => $this->tier,
             'price' => $this->price, // Simpan harga
+            'is_active' => (bool) $this->is_active,
         ];
 
         if ($this->thumbnail) {
@@ -87,8 +91,9 @@ class ManageTemplates extends Component
 
         if ($this->isEdit) {
             $t = Template::findOrFail($this->templateId);
-            if ($this->thumbnail && $t->thumbnail) Storage::disk('public')->delete($t->thumbnail);
-            
+            if ($this->thumbnail && $t->thumbnail)
+                Storage::disk('public')->delete($t->thumbnail);
+
             $t->update($data);
             $msg = 'Template diperbarui.';
         } else {
@@ -103,16 +108,26 @@ class ManageTemplates extends Component
     public function delete($id)
     {
         $t = Template::withCount('invitations')->findOrFail($id);
-        
+
         if ($t->invitations_count > 0) {
             $this->dispatch('notify', message: 'Gagal! Template ini sedang dipakai oleh user.', type: 'error');
             return;
         }
 
-        if ($t->thumbnail) Storage::disk('public')->delete($t->thumbnail);
-        if ($t->preview_video) Storage::disk('public')->delete($t->preview_video);
-        
+        if ($t->thumbnail)
+            Storage::disk('public')->delete($t->thumbnail);
+        if ($t->preview_video)
+            Storage::disk('public')->delete($t->preview_video);
+
         $t->delete();
         $this->dispatch('notify', message: 'Template dihapus.', type: 'success');
+    }
+
+    public function toggleActive($id)
+    {
+        $t = Template::findOrFail($id);
+        $t->is_active = !$t->is_active;
+        $t->save();
+        $this->dispatch('notify', message: $t->is_active ? 'Template ditampilkan ke user.' : 'Template disembunyikan dari user.', type: 'info');
     }
 }

@@ -22,6 +22,9 @@ class Checkout extends Component
     public $templatePrice;
     public $templateTier;
     public $features = [];
+    public $payableAmount = 0;
+    public $isUpgrade = false;
+    public $isDowngrade = false;
 
     public function mount(Invitation $invitation)
     {
@@ -37,14 +40,34 @@ class Checkout extends Component
         $this->templateTier = $template->tier;
         $this->features = Template::TIERS[$template->tier]['features'] ?? [];
 
-        // Pastikan amount di invitation sync dengan harga template terbaru
+        // Deteksi upgrade/downgrade
+        $this->isUpgrade = $invitation->payment_action === 'upgraded' && ($invitation->due_amount ?? 0) > 0;
+        $this->isDowngrade = $invitation->payment_action === 'downgraded' && ($invitation->refund_amount ?? 0) > 0;
+
+        // Sinkronisasi nominal yang harus dibayar:
+        // - Upgrade: gunakan due_amount (selisih)
+        // - Unpaid non-upgrade: gunakan harga template terbaru
+        // - Downgrade: tidak perlu bayar
         if ($invitation->payment_status == 'unpaid') {
-            $invitation->update(['amount' => $template->price, 'package_type' => $template->tier]);
+            if ($this->isUpgrade) {
+                $this->payableAmount = (int) ($invitation->due_amount ?? $template->price);
+                $invitation->update(['amount' => $this->payableAmount, 'package_type' => $template->tier]);
+            } else {
+                $this->payableAmount = (int) $template->price;
+                $invitation->update(['amount' => $this->payableAmount, 'package_type' => $template->tier]);
+            }
+        } else {
+            $this->payableAmount = (int) $template->price;
         }
     }
 
     public function save()
     {
+        if ($this->isDowngrade) {
+            session()->flash('message', 'Tidak perlu bayar. Tim kami akan memproses refund.');
+            return redirect()->route('dashboard.index');
+        }
+
         $this->validate(['proofImage' => 'required|image|max:2048']);
 
         $path = $this->proofImage->store('payment_proofs', 'public');

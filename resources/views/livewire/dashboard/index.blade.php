@@ -1,4 +1,4 @@
-<div class="py-2 animate-fade-in-up">
+<div class="py-2 animate-fade-in-up dashboard-ui">
 
     {{-- HEADER SECTION --}}
     <div class="flex flex-col md:flex-row justify-between items-start md:items-end mb-8 gap-4">
@@ -31,7 +31,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         @forelse($invitations as $invitation)
             <div
-                class="group bg-white rounded-2xl border border-[#E6D9B8]/60 shadow-[0_4px_20px_rgb(230,217,184,0.3)] hover:shadow-[0_8px_30px_rgb(184,151,96,0.2)] transition-all duration-300 flex flex-col overflow-hidden relative">
+                class="group bg-white rounded-[2rem] border-2 border-[#E6D9B8] shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden relative">
 
                 {{-- LOGIC BADGE STATUS & LINK --}}
                 @php
@@ -80,16 +80,15 @@
 
                 {{-- CARD HEADER (Visual) --}}
                 <div
-                    class="h-32 bg-gradient-to-br from-[#D4C1A0] to-[#B89760] relative overflow-hidden p-6 flex flex-col justify-end">
-                    <!-- Abstract Pattern -->
+                    class="h-36 bg-gradient-to-br from-[#D4C1A0] to-[#B89760] relative overflow-hidden p-6 flex flex-col justify-end">
                     <div
-                        class="absolute top-0 right-0 w-32 h-32 bg-white/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10">
+                        class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10">
                     </div>
                     <div
-                        class="absolute bottom-0 left-0 w-24 h-24 bg-[#5E4926]/10 rounded-full blur-xl transform -translate-x-5 translate-y-5">
+                        class="absolute bottom-0 left-0 w-28 h-28 bg-[#5E4926]/10 rounded-full blur-xl transform -translate-x-5 translate-y-5">
                     </div>
 
-                    <h3 class="font-serif font-bold text-xl text-white truncate drop-shadow-sm relative z-10">
+                    <h3 class="font-serif font-bold text-2xl text-white truncate drop-shadow-sm relative z-10">
                         {{ $invitation->title }}
                     </h3>
                     <p class="text-white/80 text-xs font-sans relative z-10 flex items-center gap-1 mt-1">
@@ -104,28 +103,30 @@
                     {{-- STATISTIK GRID (Total Tamu & Views) --}}
                     <div class="grid grid-cols-2 gap-4 mb-6">
                         <!-- Tamu Count -->
-                        <div class="bg-[#F9F7F2] p-3 rounded-xl border border-[#E6D9B8]/50 flex items-center gap-3">
+                        <div
+                            class="bg-[#F9F7F2] p-4 rounded-xl border border-[#E6D9B8] flex items-center gap-3 shadow-sm hover:shadow-md transition">
                             <div
-                                class="w-8 h-8 rounded-full bg-[#E6D9B8] flex items-center justify-center text-[#5E4926]">
+                                class="w-9 h-9 rounded-full bg-[#E6D9B8] flex items-center justify-center text-[#5E4926]">
                                 <i class="fa-solid fa-users text-xs"></i>
                             </div>
                             <div>
                                 <p class="text-[10px] text-[#9A7D4C] font-bold uppercase tracking-wide">Tamu</p>
-                                <p class="text-sm font-bold text-[#5E4926]">
+                                <p class="text-base font-bold text-[#5E4926]">
                                     {{ $invitation->guests_count ?? $invitation->guests->count() }}
                                 </p>
                             </div>
                         </div>
 
                         <!-- View Count -->
-                        <div class="bg-[#F9F7F2] p-3 rounded-xl border border-[#E6D9B8]/50 flex items-center gap-3">
+                        <div
+                            class="bg-[#F9F7F2] p-4 rounded-xl border border-[#E6D9B8] flex items-center gap-3 shadow-sm hover:shadow-md transition">
                             <div
-                                class="w-8 h-8 rounded-full bg-[#E6D9B8] flex items-center justify-center text-[#5E4926]">
+                                class="w-9 h-9 rounded-full bg-[#E6D9B8] flex items-center justify-center text-[#5E4926]">
                                 <i class="fa-solid fa-eye text-xs"></i>
                             </div>
                             <div>
                                 <p class="text-[10px] text-[#9A7D4C] font-bold uppercase tracking-wide">Dilihat</p>
-                                <p class="text-sm font-bold text-[#5E4926]">{{ $invitation->visit_count }}</p>
+                                <p class="text-base font-bold text-[#5E4926]">{{ $invitation->visit_count }}</p>
                             </div>
                         </div>
                     </div>
@@ -135,12 +136,12 @@
                         <label class="text-[10px] uppercase font-bold text-[#9A7D4C] tracking-wider mb-1 block">Tautan
                             Undangan</label>
                         <div
-                            class="bg-white border border-dashed border-[#C6AC80] p-2 rounded-lg flex justify-between items-center group/link hover:border-solid hover:border-[#B89760] transition-all">
+                            class="bg-white border border-[#E6D9B8] p-2 rounded-xl flex justify-between items-center group/link hover:shadow-md transition">
                             <span class="text-xs text-[#7C6339] truncate w-2/3 pl-1 font-mono">
                                 {{ request()->getHost() }}/{{ $invitation->slug }}
                             </span>
                             <a href="{{ route('invitation.show', $invitation->slug) }}" target="_blank"
-                                class="text-[10px] bg-[#F2ECDC] hover:bg-[#B89760] text-[#7C6339] hover:text-white px-3 py-1.5 rounded transition-colors font-bold flex items-center gap-1">
+                                class="text-[10px] bg-[#F2ECDC] hover:bg-[#B89760] text-[#7C6339] hover:text-white px-3 py-1.5 rounded-xl transition-colors font-bold flex items-center gap-1">
                                 Preview <i class="fa-solid fa-arrow-up-right-from-square"></i>
                             </a>
                         </div>
@@ -150,13 +151,13 @@
                     <div class="mt-auto grid grid-cols-2 gap-2 pt-4 border-t border-[#F2ECDC]">
                         <!-- Edit (Primary) -->
                         <a href="{{ route('dashboard.invitation.edit', $invitation->id) }}"
-                            class="col-span-2 text-center py-2.5 bg-[#5E4926] hover:bg-[#403013] text-white text-xs font-bold rounded-lg transition shadow-md flex items-center justify-center gap-2">
+                            class="col-span-2 text-center py-3 bg-[#5E4926] hover:bg-[#403013] text-white text-xs font-bold rounded-xl transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
                             <i class="fa-solid fa-pen-nib"></i> Manage Undangan
                         </a>
 
                         <!-- Guest Manager -->
                         <a href="{{ route('dashboard.guests.index', $invitation->id) }}"
-                            class="col-span-1 text-center py-2.5 bg-white border border-[#C6AC80] text-[#7C6339] hover:bg-[#F2ECDC] text-xs font-bold rounded-lg transition flex items-center justify-center"
+                            class="col-span-1 text-center py-2.5 bg-white border border-[#C6AC80] text-[#7C6339] hover:bg-[#F2ECDC] text-xs font-bold rounded-xl transition flex items-center justify-center shadow-sm hover:shadow-md"
                             title="Kelola Tamu">
                             <i class="fa-solid fa-user-group text-sm mr-2"></i>
                             Kelola Tamu
@@ -165,7 +166,7 @@
                         <!-- Delete -->
                         <button wire:click="delete({{ $invitation->id }})"
                             wire:confirm="Yakin ingin menghapus undangan ini? Data tamu juga akan terhapus."
-                            class="col-span-1 text-center py-2.5 bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 hover:border-red-200 rounded-lg transition flex items-center justify-center"
+                            class="col-span-1 text-center py-2.5 bg-red-50 hover:bg-red-100 text-red-500 border border-red-100 hover:border-red-200 rounded-xl transition flex items-center justify-center shadow-sm hover:shadow-md"
                             title="Hapus">
                             <i class="fa-regular fa-trash-can text-sm"></i>
                         </button>

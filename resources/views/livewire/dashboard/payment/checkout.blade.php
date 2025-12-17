@@ -1,4 +1,4 @@
-<div class="py-6 max-w-4xl mx-auto animate-fade-in-up">
+<div class="py-6 max-w-4xl mx-auto animate-fade-in-up dashboard-ui">
 
     <div class="mb-10 text-center">
         <h2 class="font-serif font-bold text-3xl text-[#5E4926]">Selesaikan Pembayaran</h2>
@@ -45,11 +45,31 @@
                     </div>
                 </div>
 
-                <div class="flex justify-between items-end border-t border-dashed border-[#E6D9B8] pt-4">
-                    <span class="text-sm font-bold text-[#7C6339]">Total Tagihan</span>
-                    <span class="font-sans font-bold text-3xl text-[#B89760]">Rp
-                        {{ number_format($templatePrice, 0, ',', '.') }}</span>
-                </div>
+                @if ($isUpgrade)
+                    <div class="space-y-2 border-t border-dashed border-[#E6D9B8] pt-4">
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#7C6339]">Harga Template Baru</span>
+                            <span class="font-bold text-[#5E4926]">Rp
+                                {{ number_format($templatePrice, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between text-sm">
+                            <span class="text-[#7C6339]">Pembayaran Sebelumnya</span>
+                            <span class="font-bold text-[#5E4926]">Rp
+                                {{ number_format($templatePrice - $payableAmount, 0, ',', '.') }}</span>
+                        </div>
+                        <div class="flex justify-between items-end mt-2">
+                            <span class="text-sm font-bold text-[#7C6339]">Selisih yang Harus Dibayar</span>
+                            <span class="font-sans font-bold text-3xl text-[#B89760]">Rp
+                                {{ number_format($payableAmount, 0, ',', '.') }}</span>
+                        </div>
+                    </div>
+                @else
+                    <div class="flex justify-between items-end border-t border-dashed border-[#E6D9B8] pt-4">
+                        <span class="text-sm font-bold text-[#7C6339]">Total Tagihan</span>
+                        <span class="font-sans font-bold text-3xl text-[#B89760]">Rp
+                            {{ number_format($templatePrice, 0, ',', '.') }}</span>
+                    </div>
+                @endif
             </div>
 
             <a href="{{ route('dashboard.invitation.edit', $invitation->id) }}"
@@ -79,7 +99,16 @@
                 <p class="text-xs text-[#E6D9B8]/80">A.N Revaldy Adhityawiguna Sahabu</p>
             </div>
 
-            <form wire:submit="save" class="space-y-6">
+            @if ($isDowngrade)
+                <div class="p-4 bg-white/5 border border-white/10 rounded-xl text-sm">
+                    <p class="text-[#E6D9B8]">Anda mengubah ke template yang lebih murah. Tidak perlu membayar. Admin
+                        akan memproses refund sebesar <span class="font-bold text-[#B89760]">Rp
+                            {{ number_format($invitation->refund_amount, 0, ',', '.') }}</span>.</p>
+                </div>
+            @endif
+
+            <form wire:submit="save" class="space-y-6"
+                @if ($isDowngrade) x-data x-init="$el.querySelector('button[type=submit]').disabled = true" @endif>
                 <div>
                     <label class="block text-xs font-bold text-[#E6D9B8] uppercase mb-2">Upload Bukti Transfer</label>
                     <div class="relative w-full">
@@ -107,7 +136,8 @@
                 </div>
 
                 <button type="submit"
-                    class="w-full py-4 bg-[#B89760] text-white rounded-xl font-bold hover:bg-[#9A7D4C] transition shadow-lg shadow-[#B89760]/20 flex justify-center gap-2 transform hover:-translate-y-0.5">
+                    class="w-full py-4 bg-[#B89760] text-white rounded-xl font-bold hover:bg-[#9A7D4C] transition shadow-lg shadow-[#B89760]/20 flex justify-center gap-2 transform hover:-translate-y-0.5"
+                    @if ($isDowngrade) disabled @endif>
                     <span wire:loading.remove>Konfirmasi Pembayaran</span>
                     <span wire:loading><i class="fa-solid fa-circle-notch fa-spin"></i> Sending...</span>
                 </button>

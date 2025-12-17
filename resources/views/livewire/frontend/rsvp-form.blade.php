@@ -1,6 +1,6 @@
 <div class="p-8 shadow-[0_10px_40px_-10px_rgba(184,151,96,0.2)] relative overflow-hidden">
-    
-    <h3 class="text-3xl font-bold mb-1 text-center">Konfirmasi Kehadiran</h3>
+
+    <h3 class="text-3xl font-bold mb-1 text-center theme-text">Konfirmasi Kehadiran</h3>
     <p class="text-center text-[10px] font-bold uppercase tracking-[0.2em] mb-8">RSVP Form</p>
 
     @if ($isSubmitted)
@@ -9,11 +9,11 @@
                 <div class="absolute inset-0 rounded-full border animate-ping opacity-20"></div>
                 <i class="fa-solid fa-check text-3xl "></i>
             </div>
-            <h4 class="text-xl font-serif font-bold text-[#5E4926] mb-2">Terima Kasih!</h4>
+            <h4 class="text-xl font-serif font-bold theme-text mb-2">Terima Kasih!</h4>
             <p class="text-sm max-w-xs mx-auto leading-relaxed">
                 Konfirmasi kehadiran Anda telah kami catat. Kami menantikan kehadiran Anda di hari bahagia kami.
             </p>
-            <button wire:click="$set('isSubmitted', false)" 
+            <button wire:click="$set('isSubmitted', false)"
                 class="mt-6 text-xs font-bold  hover:text-[#5E4926] uppercase tracking-wider border-b  transition">
                 Ubah Data Konfirmasi
             </button>
@@ -22,12 +22,12 @@
         <form wire:submit="save" class="space-y-5 text-left relative z-10">
             {{-- Nama --}}
             <div>
-                <label class="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1">Nama Tamu</label>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 theme-text">Nama Tamu</label>
                 <div class="relative">
                     <input type="text" wire:model="name"
-                        class="w-full px-4 py-3 rounded-xl transition-all text-sm font-medium"
+                        class="w-full px-4 py-3 rounded-xl transition-all text-sm font-medium border bg-white"
                         {{ $guest ? 'readonly' : '' }} placeholder="Nama Lengkap">
-                    
+
                     @if ($guest)
                         <div class="absolute right-3 top-3.5 " title="Tamu Terundang">
                             <i class="fa-solid fa-envelope-circle-check text-lg"></i>
@@ -43,16 +43,19 @@
 
             {{-- WhatsApp --}}
             <div>
-                <label class="block text-xs font-bold  uppercase tracking-wider mb-1.5 ml-1">Nomor WhatsApp <span class=" font-normal normal-case">(Opsional)</span></label>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 theme-text">Nomor WhatsApp
+                    <span class=" font-normal normal-case">(Opsional)</span></label>
                 <input type="number" wire:model="phone"
-                    class="w-full px-4 py-3 rounded-xl  focus:ring-1 transition-all text-sm font-medium">
+                    class="w-full px-4 py-3 rounded-xl border bg-white focus:ring-1 transition-all text-sm font-medium">
             </div>
 
             {{-- Jumlah Pax --}}
             <div>
-                <label class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-1.5 ml-1">Jumlah Hadir</label>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-1.5 ml-1 theme-text">Jumlah
+                    Hadir</label>
                 <div class="relative">
-                    <select wire:model="pax" class="w-full px-4 py-3 rounded-xl bg-[#F9F7F2] border-[#E6D9B8] text-[#5E4926] focus:border-[#B89760] focus:ring-1 focus:ring-[#B89760] transition-all text-sm font-medium appearance-none">
+                    <select wire:model="pax"
+                        class="w-full px-4 py-3 rounded-xl bg-white border focus:ring-1 transition-all text-sm font-medium appearance-none">
                         @for ($i = 1; $i <= 5; $i++)
                             <option value="{{ $i }}">{{ $i }} Orang</option>
                         @endfor
@@ -65,12 +68,14 @@
 
             {{-- Radio Buttons --}}
             <div>
-                <label class="block text-xs font-bold text-[#7C6339] uppercase tracking-wider mb-3 ml-1">Konfirmasi Kehadiran</label>
+                <label class="block text-xs font-bold uppercase tracking-wider mb-3 ml-1 theme-text">Konfirmasi
+                    Kehadiran</label>
                 <div class="grid grid-cols-2 gap-4">
                     {{-- Hadir --}}
                     <label class="cursor-pointer relative">
                         <input type="radio" wire:model="rsvp_status" value="1" class="peer sr-only">
-                        <div class="p-3 rounded-xl border border-[#E6D9B8] bg-white text-center transition-all peer-checked:bg-[#5E4926] peer-checked:text-white peer-checked:border-[#5E4926] hover:bg-[#F9F7F2]">
+                        <div
+                            class="p-3 rounded-xl border bg-white text-center transition-all peer-checked:theme-bg peer-checked:text-white hover:bg-[#F9F7F2]">
                             <i class="fa-solid fa-circle-check mb-1 block text-lg"></i>
                             <span class="text-sm font-bold">Hadir</span>
                         </div>
@@ -79,7 +84,8 @@
                     {{-- Tidak Hadir --}}
                     <label class="cursor-pointer relative">
                         <input type="radio" wire:model="rsvp_status" value="2" class="peer sr-only">
-                        <div class="p-3 rounded-xl border border-[#E6D9B8] bg-white text-center transition-all peer-checked:bg-[#9A7D4C] peer-checked:text-white peer-checked:border-[#9A7D4C] hover:bg-[#F9F7F2]">
+                        <div
+                            class="p-3 rounded-xl border bg-white text-center transition-all peer-checked:theme-bg peer-checked:text-white hover:bg-[#F9F7F2]">
                             <i class="fa-solid fa-circle-xmark mb-1 block text-lg"></i>
                             <span class="text-sm font-bold">Berhalangan</span>
                         </div>

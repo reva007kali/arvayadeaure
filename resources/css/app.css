@@ -48,8 +48,8 @@
     --color-royal-600: #143a2f;
 
     /* --- COLORS: FLUX UI MAPPING --- */
-    --color-accent: var(--color-neutral-800);
-    --color-accent-content: var(--color-neutral-800);
+    --color-accent: var(--color-arvaya-500);
+    --color-accent-content: var(--color-arvaya-500);
     --color-accent-foreground: var(--color-white);
 
     /* --- ANIMATIONS (Landing Page Specific) --- */
@@ -109,6 +109,81 @@
     ::file-selector-button {
         border-color: var(--color-gray-200, currentColor);
     }
+
+    .dark-ui input,
+    .dark-ui textarea,
+    .dark-ui select {
+        background-color: #12110e !important;
+        color: #e6d9b8 !important;
+        border-color: #e6d9b8 !important;
+    }
+    .dark-ui input::placeholder,
+    .dark-ui textarea::placeholder {
+        color: #c6ac80 !important;
+    }
+    .dark-ui input:disabled,
+    .dark-ui textarea:disabled,
+    .dark-ui select:disabled {
+        opacity: 0.6;
+    }
+
+    .modal-gold-ui input,
+    .modal-gold-ui textarea,
+    .modal-gold-ui select {
+        background-color: #ffffff !important;
+        color: #12110e !important;
+        border: 1px solid #b89760 !important;
+    }
+
+    .dashboard-ui input,
+    .dashboard-ui textarea,
+    .dashboard-ui select {
+        border: 1px solid #e6d9b8;
+    }
+    .dashboard-ui input:focus,
+    .dashboard-ui textarea:focus,
+    .dashboard-ui select:focus {
+        border-color: #b89760;
+        outline: none;
+        box-shadow: 0 0 0 2px rgba(184, 151, 96, 0.15);
+    }
+    .modal-gold-ui input::placeholder,
+    .modal-gold-ui textarea::placeholder {
+        color: #c6ac80 !important;
+    }
+    .modal-gold-ui input:focus,
+    .modal-gold-ui textarea:focus,
+    .modal-gold-ui select:focus {
+        outline: none !important;
+        box-shadow: 0 0 0 2px #b89760 !important;
+    }
+    .modal-gold-ui,
+    .modal-gold-ui h1,
+    .modal-gold-ui h2,
+    .modal-gold-ui h3,
+    .modal-gold-ui h4,
+    .modal-gold-ui p,
+    .modal-gold-ui span,
+    .modal-gold-ui label {
+        color: #5e4926 !important;
+    }
+    .modal-gold-ui i {
+        color: #7c6339 !important;
+    }
+    .modal-gold-ui .bg-white i {
+        color: #7c6339 !important;
+    }
+    .modal-gold-header,
+    .modal-gold-header h1,
+    .modal-gold-header h2,
+    .modal-gold-header h3,
+    .modal-gold-header h4,
+    .modal-gold-header p,
+    .modal-gold-header span,
+    .modal-gold-header label,
+    .modal-gold-header i {
+        color: #ffffff !important;
+    }
 }
 
 /* --- FLUX UI OVERRIDES --- */
@@ -130,7 +205,7 @@ select:focus[data-flux-control] {
 @layer utilities {
     /* Kaca Efek Sidebar (Existing) */
     .glass-sidebar {
-        background: rgba(255, 255, 255, 0.7);
+        background: rgba(18, 17, 14, 0.7);
         backdrop-filter: blur(10px);
         border-right: 1px solid rgba(230, 217, 184, 0.6);
     }
@@ -238,4 +313,27 @@ select {
         opacity: 1 !important;
         transform: none !important;
     }
+}
+
+/* Thin gold scrollbar */
+html,
+body {
+    scrollbar-width: thin;
+    scrollbar-color: #c6ac80 transparent;
+}
+*::-webkit-scrollbar {
+    width: 4px;
+    height: 4px;
+}
+*::-webkit-scrollbar-track {
+    background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+    background-color: #c6ac80;
+    border-radius: 9999px;
+    border: 2px solid transparent;
+    background-clip: padding-box;
+}
+*::-webkit-scrollbar-thumb:hover {
+    background-color: #b89760;
 }

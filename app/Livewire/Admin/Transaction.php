@@ -11,14 +11,15 @@ class Transaction extends Component
     use WithPagination;
 
     public $statusFilter = 'pending';
-    
+    public $actionFilter = 'all';
+
     // State Modal
     public $rejectId = null;
     public $rejectReason = '';
     public $showRejectModal = false;
     public $proofUrl = null;
     public $showProofModal = false;
-    
+
     // State Detail Modal
     public $showDetailModal = false;
     public $detailTransaction = null;
@@ -29,17 +30,23 @@ class Transaction extends Component
         $stats = [
             'total_revenue' => Invitation::where('payment_status', 'paid')->sum('amount'),
             'count_pending' => Invitation::where('payment_status', 'pending')->count(),
-            'count_paid'    => Invitation::where('payment_status', 'paid')->count(),
-            'count_rejected'=> Invitation::where('payment_status', 'rejected')->count(),
+            'count_paid' => Invitation::where('payment_status', 'paid')->count(),
+            'count_rejected' => Invitation::where('payment_status', 'rejected')->count(),
+            'count_upgraded' => Invitation::where('payment_action', 'upgraded')->count(),
+            'count_downgraded' => Invitation::where('payment_action', 'downgraded')->count(),
+            'count_refund' => Invitation::where('payment_action', 'refund')->count(),
+            'count_cancel' => Invitation::where('payment_action', 'cancel')->count(),
         ];
 
         // 2. Data Transaksi
         $transactions = Invitation::with('user')
-            ->where('payment_status', '!=', 'unpaid')
-            ->when($this->statusFilter, function($q) {
-                if($this->statusFilter !== 'all') {
+            ->when($this->statusFilter, function ($q) {
+                if ($this->statusFilter !== 'all') {
                     $q->where('payment_status', $this->statusFilter);
                 }
+            })
+            ->when($this->actionFilter && $this->actionFilter !== 'all', function ($q) {
+                $q->where('payment_action', $this->actionFilter);
             })
             ->latest('updated_at')
             ->paginate(10);

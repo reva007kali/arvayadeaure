@@ -13,74 +13,49 @@
     </div>
 
     {{-- GRID TEMPLATES --}}
-    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+    <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-2 md:gap-4">
         @foreach ($templates as $item)
-            <div
-                class="group bg-white rounded-2xl border border-[#E6D9B8] overflow-hidden shadow-sm hover:shadow-[0_10px_30px_rgba(184,151,96,0.2)] transition duration-300 flex flex-col h-full relative">
-
-                {{-- Badge Type & Price (Top Left) --}}
-                <div class="absolute top-3 left-3 z-10 flex flex-col items-start gap-1">
-                    {{-- Tipe --}}
-                    <span
-                        class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider shadow-sm border border-white/20
-                        {{ $item->type == 'premium' ? 'bg-[#2D2418] text-[#B89760]' : 'bg-white/90 text-[#7C6339]' }}">
-                        {{ $item->type }}
-                    </span>
-
-                    {{-- Harga (Jika Premium/Berbayar) --}}
-                    @if ($item->price > 0)
-                        <span
-                            class="px-2 py-1 rounded text-[10px] font-bold shadow-sm border border-white/20 bg-[#B89760] text-white">
-                            Rp {{ number_format($item->price, 0, ',', '.') }}
-                        </span>
-                    @else
-                        <span
-                            class="px-2 py-1 rounded text-[10px] font-bold shadow-sm border border-white/20 bg-green-500 text-white">
-                            FREE
-                        </span>
-                    @endif
-                </div>
-
-                {{-- Thumbnail / Video Area --}}
-                <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden group/media">
+            <div class="group rounded-xl overflow-hidden border border-[#E6D9B8] bg-gray-100 cursor-pointer"
+                wire:click="edit({{ $item->id }})">
+                <div class="relative aspect-[9/16]">
                     @if ($item->thumbnail)
                         <img src="{{ asset('storage/' . $item->thumbnail) }}"
                             class="w-full h-full object-cover transition duration-700 group-hover:scale-105">
                     @else
                         <div class="w-full h-full flex items-center justify-center text-[#C6AC80]">
-                            <i class="fa-solid fa-image text-3xl"></i>
+                            <i class="fa-solid fa-image text-2xl"></i>
                         </div>
                     @endif
-
-                    {{-- Hover Overlay Actions --}}
-                    <div
-                        class="absolute inset-0 bg-[#5E4926]/60 backdrop-blur-[2px] opacity-0 group-hover:opacity-100 transition duration-300 flex flex-col items-center justify-center gap-3">
-                        <button wire:click="edit({{ $item->id }})"
-                            class="px-4 py-2 bg-white text-[#5E4926] rounded-lg text-xs font-bold hover:bg-[#B89760] hover:text-white transition">
-                            <i class="fa-solid fa-pen"></i> Edit
-                        </button>
-
-                        <button wire:click="delete({{ $item->id }})" wire:confirm="Hapus template ini?"
-                            class="px-4 py-2 bg-red-500 text-white rounded-lg text-xs font-bold hover:bg-red-600 transition">
-                            <i class="fa-solid fa-trash"></i> Hapus
-                        </button>
-
-                        @if ($item->preview_video)
-                            <a href="{{ asset('storage/' . $item->preview_video) }}" target="_blank"
-                                class="text-white text-xs mt-2 hover:underline">
-                                <i class="fa-solid fa-play-circle"></i> Cek Video
-                            </a>
+                    <div class="absolute top-2 left-2 flex items-center gap-1">
+                        <span
+                            class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-white/80 border border-white/60 text-[#7C6339]">
+                            {{ ucfirst($item->tier ?? $item->type) }}
+                        </span>
+                        @if ($item->price > 0)
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#B89760] text-white border border-white/40">
+                                Rp {{ number_format($item->price, 0, ',', '.') }}
+                            </span>
+                        @else
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold bg-green-500 text-white border border-white/40">
+                                FREE
+                            </span>
                         @endif
                     </div>
+                    <div class="absolute top-2 right-2">
+                        <button wire:click.stop="toggleActive({{ $item->id }})"
+                            class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border
+                            {{ $item->is_active ? 'bg-green-50 text-green-700 border-green-200 hover:bg-green-100' : 'bg-gray-100 text-gray-500 border-gray-200 hover:bg-gray-200' }}">
+                            {{ $item->is_active ? 'Visible' : 'Hidden' }}
+                        </button>
+                    </div>
                 </div>
-
-                {{-- Info --}}
-                <div class="p-4 flex-1 flex flex-col">
-                    <h3 class="font-serif font-bold text-lg text-[#5E4926]">{{ $item->name }}</h3>
-                    <p class="text-xs font-mono text-[#B89760] mb-2 bg-[#F9F7F2] inline-block px-2 py-0.5 rounded">Slug:
-                        {{ $item->slug }}</p>
-                    <p class="text-xs text-[#7C6339] line-clamp-2">{{ $item->description ?? 'Tidak ada deskripsi.' }}
-                    </p>
+                <div class="px-2 py-2">
+                    <h3 class="font-serif font-bold text-sm text-[#5E4926]">{{ $item->name }}</h3>
+                    <p class="text-[10px] opacity-80 text-[#7C6339]">{{ $item->slug }}</p>
+                    <span class="text-[10px] inline-flex items-center gap-1 text-[#9A7D4C]"><i
+                            class="fa-solid fa-pen"></i> Klik untuk edit</span>
                 </div>
             </div>
         @endforeach
@@ -91,7 +66,7 @@
         <div class="fixed inset-0 z-50 flex items-center justify-center bg-[#2D2418]/60 backdrop-blur-sm px-4"
             x-transition>
             <div
-                class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-[#E6D9B8] animate-fade-in-up">
+                class="bg-white rounded-3xl w-full max-w-lg shadow-2xl overflow-hidden border border-[#E6D9B8] animate-fade-in-up modal-gold-ui">
 
                 <div class="p-6 border-b border-[#F2ECDC] bg-[#F9F7F2] flex justify-between items-center">
                     <h3 class="font-serif font-bold text-xl text-[#5E4926]">
@@ -119,7 +94,8 @@
                         <input type="text" wire:model="slug" placeholder="rustic"
                             class="w-full rounded-xl border-[#E6D9B8] text-sm focus:border-[#B89760] focus:ring-[#B89760] bg-[#F9F7F2] font-mono">
                         <p class="text-[10px] text-[#9A7D4C] mt-1">Pastikan ada file
-                            <code>resources/views/components/themes/<b>slug</b>.blade.php</code></p>
+                            <code>resources/views/components/themes/<b>slug</b>.blade.php</code>
+                        </p>
                         @error('slug')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
@@ -185,6 +161,12 @@
                         @error('preview_video')
                             <span class="text-red-500 text-xs">{{ $message }}</span>
                         @enderror
+                    </div>
+                    <div>
+                        <label class="flex items-center gap-2 text-xs font-bold text-[#7C6339] uppercase">
+                            <input type="checkbox" wire:model="is_active" class="rounded">
+                            Tampilkan ke User
+                        </label>
                     </div>
                 </div>
 

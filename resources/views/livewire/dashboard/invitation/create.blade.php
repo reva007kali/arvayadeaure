@@ -1,4 +1,4 @@
-<div class="max-w-3xl mx-auto py-6 animate-fade-in-up">
+<div class="max-w-3xl mx-auto py-6 animate-fade-in-up dashboard-ui">
 
     {{-- HEADER & BREADCRUMB --}}
     <div class="mb-8 text-center">

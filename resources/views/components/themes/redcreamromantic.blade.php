@@ -82,6 +82,36 @@
     .coffee-liquid {
         animation: fillCoffee 2s ease-in-out forwards;
     }
+
+    .theme-scope .theme-text {
+        color: var(--color-primary);
+    }
+
+    .theme-scope .theme-bg {
+        background-color: var(--color-primary);
+    }
+
+    .theme-scope button {
+        background-color: var(--color-primary);
+        color: #fff;
+    }
+
+    .theme-scope button:hover {
+        filter: brightness(0.9);
+    }
+
+    .theme-scope input,
+    .theme-scope textarea,
+    .theme-scope select {
+        border: 1px solid var(--color-primary);
+    }
+
+    .theme-scope input:focus,
+    .theme-scope textarea:focus,
+    .theme-scope select:focus {
+        outline: none;
+        box-shadow: 0 0 0 2px var(--color-primary);
+    }
 </style>
 
 {{-- ======================================================================= --}}
@@ -129,11 +159,15 @@
     </div>
 
     <!-- Container Text / Button -->
-    <div class="h-16 flex items-center justify-center">
-        <!-- Teks Loading -->
-        <p id="loading-text" class="text-[#5C2828] font-serif tracking-widest text-sm animate-pulse">
-            Loading The Invitation...
-        </p>
+    <div class="h-24 flex flex-col items-center justify-center gap-2">
+        <div id="loading-info" class="text-center">
+            <p class="text-[#5C2828] font-serif tracking-widest text-sm animate-pulse">
+                {{ $invitation->event_data[0]['title'] ?? 'Wedding Invitation' }}
+            </p>
+            <p class="text-[#5C2828] font-title text-2xl leading-tight">
+                {{ $groom['nickname'] ?? 'Groom' }} & {{ $bride['nickname'] ?? 'Bride' }}
+            </p>
+        </div>
 
         <!-- Tombol Buka Undangan (Hidden Default) -->
         <button id="open-invitation-btn"
@@ -150,7 +184,7 @@
     // Logika Loading
     window.addEventListener('load', function() {
         const fill = document.getElementById('coffee-fill');
-        const text = document.getElementById('loading-text');
+        const info = document.getElementById('loading-info');
         const btn = document.getElementById('open-invitation-btn');
         const overlay = document.getElementById('loading-overlay');
 
@@ -160,7 +194,7 @@
 
         // 2. Tunggu sebentar (biar user lihat animasi penuh), lalu ganti teks jadi tombol
         setTimeout(() => {
-            text.style.display = 'none';
+            info.style.display = 'none';
             btn.classList.remove('hidden');
             // Sedikit delay biar transisi CSS tombol smooth
             setTimeout(() => {
@@ -369,12 +403,34 @@
     {{-- Intro 2 --}}
     <section class="p-8 bg-cover bg-no-repeat bg-[url('/public/img/bg/paper2.png')]">
         <div class="lg:max-w-4xl lg:mx-auto lg:text-center" data-anim="fade-up" data-duration="1.5s">
+            @php $qs = $invitation->couple_data['quote_structured'] ?? null; @endphp
             <i class="fa-solid fa-quote-left text-4xl theme-text opacity-30 mb-4 block"></i>
-            <p class="font-serif text-md md:text-2xl text-[#7C6339] mb-4 max-w-3xl mx-auto leading-relaxed">
-                "{{ $invitation->couple_data['quote'] ?? 'Dan di antara tanda-tanda (kebesaran)-Nya ialah Dia menciptakan pasangan-pasangan untukmu dari jenismu sendiri, agar kamu cenderung dan merasa tenteram kepadanya...' }}"
-            </p>
-            <p class="font-serif text-md md:text-2xl text-[#7C6339] mb-8 max-w-3xl mx-auto leading-relaxed">QS
-                AR-RUM : 21</p>
+            @if ($qs && ($qs['type'] ?? '') === 'quran')
+                <p class="font-serif text-2xl text-[#7C6339] mb-4 max-w-3xl mx-auto leading-relaxed">
+                    {{ $qs['arabic'] ?? '' }}</p>
+                <p class="font-serif text-md md:text-2xl text-[#7C6339] mb-4 max-w-3xl mx-auto leading-relaxed">
+                    {{ $qs['translation'] ?? '' }}</p>
+                <p class="font-serif text-sm md:text-base text-[#7C6339] mb-8 max-w-3xl mx-auto leading-relaxed">
+                    {{ $qs['source'] ?? '' }}</p>
+            @elseif ($qs && ($qs['type'] ?? '') === 'bible')
+                <p class="font-serif text-md md:text-2xl text-[#7C6339] mb-4 max-w-3xl mx-auto leading-relaxed">
+                    {{ $qs['verse_text'] ?? '' }}</p>
+                @if (!empty($qs['translation']))
+                    <p class="font-serif text-md md:text-xl text-[#7C6339] mb-4 max-w-3xl mx-auto leading-relaxed">
+                        {{ $qs['translation'] }}</p>
+                @endif
+                <p class="font-serif text-sm md:text-base text-[#7C6339] mb-8 max-w-3xl mx-auto leading-relaxed">
+                    {{ $qs['source'] ?? '' }}</p>
+            @elseif ($qs && ($qs['type'] ?? '') === 'quote')
+                <p class="font-serif text-md md:text-2xl text-[#7C6339] mb-4 max-w-3xl mx-auto leading-relaxed">
+                    “{{ $qs['quote_text'] ?? '' }}”</p>
+                <p class="font-serif text-sm md:text-base text-[#7C6339] mb-8 max-w-3xl mx-auto leading-relaxed">
+                    {{ $qs['source'] ?? 'Unknown' }}</p>
+            @else
+                <p class="font-serif text-md md:text-2xl text-[#7C6339] mb-8 max-w-3xl mx-auto leading-relaxed">
+                    "{{ $invitation->couple_data['quote'] ?? '' }}"
+                </p>
+            @endif
             <div class="w-24 h-1 theme-bg mx-auto rounded-full mb-10"></div>
         </div>
         <div data-anim="fade-up">
@@ -507,7 +563,8 @@
 
     {{-- grooms and bride moments --}}
     @if (!empty($moments))
-        <section class="p-8 bg-cover bg-no-repeat bg-[url('/public/img/bg/paper2.png')]">
+        <section class="p-8 bg-cover bg-no-repeat bg-[url('/public/img/bg/paper2.png')]" x-data="{ photoOpen: false, photoSrc: '' }"
+            @keydown.escape.window="photoOpen = false">
             <div data-anim="fade-up">
                 <img src="img/assets/quote-note.png" alt="">
             </div>
@@ -515,12 +572,28 @@
                 data-anim-stagger="0.1">
                 @foreach ($moments as $index => $photo)
                     <div data-anim="zoom-in" data-delay=""
-                        class="relative group overflow-hidden rounded shadow-md {{ $index % 3 == 0 ? 'md:col-span-2 md:row-span-2 h-full' : '' }}">
-                        <img src="{{ asset($photo) }}"
+                        class="relative group overflow-hidden rounded shadow-md cursor-pointer {{ $index % 3 == 0 ? 'md:col-span-2 md:row-span-2 h-full' : '' }}"
+                        @click="photoOpen = true; photoSrc = '{{ asset($photo) }}'">
+                        <img src="{{ asset($photo) }}" alt="Moment photo"
                             class="w-full grayscale-100 h-full p-3 pb-10 bg-white/70 object-cover transition duration-700 group-hover:scale-110">
                         <div class="absolute inset-0 group-hover:bg-black/40 transition"></div>
                     </div>
                 @endforeach
+            </div>
+
+            <!-- Fullscreen Photo Modal -->
+            <div x-show="photoOpen" x-transition.opacity class="fixed inset-0 z-[9999]">
+                <div class="absolute inset-0 bg-black/80 backdrop-blur-sm" @click="photoOpen = false"></div>
+                <div class="absolute inset-0 flex items-center justify-center p-4">
+                    <div class="relative w-full max-w-6xl">
+                        <button @click="photoOpen = false"
+                            class="absolute -top-6 right-0 bg-white text-[#5C2828] hover:bg-[#F2ECDC] w-10 h-10 rounded-full shadow-md flex items-center justify-center border border-white/70">
+                            <i class="fa-solid fa-xmark"></i>
+                        </button>
+                        <img :src="photoSrc" alt="Preview"
+                            class="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl border border-white/40 bg-white/5">
+                    </div>
+                </div>
             </div>
         </section>
     @endif
@@ -637,12 +710,23 @@
                     </div>
                 </div>
             @endforeach
+            @if (!empty($theme['gift_address']))
+                <div class="mt-8 bg-white/80 border border-yellow-900/20 rounded-2xl p-6 shadow-sm"
+                    data-anim="fade-up">
+                    <div class="flex items-center gap-2 mb-2 text-[#5E4926]">
+                        <i class="fa-solid fa-gift"></i>
+                        <span class="font-serif font-bold">Alamat Pengiriman Kado</span>
+                    </div>
+                    <p class="text-sm text-[#7C6339] leading-relaxed">{{ $theme['gift_address'] }}</p>
+                </div>
+            @endif
         </section>
     @endif
 
     {{-- reservasi --}}
     <div class="shadow-2xl shadow-black/50 bg-[url('/public/img/bg/paper2.png')]">
-        <div class="lg:max-w-3xl lg:mx-auto" data-anim="fade-up">
+        <div class="lg:max-w-3xl lg:mx-auto theme-scope" style="--color-primary: {{ $primaryColor }};"
+            data-anim="fade-up">
             @livewire('frontend.rsvp-form', ['invitation' => $invitation, 'guest' => $guest])
         </div>
 
@@ -652,7 +736,8 @@
             <div class="h-px theme-bg w-20"></div>
         </div>
 
-        <div class="bg-white/80 lg:max-w-3xl lg:mx-auto" data-aos="fade-up">
+        <div class="bg-white/80 lg:max-w-3xl lg:mx-auto theme-scope" style="--color-primary: {{ $primaryColor }};"
+            data-aos="fade-up">
             @livewire('frontend.guest-book', ['invitation' => $invitation, 'guest' => $guest])
         </div>
     </div>

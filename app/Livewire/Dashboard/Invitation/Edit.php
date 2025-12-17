@@ -25,7 +25,7 @@ class Edit extends Component
 
     // --- PROPERTI UTAMA ---
     public Invitation $invitation;
-    public $activeTab = 'couple'; // Tab default yang terbuka saat halaman dimuat
+    public $activeTab = null; // Tidak ada tab aktif saat halaman dimuat
 
     // --- PROPERTI DATA (MODEL BINDING) ---
     // Variabel ini terhubung langsung dengan input form di view (wire:model)
@@ -55,12 +55,32 @@ class Edit extends Component
     // --- PROPERTI AI ---
     public $isGeneratingAi = false; // Loading state
     public $aiTone = 'islami';      // Pilihan gaya bahasa
+    public $aiLanguage = 'id';
+    public $aiContentMode = 'quote';
+    public $useAiQuote = false;
+    public $quranPreset = '';
 
     // --- PROPERTI LOGIC TEMPLATE & HARGA ---
     public $availableTemplates = [];   // List semua template dari DB
     public $currentTemplatePrice = 0;  // Harga template yang sedang dipilih
     public $currentTierName = '';      // Nama Tier (Basic/Premium)
     public $currentTierFeatures = [];  // List fitur yang didapat
+    public $modalOpen = false;
+    public $search = '';
+    public $templatePage = 1;
+    public $perPage = 18;
+    public $hasMoreTemplates = true;
+
+    public function openModal($tab)
+    {
+        $this->activeTab = $tab;
+        $this->modalOpen = true;
+    }
+
+    public function closeModal()
+    {
+        $this->modalOpen = false;
+    }
 
     // --- RULES VALIDASI ---
     protected function rules()
@@ -87,8 +107,8 @@ class Edit extends Component
 
         $this->invitation = $invitation;
 
-        // 2. Load Templates dari Database (Hanya yang aktif)
-        $this->availableTemplates = Template::where('is_active', true)->get();
+        // 2. Load Templates awal (hanya yang aktif) dengan paging ringan
+        $this->loadTemplates(reset: true);
 
         // 3. Set Template Awal
         $this->theme_template = $invitation->theme_template ?? 'default';
@@ -122,6 +142,63 @@ class Edit extends Component
             // Pastikan const TIERS ada di App\Models\Template
             $this->currentTierFeatures = Template::TIERS[$template->tier]['features'] ?? [];
         }
+    }
+
+    // --- TEMPLATE LIST (SEARCH + INFINITE LOAD) ---
+    private function templateBaseQuery()
+    {
+        $q = Template::query()
+            ->select(['id', 'name', 'slug', 'thumbnail', 'tier', 'price', 'is_active'])
+            ->where('is_active', true);
+        if (!empty($this->search)) {
+            $term = trim($this->search);
+            $q->where(function ($qq) use ($term) {
+                $qq->where('name', 'like', "%{$term}%")
+                    ->orWhere('slug', 'like', "%{$term}%");
+            });
+        }
+        return $q->orderBy('tier')->orderBy('name');
+    }
+
+    public function loadTemplates(bool $reset = false)
+    {
+        if ($reset) {
+            $this->templatePage = 1;
+            $this->availableTemplates = collect();
+            $this->hasMoreTemplates = true;
+        }
+
+        $results = $this->templateBaseQuery()
+            ->skip(($this->templatePage - 1) * $this->perPage)
+            ->take($this->perPage)
+            ->get();
+
+        if ($reset) {
+            $this->availableTemplates = $results;
+        } else {
+            $this->availableTemplates = $this->availableTemplates->concat($results);
+        }
+
+        $this->hasMoreTemplates = $results->count() === $this->perPage;
+    }
+
+    public function loadMoreTemplates()
+    {
+        if (!$this->hasMoreTemplates)
+            return;
+        $this->templatePage++;
+        $this->loadTemplates();
+    }
+
+    public function updatedSearch()
+    {
+        $this->loadTemplates(reset: true);
+    }
+
+    public function selectTemplate(string $slug)
+    {
+        $this->theme_template = $slug;
+        $this->updateTemplateInfo();
     }
 
     // --- HELPER: LOAD DATA ---
@@ -176,14 +253,91 @@ class Edit extends Component
         }
 
         $this->isGeneratingAi = true;
+        $options = [];
+        if ($this->aiContentMode === 'quran') {
+            if (empty($this->quranPreset)) {
+                $this->dispatch('notify', message: 'Pilih ayat Qur\'an dulu.', type: 'error');
+                $this->isGeneratingAi = false;
+                return;
+            }
+            $options['source'] = $this->mapQuranPresetLabel($this->quranPreset);
+        }
 
-        // Panggil Service OpenAI
-        $result = OpenAIService::generateWeddingQuote($groom, $bride, $this->aiTone);
-
-        $this->couple['quote'] = $result;
+        $structured = OpenAIService::generateWeddingInspiration($groom, $bride, $this->aiContentMode, $this->aiLanguage, $options);
+        $this->couple['quote_structured'] = $structured;
+        $this->couple['quote'] = $structured['display_text'] ?? ($structured['quote_text'] ?? ($structured['verse_text'] ?? ''));
         $this->isGeneratingAi = false;
 
         $this->dispatch('notify', message: 'Kata-kata berhasil dibuat AI!', type: 'success');
+    }
+
+    public function composeManualQuote()
+    {
+        $qs = $this->couple['quote_structured'] ?? [];
+        $mode = $this->aiContentMode;
+        $lang = $this->aiLanguage;
+
+        if ($mode === 'quran') {
+            $arabic = $qs['arabic'] ?? '';
+            $translation = $qs['translation'] ?? '';
+            $source = $qs['source'] ?? '';
+            $display = $lang === 'en'
+                ? "Quran {$source}: {$translation}"
+                : "QS {$source}: {$translation}";
+            $this->couple['quote_structured'] = [
+                'type' => 'quran',
+                'arabic' => $arabic,
+                'translation' => $translation,
+                'source' => $source,
+                'display_text' => $display,
+            ];
+            $this->couple['quote'] = $display;
+        } elseif ($mode === 'bible') {
+            $verse = $qs['verse_text'] ?? '';
+            $translation = $qs['translation'] ?? '';
+            $source = $qs['source'] ?? '';
+            $finalText = $translation ?: $verse;
+            $display = "{$source}: {$finalText}";
+            $this->couple['quote_structured'] = [
+                'type' => 'bible',
+                'verse_text' => $verse,
+                'translation' => $translation,
+                'source' => $source,
+                'display_text' => $display,
+            ];
+            $this->couple['quote'] = $display;
+        } else {
+            $text = $qs['quote_text'] ?? '';
+            $source = $qs['source'] ?? '';
+            $display = $source ? "{$text} — {$source}" : $text;
+            $this->couple['quote_structured'] = [
+                'type' => 'quote',
+                'quote_text' => $text,
+                'source' => $source,
+                'display_text' => $display,
+            ];
+            $this->couple['quote'] = $display;
+        }
+
+        $this->dispatch('notify', message: 'Kata-kata manual tersusun.', type: 'success');
+    }
+
+    private function mapQuranPresetLabel(string $key): string
+    {
+        return match ($key) {
+            'ar_rum_21' => 'QS Ar-Rum 21',
+            'an_nur_32' => 'QS An-Nur 32',
+            'an_nisa_1' => 'QS An-Nisa 1',
+            'al_furqan_74' => 'QS Al-Furqan 74',
+            default => 'QS Ar-Rum 21',
+        };
+    }
+
+    public function updatedQuranPreset($value)
+    {
+        // Do not compose immediately; let Generate use the selected verse
+        $this->couple['quote_structured'] = null;
+        $this->couple['quote'] = '';
     }
 
     // --- HELPER: IMAGE PROCESSING ---
@@ -250,6 +404,22 @@ class Edit extends Component
         $this->gallery['moments'] = array_values($this->gallery['moments']);
     }
 
+    public function reorderMoments(array $order)
+    {
+        $current = $this->gallery['moments'] ?? [];
+        $new = [];
+        foreach ($order as $i) {
+            if (isset($current[$i])) {
+                $new[] = $current[$i];
+            }
+        }
+        if (count($new) === count($current) && !empty($new)) {
+            $this->gallery['moments'] = $new;
+            $this->invitation->update(['gallery_data' => $this->gallery]);
+            $this->dispatch('notify', message: 'Urutan galeri diperbarui.', type: 'success');
+        }
+    }
+
     // --- MAIN ACTION: SAVE ---
     public function save()
     {
@@ -275,6 +445,31 @@ class Edit extends Component
         $packageType = $selectedTemplate ? $selectedTemplate->tier : 'basic';
         $amount = $selectedTemplate ? $selectedTemplate->price : 0;
 
+        // 2.a HANDLE UPGRADE/DOWNGRADE
+        $paymentAction = null;
+        $dueAmount = 0;
+        $refundAmount = 0;
+
+        $previousAmount = (int) ($this->invitation->amount ?? 0);
+        $previousStatus = $this->invitation->payment_status ?? 'unpaid';
+
+        // Jika sebelumnya sudah paid dan memilih template lebih mahal -> unpaid lagi, bayar selisih
+        if ($previousStatus === 'paid' && $amount > $previousAmount) {
+            $paymentAction = 'upgraded';
+            $dueAmount = $amount - $previousAmount;
+            // Set unpaid agar user diarahkan ke pembayaran
+            $this->invitation->payment_status = 'unpaid';
+            $this->invitation->is_active = false;
+            // Amount merepresentasikan selisih yang harus dibayar
+            $amount = $dueAmount;
+        }
+        // Jika sebelumnya paid dan template lebih murah -> tandai downgraded dan hitung refund
+        if ($previousStatus === 'paid' && $amount < $previousAmount) {
+            $paymentAction = 'downgraded';
+            $refundAmount = $previousAmount - $amount;
+            // Tetap paid (admin bisa proses refund manual), undangan tetap aktif
+        }
+
         // 3. UPDATE DATABASE
         $this->invitation->update([
             'theme_template' => $this->theme_template,
@@ -282,6 +477,11 @@ class Edit extends Component
             // Update Info Keuangan & Paket
             'package_type' => $packageType,
             'amount' => $amount,
+            'payment_action' => $paymentAction,
+            'due_amount' => $dueAmount,
+            'refund_amount' => $refundAmount,
+            'payment_status' => $this->invitation->payment_status,
+            'is_active' => $this->invitation->is_active,
 
             // Update Data JSON
             'couple_data' => $this->couple,
@@ -295,6 +495,7 @@ class Edit extends Component
         $this->reset(['newCover', 'newGroom', 'newBride', 'newMoments']);
 
         session()->flash('message', 'Perubahan disimpan! Paket & Harga disesuaikan dengan template.');
+        $this->modalOpen = false;
     }
 
     public function render()

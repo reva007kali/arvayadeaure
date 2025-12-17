@@ -56,6 +56,46 @@
                 <h3 class="font-serif font-bold text-2xl text-[#5E4926]">{{ $stats['count_rejected'] }}</h3>
             </div>
         </div>
+        {{-- Card 5: Upgraded --}}
+        <div class="bg-white p-5 rounded-2xl border border-[#E6D9B8] shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-[#F2ECDC] flex items-center justify-center text-[#B89760] text-xl">
+                <i class="fa-solid fa-arrow-up"></i>
+            </div>
+            <div>
+                <p class="text-[10px] text-[#9A7D4C] font-bold uppercase tracking-wider">Upgraded</p>
+                <h3 class="font-serif font-bold text-2xl text-[#5E4926]">{{ $stats['count_upgraded'] }}</h3>
+            </div>
+        </div>
+        {{-- Card 6: Downgraded --}}
+        <div class="bg-white p-5 rounded-2xl border border-[#E6D9B8] shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-[#F2ECDC] flex items-center justify-center text-[#B89760] text-xl">
+                <i class="fa-solid fa-arrow-down"></i>
+            </div>
+            <div>
+                <p class="text-[10px] text-[#9A7D4C] font-bold uppercase tracking-wider">Downgraded</p>
+                <h3 class="font-serif font-bold text-2xl text-[#5E4926]">{{ $stats['count_downgraded'] }}</h3>
+            </div>
+        </div>
+        {{-- Card 7: Refund --}}
+        <div class="bg-white p-5 rounded-2xl border border-[#E6D9B8] shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-[#F2ECDC] flex items-center justify-center text-[#B89760] text-xl">
+                <i class="fa-solid fa-receipt"></i>
+            </div>
+            <div>
+                <p class="text-[10px] text-[#9A7D4C] font-bold uppercase tracking-wider">Refund</p>
+                <h3 class="font-serif font-bold text-2xl text-[#5E4926]">{{ $stats['count_refund'] }}</h3>
+            </div>
+        </div>
+        {{-- Card 8: Cancel --}}
+        <div class="bg-white p-5 rounded-2xl border border-[#E6D9B8] shadow-sm flex items-center gap-4">
+            <div class="w-12 h-12 rounded-full bg-[#F2ECDC] flex items-center justify-center text-[#B89760] text-xl">
+                <i class="fa-solid fa-ban"></i>
+            </div>
+            <div>
+                <p class="text-[10px] text-[#9A7D4C] font-bold uppercase tracking-wider">Cancel</p>
+                <h3 class="font-serif font-bold text-2xl text-[#5E4926]">{{ $stats['count_cancel'] }}</h3>
+            </div>
+        </div>
     </div>
 
     {{-- Filter & List Header --}}
@@ -63,9 +103,17 @@
         <h3 class="font-bold text-[#5E4926] text-lg">Riwayat Transaksi</h3>
 
         <div class="flex bg-white rounded-lg p-1 border border-[#E6D9B8] shadow-sm">
-            @foreach (['pending' => 'Menunggu', 'paid' => 'Lunas', 'rejected' => 'Gagal', 'all' => 'Semua'] as $key => $label)
+            @foreach (['pending' => 'Menunggu', 'paid' => 'Lunas', 'rejected' => 'Gagal', 'unpaid' => 'Belum Bayar', 'all' => 'Semua'] as $key => $label)
                 <button wire:click="$set('statusFilter', '{{ $key }}')"
                     class="px-4 py-1.5 rounded-md text-xs font-bold transition {{ $statusFilter === $key ? 'bg-[#B89760] text-white shadow-md' : 'text-[#7C6339] hover:bg-[#F9F7F2]' }}">
+                    {{ $label }}
+                </button>
+            @endforeach
+        </div>
+        <div class="flex bg-white rounded-lg p-1 border border-[#E6D9B8] shadow-sm">
+            @foreach (['all' => 'Semua Tindakan', 'upgraded' => 'Upgraded', 'downgraded' => 'Downgraded', 'refund' => 'Refund', 'cancel' => 'Cancel'] as $key => $label)
+                <button wire:click="$set('actionFilter', '{{ $key }}')"
+                    class="px-4 py-1.5 rounded-md text-xs font-bold transition {{ $actionFilter === $key ? 'bg-[#B89760] text:white shadow-md' : 'text-[#7C6339] hover:bg-[#F9F7F2]' }}">
                     {{ $label }}
                 </button>
             @endforeach
@@ -107,6 +155,14 @@
                                     {{ number_format($trx->amount, 0, ',', '.') }}</span>
                                 <span
                                     class="text-[10px] text-[#9A7D4C] uppercase tracking-wider">{{ $trx->package_type }}</span>
+                                @if ($trx->payment_action === 'upgraded' && $trx->due_amount > 0)
+                                    <div class="text-[10px] text-[#B89760] mt-1">Tambah bayar: Rp
+                                        {{ number_format($trx->due_amount, 0, ',', '.') }}</div>
+                                @endif
+                                @if ($trx->payment_action === 'downgraded' && $trx->refund_amount > 0)
+                                    <div class="text-[10px] text-[#9A7D4C] mt-1">Refund disarankan: Rp
+                                        {{ number_format($trx->refund_amount, 0, ',', '.') }}</div>
+                                @endif
                             </td>
                             <td class="px-6 py-4">
                                 @if ($trx->payment_proof)
@@ -130,11 +186,22 @@
                                         class="inline-flex items-center gap-1 px-2 py-1 bg-green-50 text-green-700 rounded text-[10px] font-bold border border-green-200 uppercase">
                                         <i class="fa-solid fa-check"></i> Paid
                                     </span>
-                                @else
+                                @elseif($trx->payment_status == 'rejected')
                                     <span
                                         class="inline-flex items-center gap-1 px-2 py-1 bg-red-50 text-red-700 rounded text-[10px] font-bold border border-red-200 uppercase">
                                         <i class="fa-solid fa-xmark"></i> Rejected
                                     </span>
+                                @else
+                                    <span
+                                        class="inline-flex items-center gap-1 px-2 py-1 bg-zinc-50 text-zinc-700 rounded text-[10px] font-bold border border-zinc-200 uppercase">
+                                        {{ ucfirst($trx->payment_status) }}
+                                    </span>
+                                @endif
+                                @if ($trx->payment_action)
+                                    <div
+                                        class="mt-1 inline-flex items-center gap-1 px-2 py-0.5 bg-[#F2ECDC] text-[#7C6339] rounded text-[10px] font-bold border border-[#E6D9B8] uppercase">
+                                        <i class="fa-solid fa-info-circle"></i> {{ ucfirst($trx->payment_action) }}
+                                    </div>
                                 @endif
                             </td>
                             <td class="px-6 py-4 text-right">
