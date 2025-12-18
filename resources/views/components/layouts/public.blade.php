@@ -37,77 +37,91 @@
     {{ $styles ?? '' }}
 </head>
 
-<body class="font-sans text-gray-800 antialiased bg-arvaya-50 overflow-x-hidden">
+<body class="font-sans text-gray-800 antialiased bg-arvaya-50 overflow-x-hidden selection:bg-arvaya-200 selection:text-arvaya-900">
 
-    <!-- NAVBAR (New Addition) -->
-    <nav class="fixed w-full z-50 top-0 transition-all duration-300" x-data="{ scrolled: false }"
-        @scroll.window="scrolled = (window.pageYOffset > 20)"
-        :class="scrolled ? 'bg-white/80 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-6'">
-        <div class="container mx-auto px-6 flex justify-between items-center">
-            <a href="/" class="font-serif text-2xl font-bold text-arvaya-900 tracking-tight">
-                <img class="h-10" src="img/large-favicon/logo-transparent.png" alt="">
+    <!-- NAVBAR (Regular Clean) -->
+    <nav class="w-full bg-arvaya-50/80 backdrop-blur-md border-b border-arvaya-100 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-6 h-20 flex justify-between items-center">
+            <a href="/" class="flex items-center gap-2 group">
+                <img class="h-8 w-auto transition-transform group-hover:scale-105" src="/logo.png" alt="Arvaya Logo">
+                <span class="font-serif font-bold text-xl text-arvaya-900 tracking-wide">ARVAYA</span>
             </a>
-            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-gray-600">
-                <a href="#features" class="hover:text-arvaya-500 transition">Fitur</a>
-                <a href="#themes" class="hover:text-arvaya-500 transition">Tema</a>
-                <a href="#pricing" class="hover:text-arvaya-500 transition">Harga</a>
-                <a href="#testimonials" class="hover:text-arvaya-500 transition">Testimoni</a>
+            
+            <div class="hidden md:flex items-center gap-8 text-sm font-medium text-arvaya-800">
+                <a href="#features" class="hover:text-arvaya-600 transition relative group">
+                    Fitur
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-arvaya-500 transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#themes" class="hover:text-arvaya-600 transition relative group">
+                    Tema
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-arvaya-500 transition-all group-hover:w-full"></span>
+                </a>
+                <a href="#pricing" class="hover:text-arvaya-600 transition relative group">
+                    Harga
+                    <span class="absolute -bottom-1 left-0 w-0 h-0.5 bg-arvaya-500 transition-all group-hover:w-full"></span>
+                </a>
             </div>
-            <a href="{{ route('dashboard.index') }}"
-                class="px-6 py-2 bg-arvaya-900 text-white rounded-full text-sm font-bold hover:bg-arvaya-700 transition shadow-lg hover:shadow-arvaya-900/30">
-                Login / Buat
-            </a>
+
+            <div class="flex items-center gap-4">
+                @auth
+                    <a href="{{ route('dashboard.index') }}"
+                        class="px-5 py-2.5 bg-arvaya-900 text-white rounded-lg text-sm font-bold hover:bg-arvaya-800 transition shadow-lg shadow-arvaya-900/10">
+                        Dashboard
+                    </a>
+                @else
+                    <a href="{{ route('login') }}" class="text-sm font-bold text-arvaya-900 hover:text-arvaya-600 transition hidden sm:block">
+                        Masuk
+                    </a>
+                    <a href="{{ route('register') }}"
+                        class="px-5 py-2.5 bg-arvaya-900 text-white rounded-lg text-sm font-bold hover:bg-arvaya-800 transition shadow-lg shadow-arvaya-900/10">
+                        Buat Undangan
+                    </a>
+                @endauth
+            </div>
         </div>
     </nav>
 
     {{ $slot }}
 
-    <!-- FOOTER -->
-    <footer class="bg-arvaya-900 text-arvaya-100 pt-24 pb-12 relative overflow-hidden">
-        <!-- Decoration -->
-        <div
-            class="absolute top-0 right-0 w-64 h-64 bg-arvaya-500 rounded-full mix-blend-overlay filter blur-3xl opacity-10">
-        </div>
-
-        <div class="container mx-auto px-6 relative z-10 text-center">
-            <h2 class="font-serif text-4xl md:text-6xl font-bold mb-8" data-aos="zoom-in">Siap Menebar <br>Kabar
-                Bahagia?</h2>
-            <p class="text-arvaya-200 mb-12 max-w-xl mx-auto text-lg">
-                Buat momen spesialmu abadi dalam balutan teknologi dan seni. Mulai sekarang, gratis coba tema.
-            </p>
-
-            <a href="{{ route('dashboard.index') }}"
-                class="inline-block px-10 py-5 bg-arvaya-500 text-white rounded-full text-lg font-bold hover:bg-white hover:text-arvaya-900 transition duration-300 shadow-[0_0_40px_-10px_rgba(212,175,55,0.6)] mb-20 animate-bounce hover:animate-none">
-                Buat Undangan Sekarang
-            </a>
-
-            <div class="grid md:grid-cols-4 gap-8 text-left border-t border-arvaya-800 pt-16 text-sm">
+    <!-- FOOTER (Clean Minimalist) -->
+    <footer class="bg-white border-t border-arvaya-100 pt-16 pb-8">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="grid md:grid-cols-4 gap-12 mb-12">
                 <div class="col-span-1 md:col-span-2">
-                    <span class="font-serif font-bold text-2xl text-white block mb-4">ARVAYA.</span>
-                    <p class="text-arvaya-400 max-w-xs">Platform undangan digital #1 di Indonesia dengan fitur AI dan
-                        desain premium.</p>
+                    <a href="/" class="flex items-center gap-2 mb-4">
+                        <img class="h-8 w-auto" src="/logo.png" alt="Arvaya Logo">
+                        <span class="font-serif font-bold text-xl text-arvaya-900 tracking-wide">ARVAYA</span>
+                    </a>
+                    <p class="text-arvaya-700 text-sm leading-relaxed max-w-sm">
+                        Platform undangan digital premium dengan sentuhan estetika tinggi dan teknologi AI cerdas. Rayakan momen bahagiamu dengan elegan.
+                    </p>
                 </div>
+                
                 <div>
-                    <h4 class="font-bold text-white mb-4">Company</h4>
-                    <ul class="space-y-2 text-arvaya-400">
-                        <li><a href="#" class="hover:text-arvaya-200">About Us</a></li>
-                        <li><a href="#" class="hover:text-arvaya-200">Pricing</a></li>
-                        <li><a href="#" class="hover:text-arvaya-200">Affiliate</a></li>
+                    <h4 class="font-bold text-arvaya-900 mb-4 text-sm uppercase tracking-wider">Menu</h4>
+                    <ul class="space-y-2 text-sm text-arvaya-700">
+                        <li><a href="#features" class="hover:text-arvaya-500 transition">Fitur Unggulan</a></li>
+                        <li><a href="#themes" class="hover:text-arvaya-500 transition">Koleksi Tema</a></li>
+                        <li><a href="#pricing" class="hover:text-arvaya-500 transition">Paket Harga</a></li>
                     </ul>
                 </div>
+
                 <div>
-                    <h4 class="font-bold text-white mb-4">Support</h4>
-                    <ul class="space-y-2 text-arvaya-400">
-                        <li><a href="#" class="hover:text-arvaya-200">FAQ</a></li>
-                        <li><a href="#" class="hover:text-arvaya-200">Contact</a></li>
-                        <li><a href="#" class="hover:text-arvaya-200">Privacy Policy</a></li>
+                    <h4 class="font-bold text-arvaya-900 mb-4 text-sm uppercase tracking-wider">Legal & Support</h4>
+                    <ul class="space-y-2 text-sm text-arvaya-700">
+                        <li><a href="#" class="hover:text-arvaya-500 transition">Syarat & Ketentuan</a></li>
+                        <li><a href="#" class="hover:text-arvaya-500 transition">Kebijakan Privasi</a></li>
+                        <li><a href="https://wa.me/6282260894009" class="hover:text-arvaya-500 transition">Bantuan WhatsApp</a></li>
                     </ul>
                 </div>
             </div>
 
-            <div class="mt-12 text-center text-xs text-arvaya-600">
-                &copy; {{ date('Y') }} Arvaya. All rights reserved. Made with <i
-                    class="fa-solid fa-heart text-arvaya-500 mx-1"></i>.
+            <div class="border-t border-arvaya-100 pt-8 flex flex-col md:flex-row justify-between items-center gap-4 text-xs text-arvaya-600">
+                <p>&copy; {{ date('Y') }} Arvaya De Aure. All rights reserved.</p>
+                <div class="flex gap-4">
+                    <a href="#" class="hover:text-arvaya-900"><i class="fa-brands fa-instagram text-lg"></i></a>
+                    <a href="#" class="hover:text-arvaya-900"><i class="fa-brands fa-tiktok text-lg"></i></a>
+                </div>
             </div>
         </div>
     </footer>
