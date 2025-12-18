@@ -3,8 +3,14 @@
 
 <title>{{ $title ?? config('app.name') }}</title>
 
-{{-- <link rel="icon" href="/favicon.ico" sizes="any"> --}}
-<link rel="icon" href="/logo.png" type="image/svg+xml">
+{{-- PWA & SEO Meta Tags --}}
+<meta name="theme-color" content="#1a1a1a">
+<meta name="description" content="Arvaya De Aure - Undangan Pernikahan Digital Premium">
+<meta property="og:title" content="{{ $title ?? config('app.name') }}">
+<meta property="og:image" content="/logo.png">
+
+<link rel="manifest" href="/manifest.json">
+<link rel="icon" type="image/png" href="/logo.png">
 <link rel="apple-touch-icon" href="/logo.png">
 
 <link rel="preconnect" href="https://fonts.bunny.net">

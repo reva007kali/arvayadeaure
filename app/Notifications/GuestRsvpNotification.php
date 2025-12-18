@@ -34,7 +34,7 @@ class GuestRsvpNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -66,8 +66,18 @@ class GuestRsvpNotification extends Notification implements ShouldQueue
      */
     public function toArray(object $notifiable): array
     {
+        $statusText = match ($this->status) {
+            1 => 'Hadir',
+            2 => 'Tidak Hadir',
+            default => 'Pending'
+        };
+
         return [
-            //
+            'title' => 'RSVP Baru',
+            'message' => "{$this->guestName} akan {$statusText} di undangan {$this->invitationTitle}",
+            'action_url' => route('dashboard.guests.index', $this->invitationId),
+            'type' => 'rsvp',
+            'invitation_id' => $this->invitationId
         ];
     }
 }

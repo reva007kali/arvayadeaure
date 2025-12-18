@@ -6,12 +6,15 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Arvaya De Aure | Undangan Digital Premium</title>
 
-    <meta name="theme-color" content="#23201A">
+    <meta name="description" content="Platform undangan digital premium dengan fitur AI Assistant, manajemen tamu, dan desain elegan.">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta property="og:title" content="Arvaya De Aure | Undangan Digital Premium">
+    <meta property="og:description" content="Buat undangan pernikahan impianmu dengan Arvaya De Aure.">
+    <meta property="og:image" content="/logo.png">
+
     <link rel="manifest" href="/manifest.json">
-    <link rel="icon" href="/img/favicon/1.png" type="image/png">
-    <link rel="icon" href="/img/favicon/2.png" type="image/png">
-    <link rel="icon" href="/img/favicon/3.png" type="image/png">
-    <link rel="apple-touch-icon" href="/img/large-favicon/logo-transparent.png">
+    <link rel="icon" type="image/png" href="/logo.png">
+    <link rel="apple-touch-icon" href="/logo.png">
 
     <!-- Fonts Global (Optional, biasanya tiap tema punya font sendiri) -->
     <!-- Fonts (Sama seperti Landing Page) -->

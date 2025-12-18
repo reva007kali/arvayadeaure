@@ -8,9 +8,17 @@
 
     <title>{{ config('app.name', 'Arvaya De Aure') }} - Dashboard</title>
 
-    {{--
-    <link rel="icon" href="/favicon.ico" sizes="any"> --}}
-    <link rel="icon" href="/logo.png" type="image/svg+xml">
+    {{-- PWA & SEO Meta Tags --}}
+    <meta name="theme-color" content="#1a1a1a">
+    <meta name="description" content="Arvaya De Aure - Undangan Pernikahan Digital Premium dengan AI Assistant">
+    <meta name="keywords" content="undangan digital, wedding invitation, arvaya, ai wedding, pwa">
+    <meta property="og:title" content="Arvaya De Aure | Dashboard">
+    <meta property="og:description" content="Kelola undangan pernikahan digital Anda dengan mudah.">
+    <meta property="og:image" content="/logo.png">
+    <meta property="og:type" content="website">
+
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="/logo.png">
     <link rel="apple-touch-icon" href="/logo.png">
 
     <!-- Fonts (Sama seperti Landing Page) -->
@@ -43,7 +51,7 @@
 
     <!-- SIDEBAR -->
     <aside :class="sidebarOpen ? 'translate-x-0' : '-translate-x-full'"
-        class="fixed inset-y-0 left-0 z-50 w-72 bg-[#1a1a1a] border-r border-[#333333] transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:inset-auto shrink-0 flex flex-col shadow-xl lg:shadow-none">
+        class="fixed inset-y-0 left-0 z-[55] w-72 bg-[#1a1a1a] border-r border-[#333333] transition-transform duration-300 ease-in-out lg:static lg:translate-x-0 lg:inset-auto shrink-0 flex flex-col shadow-xl lg:shadow-none">
 
         <!-- Decoration Blobs (Hiasan) -->
         <div
@@ -76,63 +84,79 @@
             {{-- ================= MENU ADMIN ================= --}}
             @if (auth()->user()->role === 'admin')
 
+                {{-- Dashboard --}}
                 <a href="{{ route('dashboard.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                                       {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
+                                       {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-house"></i></div>
                     <span class="font-medium text-sm tracking-wide">Dashboard</span>
                 </a>
 
-                <p class="px-4 text-[10px] font-bold text-[#666] uppercase tracking-widest mb-2">Administrator</p>
-
+                {{-- Overview --}}
                 <a href="{{ route('admin.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                                       {{ request()->routeIs('admin.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
+                                       {{ request()->routeIs('admin.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-chart-line"></i></div>
                     <span class="font-medium text-sm tracking-wide">Overview</span>
                 </a>
 
-                <a href="{{ route('admin.users') }}" wire:navigate
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                                       {{ request()->routeIs('admin.users') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
-                    <div class="w-6 text-center"><i class="fa-solid fa-users-gear"></i></div>
-                    <span class="font-medium text-sm tracking-wide">Kelola User</span>
-                </a>
+                {{-- Group Admin --}}
+                <div x-data="{ open: {{ request()->routeIs('admin.*') && !request()->routeIs('admin.index') ? 'true' : 'false' }} }"
+                    class="space-y-1">
+                    <button @click="open = !open"
+                        class="w-full flex items-center justify-between gap-3 px-4 py-3 rounded-xl transition-all duration-300 group text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]">
+                        <div class="flex items-center gap-3">
+                            <div class="w-6 text-center"><i class="fa-solid fa-user-shield"></i></div>
+                            <span class="font-medium text-sm tracking-wide">Administrator</span>
+                        </div>
+                        <i class="fa-solid fa-chevron-down text-xs transition-transform duration-300"
+                            :class="open ? 'rotate-180' : ''"></i>
+                    </button>
 
-                <a href="{{ route('admin.invitations') }}" wire:navigate
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                                       {{ request()->routeIs('admin.invitations') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
-                    <div class="w-6 text-center"><i class="fa-solid fa-list-check"></i></div>
-                    <span class="font-medium text-sm tracking-wide">Semua Undangan</span>
-                </a>
+                    <div x-show="open" x-collapse class="pl-4 space-y-1">
+                        <a href="{{ route('admin.users') }}" wire:navigate
+                            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
+                                               {{ request()->routeIs('admin.users') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                            <span
+                                class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.users') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
+                            <span class="font-medium text-xs tracking-wide">Kelola User</span>
+                        </a>
 
-                <a href="{{ route('admin.templates') }}" wire:navigate
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                               {{ request()->routeIs('admin.templates') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
-                    <div class="w-6 text-center"><i class="fa-solid fa-swatchbook"></i></div>
-                    <span class="font-medium text-sm tracking-wide">Kelola Template</span>
-                </a>
+                        <a href="{{ route('admin.invitations') }}" wire:navigate
+                            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
+                                               {{ request()->routeIs('admin.invitations') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                            <span
+                                class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.invitations') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
+                            <span class="font-medium text-xs tracking-wide">Semua Undangan</span>
+                        </a>
 
-                <a href="{{ route('admin.transactions') }}" wire:navigate
-                    class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                               {{ request()->routeIs('admin.transactions') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
-                    <div class="w-6 text-center"><i class="fa-solid fa-file-invoice-dollar"></i></div>
-                    <span class="font-medium text-sm tracking-wide">Transaksi</span>
+                        <a href="{{ route('admin.templates') }}" wire:navigate
+                            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
+                                               {{ request()->routeIs('admin.templates') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                            <span
+                                class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.templates') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
+                            <span class="font-medium text-xs tracking-wide">Kelola Template</span>
+                        </a>
 
-                    {{-- Badge Notifikasi jika ada Pending --}}
-                    @if (\App\Models\Invitation::where('payment_status', 'pending')->count() > 0)
-                        <span wire:poll.5s
-                            class="ml-auto bg-red-500 text-white text-[10px] font-bold px-2 py-0.5 rounded-full animate-pulse">
-                            {{ \App\Models\Invitation::where('payment_status', 'pending')->count() }}
-                        </span>
-                    @endif
-                </a>
+                        <a href="{{ route('admin.transactions') }}" wire:navigate
+                            class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
+                                               {{ request()->routeIs('admin.transactions') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                            <span
+                                class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.transactions') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
+                            <span class="font-medium text-xs tracking-wide">Transaksi</span>
+
+                            @if (\App\Models\Invitation::where('payment_status', 'pending')->count() > 0)
+                                <span class="ml-auto bg-red-500 text-white text-[9px] font-bold px-1.5 py-0.5 rounded-full">
+                                    {{ \App\Models\Invitation::where('payment_status', 'pending')->count() }}
+                                </span>
+                            @endif
+                        </a>
+                    </div>
+                </div>
 
                 @if (request()->route('invitation'))
-                    {{-- Menu Edit Undangan (Sama seperti kode sebelumnya) --}}
-                    <p class="px-4 text-[10px] font-bold text-[#666] uppercase tracking-widest mb-2">Manage Undangan
-                    </p>
-
+                    <div class="my-4 border-t border-[#333333]"></div>
+                    <p class="px-4 text-[10px] font-bold text-[#666] uppercase tracking-widest mb-2">Manage Undangan</p>
 
                     <a href="{{ route('dashboard.invitation.edit', request()->route('invitation')) }}" wire:navigate
                         class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group {{ request()->routeIs('dashboard.invitation.edit') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
@@ -159,11 +183,12 @@
                         <span class="font-medium text-sm tracking-wide">Buat Undangan Baru</span>
                     </a>
                 @endif
+
                 {{-- ================= MENU USER BIASA ================= --}}
             @else
                 <a href="{{ route('dashboard.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                               {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
+                                                                           {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-house"></i></div>
                     <span class="font-medium text-sm tracking-wide">Dashboard</span>
                 </a>
@@ -301,10 +326,16 @@
                     <i class="fa-solid fa-circle-plus text-xl"></i>
                     <span class="text-[9px] font-bold uppercase tracking-wider">Add</span>
                 </a>
-                <button class="flex flex-col items-center gap-1 text-arvaya-400 hover:text-arvaya-300 transition">
+                <a href="{{ route('dashboard.notifications') }}" wire:navigate
+                    class="flex flex-col items-center gap-1 text-arvaya-400 hover:text-arvaya-300 transition relative">
                     <i class="fa-solid fa-bell text-xl"></i>
                     <span class="text-[9px] font-bold uppercase tracking-wider">Notif</span>
-                </button>
+
+                    @if (auth()->user()->unreadNotifications->count() > 0)
+                        <span
+                            class="absolute top-0 right-1 w-2.5 h-2.5 bg-red-500 rounded-full border border-[#1a1a1a]"></span>
+                    @endif
+                </a>
             </div>
 
             {{-- Center Floating Button (Home) --}}
@@ -333,6 +364,15 @@
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', () => {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .then(reg => console.log('SW registered!', reg.scope))
+                    .catch(err => console.error('SW registration failed:', err));
+            });
+        }
+    </script>
 </body>
 
 </html>

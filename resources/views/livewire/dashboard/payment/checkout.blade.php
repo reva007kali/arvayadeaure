@@ -59,14 +59,14 @@
                         </div>
                         <div class="flex justify-between items-end mt-2">
                             <span class="text-sm font-bold text-[#A0A0A0]">Selisih yang Harus Dibayar</span>
-                            <span class="font-sans font-bold text-3xl text-[#D4AF37]">Rp
+                            <span class="font-sans font-bold text-2xl md:text-3xl text-[#D4AF37]">Rp
                                 {{ number_format($payableAmount, 0, ',', '.') }}</span>
                         </div>
                     </div>
                 @else
-                    <div class="flex justify-between items-end border-t border-dashed border-[#333333] pt-4">
+                    <div class="flex flex-col md:flex-row justify-between items-start md:items-end border-t border-dashed border-[#333333] pt-4 gap-1">
                         <span class="text-sm font-bold text-[#A0A0A0]">Total Tagihan</span>
-                        <span class="font-sans font-bold text-3xl text-[#D4AF37]">Rp
+                        <span class="font-sans font-bold text-2xl md:text-3xl text-[#D4AF37]">Rp
                             {{ number_format($templatePrice, 0, ',', '.') }}</span>
                     </div>
                 @endif
@@ -112,20 +112,23 @@
                 <div>
                     <label class="block text-xs font-bold text-[#A0A0A0] uppercase mb-2">Upload Bukti Transfer</label>
                     <div class="relative w-full">
-                        <input type="file" wire:model="proofImage" id="file-upload" class="hidden" />
+                        <input type="file" wire:model="proofImage" id="file-upload" class="hidden" accept="image/*" />
                         <label for="file-upload"
-                            class="flex flex-col items-center justify-center w-full h-32 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-300
-                            {{ $proofImage ? 'border-green-500/50 bg-green-900/10' : 'border-[#333333] hover:bg-[#252525] hover:border-[#D4AF37]' }}">
+                            class="flex flex-col items-center justify-center w-full h-48 border-2 border-dashed rounded-xl cursor-pointer transition-all duration-300 overflow-hidden relative group
+                            {{ $proofImage ? 'border-[#D4AF37] bg-black/20' : 'border-[#333333] hover:bg-[#252525] hover:border-[#D4AF37]' }}">
 
                             @if ($proofImage)
-                                <div class="text-green-400 flex flex-col items-center">
-                                    <i class="fa-solid fa-circle-check text-3xl mb-2"></i>
-                                    <span class="text-xs font-bold">File Diupload, Konfirmasi Pembayaran</span>
+                                {{-- Preview Image --}}
+                                <img src="{{ $proofImage->temporaryUrl() }}" class="absolute inset-0 w-full h-full object-cover opacity-80 group-hover:opacity-100 transition-opacity">
+                                
+                                <div class="absolute inset-0 flex flex-col items-center justify-center bg-black/50 backdrop-blur-[1px]">
+                                    <i class="fa-solid fa-cloud-arrow-up text-[#D4AF37] text-3xl mb-2 drop-shadow-md"></i>
+                                    <span class="text-xs font-bold text-white drop-shadow-md">Klik untuk Ganti Foto</span>
                                 </div>
                             @else
-                                <div class="flex flex-col items-center text-[#A0A0A0]">
-                                    <i class="fa-solid fa-camera text-2xl mb-2"></i>
-                                    <p class="text-xs">Upload Foto</p>
+                                <div class="flex flex-col items-center text-[#A0A0A0] group-hover:text-[#D4AF37] transition-colors">
+                                    <i class="fa-solid fa-camera text-3xl mb-3"></i>
+                                    <p class="text-xs font-bold uppercase tracking-wider">Tap to Upload</p>
                                 </div>
                             @endif
                         </label>

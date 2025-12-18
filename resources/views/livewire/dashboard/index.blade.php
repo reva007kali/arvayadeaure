@@ -2,18 +2,18 @@
 
     {{-- PROMOTIONAL BANNER (SWIPER) --}}
     <div
-        class="mb-10 rounded-2xl overflow-hidden shadow-2xl border-b-3 border-x-1 border-t-1 border-arvaya-400 relative group">
+        class="mb-10 overflow-hidden relative group">
         <!-- Swiper -->
         <div class="swiper promoSwiper w-full h-full"
             style="--swiper-pagination-color: #403013; --swiper-pagination-bullet-inactive-color: #ffffff; --swiper-pagination-bullet-inactive-opacity: 0.6;">
             <div class="swiper-wrapper">
                 <!-- Slide 1 -->
                 <div class="swiper-slide">
-                    <img class="" src="{{ asset('img/banner/banner-1.png') }}" alt="">
+                    <img class="rounded-xl border border-arvaya-500" src="{{ asset('img/banner/banner-1.png') }}" alt="">
                 </div>
                 <!-- Slide 2 -->
                 <div class="swiper-slide">
-                    <img class="" src="{{ asset('img/banner/banner-2.png') }}" alt="">
+                    <img class="rounded-xl border border-arvaya-500" src="{{ asset('img/banner/banner-2.png') }}" alt="">
                 </div>
 
             </div>
@@ -70,7 +70,7 @@
     {{-- HEADER SECTION --}}
     <div class="flex  justify-between items-start md:items-end mb-8 gap-4">
         <div>
-            <h2 class="font-serif font-bold text-3xl text-[#E0E0E0]">Koleksi Undangan</h2>
+            <h2 class="font-serif font-bold text-2xl text-[#E0E0E0]">Koleksi Undangan</h2>
             <p class="text-[#A0A0A0] text-sm mt-1 font-medium">Kelola momen bahagiamu di sini.</p>
         </div>
         {{-- TOMBOL CREATE (Benar: Tidak butuh ID) --}}
@@ -130,44 +130,53 @@
                 @endif
 
                 {{-- CARD HEADER (Visual) --}}
+                @php
+                    $coverImage = 'https://images.unsplash.com/photo-1519741497674-611481863552?q=80&w=600&auto=format&fit=crop';
+                    if (!empty($invitation->gallery_data['cover'])) {
+                        $coverImage = asset($invitation->gallery_data['cover']);
+                    }
+                @endphp
+
                 <div @click="if(window.innerWidth < 768) expanded = !expanded"
-                    class="bg-arvaya-500 relative overflow-hidden p-6 cursor-pointer md:cursor-default transition-colors">
+                    class="relative h-64 overflow-hidden p-6 cursor-pointer md:cursor-default transition-all bg-cover bg-center group/card"
+                    style="background-image: url('{{ $coverImage }}');">
+
+                    {{-- Dark Overlay --}}
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-black/30 z-0"></div>
+
+                    {{-- Gold Glow Effect --}}
                     <div
-                        class="absolute top-0 right-0 w-40 h-40 bg-white/10 rounded-full blur-2xl transform translate-x-10 -translate-y-10">
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-0 w-28 h-28 bg-black/10 rounded-full blur-xl transform -translate-x-5 translate-y-5">
+                        class="absolute top-0 right-0 w-40 h-40 bg-[#D4AF37]/20 rounded-full blur-3xl transform translate-x-10 -translate-y-10 z-0">
                     </div>
 
-                    <div class="relative z-10 flex items-center justify-between">
-                        {{-- Left Side: Icon + Title/Date --}}
-                        <div class="flex items-center gap-4 min-w-0 flex-1">
+                    <div class="relative z-10 flex flex-col justify-between h-full">
+                        {{-- Top Section: Icon & Chevron --}}
+                        <div class="flex justify-between items-start">
                             {{-- Icon Box --}}
                             <div
-                                class="w-12 h-12 rounded-xl bg-white/20 backdrop-blur-sm flex items-center justify-center text-[#121212] shadow-sm border border-white/10 shrink-0">
-                                <i class="fa-solid fa-envelope-open-text text-xl"></i>
+                                class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-[#D4AF37] shadow-lg border border-white/10 shrink-0">
+                                <i class="fa-solid fa-envelope-open-text text-lg"></i>
                             </div>
 
-                            {{-- Title & Date --}}
-                            <div class="min-w-0">
-                                <h3
-                                    class="font-serif font-bold text-xl text-[#121212] truncate drop-shadow-sm leading-tight">
-                                    {{ $invitation->title }}
-                                </h3>
-                                <p class="text-[#2D2418] text-xs font-sans flex items-center gap-1 mt-1 font-bold">
-                                    <i class="fa-regular fa-calendar"></i>
-                                    {{ $invitation->created_at->translatedFormat('d F Y') }}
-                                </p>
-                            </div>
-                        </div>
-
-                        {{-- Right Side: Payment Button (Moved to Actions) --}}
-                        <div class="flex items-center gap-3 shrink-0 ml-2">
                             {{-- Arrow Icon for Mobile --}}
-                            <div class="md:hidden text-[#121212]">
+                            <div
+                                class="md:hidden text-white/80 bg-black/20 p-2 rounded-full backdrop-blur-sm border border-white/5">
                                 <i class="fa-solid fa-chevron-down transition-transform duration-300 text-sm"
                                     :class="expanded ? 'rotate-180' : ''"></i>
                             </div>
+                        </div>
+
+                        {{-- Bottom Section: Title & Date --}}
+                        <div>
+                            <h3
+                                class="font-serif font-bold text-2xl text-white drop-shadow-md leading-tight mb-2 break-words">
+                                {{ $invitation->title }}
+                            </h3>
+                            <p
+                                class="text-[#D4AF37] text-xs font-sans flex items-center gap-2 font-bold bg-black/40 backdrop-blur-sm w-fit px-3 py-1.5 rounded-full border border-[#D4AF37]/30">
+                                <i class="fa-regular fa-calendar"></i>
+                                {{ $invitation->created_at->translatedFormat('d F Y') }}
+                            </p>
                         </div>
                     </div>
                 </div>
@@ -222,11 +231,11 @@
                     </div>
 
                     {{-- ACTIONS --}}
-                    <div class="mt-auto grid grid-cols-2 gap-2 pt-4 border-t border-[#333333]">
+                    <div class="mt-auto grid grid-cols-2 gap-5 pt-4 border-t border-[#333333]">
                         <!-- Payment / Status Button (Moved Here) -->
                         <a href="{{ $linkUrl }}" @if (!$isClickable) onclick="return false;" @endif
                             class="col-span-2 text-center py-3 rounded-xl font-bold uppercase tracking-wider shadow-md transition-all flex items-center justify-center gap-2 text-xs
-                                {{ $badgeColor === 'bg-white text-[#121212] shadow-md hover:bg-[#B4912F]' ? 'bg-[#252525] border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#121212]' : $badgeColor }}">
+                                    {{ $badgeColor === 'bg-white text-[#121212] shadow-md hover:bg-[#B4912F]' ? 'bg-[#252525] border border-[#D4AF37] text-[#D4AF37] hover:bg-[#D4AF37] hover:text-[#121212]' : $badgeColor }}">
                             <i class="fa-solid {{ $badgeIcon }}"></i> {{ $badgeText }}
                         </a>
 

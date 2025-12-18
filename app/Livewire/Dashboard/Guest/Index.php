@@ -97,9 +97,9 @@ class Index extends Component
             } elseif (Str::startsWith($digits, '620')) {
                 $digits = '62' . substr($digits, 3);
             } elseif (Str::startsWith($digits, '62')) {
-            } elseif (Str::startsWith($digits, '62')) {
+                // already starts with 62, do nothing
             } else {
-                $digits = $digits;
+                $digits = '62' . $digits;
             }
             if ($this->invitation->guests()->where('phone', $digits)->exists())
                 continue;

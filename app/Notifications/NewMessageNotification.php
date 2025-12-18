@@ -34,7 +34,7 @@ class NewMessageNotification extends Notification implements ShouldQueue
      */
     public function via(object $notifiable): array
     {
-        return ['mail'];
+        return ['mail', 'database'];
     }
 
     /**
@@ -61,7 +61,11 @@ class NewMessageNotification extends Notification implements ShouldQueue
     public function toArray(object $notifiable): array
     {
         return [
-            //
+            'title' => 'Ucapan Baru',
+            'message' => "{$this->senderName} mengirim ucapan: \"{$this->messageContent}\"",
+            'action_url' => route('dashboard.messages.index', $this->invitationId),
+            'type' => 'message',
+            'invitation_id' => $this->invitationId
         ];
     }
 }

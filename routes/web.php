@@ -21,6 +21,7 @@ use App\Livewire\Dashboard\Message\Index as MessageManager;
 use App\Livewire\Admin\ShowInvitation as AdminShowInvitation;
 use App\Livewire\Dashboard\Invitation\Edit as InvitationEdit;
 use App\Livewire\Dashboard\Invitation\Create as InvitationCreate;
+use App\Livewire\Dashboard\Notification\Index as NotificationManager;
 
 
 
@@ -53,6 +54,8 @@ Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')
     Route::get('/profile', \App\Livewire\Dashboard\Profile\Edit::class)->name('profile');
 
     Route::get('/tips', \App\Livewire\Dashboard\Tips\Index::class)->name('tips');
+
+    Route::get('/notifications', NotificationManager::class)->name('notifications');
 
     Route::get('/create', InvitationCreate::class)->name('create');
 

@@ -10,8 +10,11 @@
     <meta property="og:title"
         content="{{ $groom['nickname'] ?? 'Groom' }} & {{ $bride['nickname'] ?? 'bride' }} Wedding Invitation">
     <meta property="og:type" content="website">
+    <meta name="theme-color" content="#1a1a1a">
+    <meta property="og:image" content="/logo.png">
     
-    <link rel="icon" href="/logo.png" type="image/svg+xml">
+    <link rel="manifest" href="/manifest.json">
+    <link rel="icon" type="image/png" href="/logo.png">
     <link rel="apple-touch-icon" href="/logo.png">
 
 
@@ -28,6 +31,14 @@
 
     {{ $slot }}
 
+    <script>
+        if ('serviceWorker' in navigator) {
+            window.addEventListener('load', function() {
+                navigator.serviceWorker.register('/service-worker.js')
+                    .catch(function(e) { console.warn('SW registration failed', e) })
+            })
+        }
+    </script>
 </body>
 
 </html>
