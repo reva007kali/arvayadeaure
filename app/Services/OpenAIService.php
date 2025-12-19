@@ -151,4 +151,69 @@ Only output JSON. No markdown.";
             return "Gagal terhubung ke Arvaya.";
         }
     }
+
+    /**
+     * Chat with Arvaya for Quote Generation (Specialized)
+     */
+    public static function chatQuoteGenerator($message, $history = [])
+    {
+        $apiKey = env('OPENAI_API_KEY');
+        if (empty($apiKey)) {
+            return "Error: API Key OpenAI belum disetting.";
+        }
+
+        // System Prompt Persona
+        $systemMessage = [
+            'role' => 'system',
+            'content' => "You are Arvaya, a creative and versatile Wedding Invitation Assistant.
+            Your goal is to help users generate the perfect Quote, Prayer, or Greeting for their invitation.
+            
+            You can generate content in various styles:
+            - Islami (Quran verses, Doa)
+            - Christian (Bible verses)
+            - Modern, Formal, or Poetic
+            - Gen Z (Funny, Slang, Relaxed)
+            
+            IMPORTANT INSTRUCTION FOR DATA:
+            When you provide a specific recommendation that the user can 'Use', you MUST append a JSON block at the very end of your message, wrapped in `|||` delimiters.
+            
+            Format:
+            [Natural conversation text...]
+            |||{\"type\": \"quote|quran|bible\", \"quote_text\": \"...\", \"arabic\": \"...\", \"translation\": \"...\", \"source\": \"...\"}|||
+            
+            Examples:
+            1. Quran:
+            ...text conversation...
+            |||{\"type\":\"quran\", \"arabic\":\"وَمِنْ آيَاتِهِ...\", \"translation\":\"And among His signs...\", \"source\":\"QS Ar-Rum: 21\"}|||
+            
+            2. General Quote:
+            ...text conversation...
+            |||{\"type\":\"quote\", \"quote_text\":\"Love is not about finding the right person, but creating a right relationship.\", \"source\":\"Unknown\"}|||
+            
+            Always reply in Indonesian unless asked otherwise."
+        ];
+
+        // Format history
+        $messages = array_merge([$systemMessage], $history);
+        $messages[] = ['role' => 'user', 'content' => $message];
+
+        try {
+            $response = Http::withToken($apiKey)->timeout(30)->post('https://api.openai.com/v1/chat/completions', [
+                'model' => 'gpt-4o-mini',
+                'messages' => $messages,
+                'temperature' => 0.8, // Slightly higher for creativity
+                'max_tokens' => 600,
+            ]);
+
+            if ($response->successful()) {
+                return $response->json()['choices'][0]['message']['content'];
+            } else {
+                Log::error('OpenAI Quote Chat Error: ' . $response->body());
+                return "Maaf, saya sedang kesulitan mencari inspirasi. Coba lagi ya!";
+            }
+        } catch (\Exception $e) {
+            Log::error('OpenAI Quote Chat Connection Error: ' . $e->getMessage());
+            return "Gagal terhubung ke server AI.";
+        }
+    }
 }

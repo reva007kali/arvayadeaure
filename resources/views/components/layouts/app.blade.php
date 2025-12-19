@@ -87,7 +87,7 @@
                 {{-- Dashboard --}}
                 <a href="{{ route('dashboard.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                       {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
+                                                   {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-house"></i></div>
                     <span class="font-medium text-sm tracking-wide">Dashboard</span>
                 </a>
@@ -95,7 +95,7 @@
                 {{-- Overview --}}
                 <a href="{{ route('admin.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                       {{ request()->routeIs('admin.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
+                                                   {{ request()->routeIs('admin.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-chart-line"></i></div>
                     <span class="font-medium text-sm tracking-wide">Overview</span>
                 </a>
@@ -116,7 +116,7 @@
                     <div x-show="open" x-collapse class="pl-4 space-y-1">
                         <a href="{{ route('admin.users') }}" wire:navigate
                             class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
-                                               {{ request()->routeIs('admin.users') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                                                           {{ request()->routeIs('admin.users') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
                             <span
                                 class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.users') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
                             <span class="font-medium text-xs tracking-wide">Kelola User</span>
@@ -124,7 +124,7 @@
 
                         <a href="{{ route('admin.invitations') }}" wire:navigate
                             class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
-                                               {{ request()->routeIs('admin.invitations') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                                                           {{ request()->routeIs('admin.invitations') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
                             <span
                                 class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.invitations') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
                             <span class="font-medium text-xs tracking-wide">Semua Undangan</span>
@@ -132,7 +132,7 @@
 
                         <a href="{{ route('admin.templates') }}" wire:navigate
                             class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
-                                               {{ request()->routeIs('admin.templates') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                                                           {{ request()->routeIs('admin.templates') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
                             <span
                                 class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.templates') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
                             <span class="font-medium text-xs tracking-wide">Kelola Template</span>
@@ -140,7 +140,7 @@
 
                         <a href="{{ route('admin.transactions') }}" wire:navigate
                             class="flex items-center gap-3 px-4 py-2.5 rounded-xl transition-all duration-300 group
-                                               {{ request()->routeIs('admin.transactions') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
+                                                           {{ request()->routeIs('admin.transactions') ? 'text-[#D4AF37] bg-[#252525]/50' : 'text-[#888] hover:text-[#D4AF37]' }}">
                             <span
                                 class="w-1.5 h-1.5 rounded-full {{ request()->routeIs('admin.transactions') ? 'bg-[#D4AF37]' : 'bg-[#666] group-hover:bg-[#D4AF37]' }}"></span>
                             <span class="font-medium text-xs tracking-wide">Transaksi</span>
@@ -188,7 +188,7 @@
             @else
                 <a href="{{ route('dashboard.index') }}" wire:navigate
                     class="flex items-center gap-3 px-4 py-3 rounded-xl transition-all duration-300 group
-                                                                           {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
+                                                                                       {{ request()->routeIs('dashboard.index') ? 'bg-[#252525] shadow-sm border border-[#D4AF37]/30 text-[#D4AF37]' : 'text-[#A0A0A0] hover:bg-[#252525] hover:text-[#D4AF37]' }}">
                     <div class="w-6 text-center"><i class="fa-solid fa-house"></i></div>
                     <span class="font-medium text-sm tracking-wide">Dashboard</span>
                 </a>
@@ -242,7 +242,7 @@
                     </div>
                 @endif
                 <div class="overflow-hidden min-w-0">
-                    <p class="text-sm font-bold text-[#E0E0E0] truncate">{{ auth()->user()->name }}</p>
+                    <p class="text-sm font-bold text-[#E0E0E0] truncate">{{ explode(' ', auth()->user()->name)[0] }}</p>
                     <form method="POST" action="{{ route('logout') }}">
                         @csrf
                         <button type="submit"
@@ -264,7 +264,8 @@
     <div class="flex-1 flex flex-col min-w-0 overflow-y-hidden h-svh bg-arvaya-bg">
 
         <!-- TOP HEADER -->
-        <header class="h-28 flex items-center justify-between px-6 lg:px-10 bg-arvaya-bg sticky top-0 z-20 shrink-0">
+        <header
+            class="py-4 flex items-center justify-between lg:justify-end px-6 lg:px-10 bg-arvaya-bg border-b border-[#333333] sticky top-0 z-20 shrink-0">
             <div class="flex items-center gap-4">
                 @if (auth()->user()->avatar)
                     <img src="{{ auth()->user()->avatar }}" alt="{{ auth()->user()->name }}"
@@ -276,7 +277,7 @@
                     </div>
                 @endif
                 <!-- Page Title -->
-                <h2 class="font-sans lg:text-4xl text-xl text-white tracking-tight">
+                <h2 class="font-sans lg:text-xl text-xl text-white tracking-tight">
                     Hello, <span class="text-arvaya-300">{{ explode(' ', auth()->user()->name)[0] }}</span>
                     <span class="text-sm text-[#888] block">{{ auth()->user()->email }}</span>
                 </h2>
@@ -364,6 +365,8 @@
 
     <!-- Swiper JS -->
     <script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+    <!-- Sortable JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@latest/Sortable.min.js"></script>
     <script>
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {

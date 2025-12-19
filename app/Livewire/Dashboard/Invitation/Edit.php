@@ -27,6 +27,9 @@ class Edit extends Component
     public Invitation $invitation;
     public $activeTab = null; // Tidak ada tab aktif saat halaman dimuat
     public $category = 'Wedding'; // Kategori Template (Wedding, Birthday, dll)
+    
+    // Query String untuk Tab
+    protected $queryString = ['activeTab'];
 
     // --- PROPERTI DATA (MODEL BINDING) ---
     // Variabel ini terhubung langsung dengan input form di view (wire:model)
@@ -60,6 +63,11 @@ class Edit extends Component
     public $aiContentMode = 'quote';
     public $useAiQuote = false;
     public $quranPreset = '';
+    
+    // Chat Logic
+    public $chatMessages = [];
+    public $chatInput = '';
+    public $isChatting = false;
 
     // --- PROPERTI LOGIC TEMPLATE & HARGA ---
     public $availableTemplates = [];   // List semua template dari DB
@@ -76,7 +84,91 @@ class Edit extends Component
     {
         $this->activeTab = $tab;
         $this->modalOpen = true;
+        
+        // Reset Wizard saat buka tab quote
+        if ($tab === 'couple_quote') {
+            // Default: Show Preview first. If empty, maybe show chat? 
+            // Let's just default to useAiQuote=false (Preview Mode)
+            // But if chat is empty, we can initialize it.
+            $this->useAiQuote = false; 
+            
+            if (empty($this->chatMessages)) {
+                $this->chatMessages[] = [
+                    'role' => 'assistant',
+                    'content' => "Halo! 👋 Saya Arvaya, asisten penulis undangan Anda.\n\nBingung mau tulis kata sambutan apa? Ceritakan saja keinginan Anda! \n\nContoh: \"Buatkan kata-kata Islami tentang jodoh\" atau \"Pantun lucu buat undangan\"."
+                ];
+            }
+        }
     }
+
+    public function sendChatMessage()
+    {
+        $this->validate(['chatInput' => 'required|string|max:500']);
+        
+        $userMsg = $this->chatInput;
+        $this->chatMessages[] = ['role' => 'user', 'content' => $userMsg];
+        $this->chatInput = '';
+        $this->isChatting = true;
+        
+        // Prepare history for API
+        $history = [];
+        foreach ($this->chatMessages as $msg) {
+            // Only send user and assistant messages to API context
+            if (in_array($msg['role'], ['user', 'assistant'])) {
+                $history[] = ['role' => $msg['role'], 'content' => $msg['content']];
+            }
+        }
+        
+        $response = OpenAIService::chatQuoteGenerator($userMsg, $history);
+        
+        $this->chatMessages[] = ['role' => 'assistant', 'content' => $response];
+        $this->isChatting = false;
+    }
+
+    public function applyQuoteFromChat($index)
+    {
+        $msg = $this->chatMessages[$index]['content'] ?? '';
+        
+        // Extract JSON block
+        if (preg_match('/\|\|\|(.*?)\|\|\|/s', $msg, $matches)) {
+            $jsonStr = $matches[1];
+            $data = json_decode($jsonStr, true);
+            if ($data) {
+                // Map to couple['quote_structured']
+                $this->couple['quote_structured'] = [
+                    'type' => $data['type'] ?? 'quote',
+                    'quote_text' => $data['quote_text'] ?? ($data['display_text'] ?? ''),
+                    'arabic' => $data['arabic'] ?? '',
+                    'translation' => $data['translation'] ?? '',
+                    'source' => $data['source'] ?? '',
+                ];
+                // Set plain text fallback
+                if (($data['type'] ?? '') === 'quran') {
+                    $this->couple['quote'] = "{$data['source']}: {$data['translation']}";
+                } else {
+                    $this->couple['quote'] = $data['quote_text'] ?? '';
+                }
+            }
+        } else {
+            // Fallback: Use the whole message as a simple quote (strip out the "Sure, here is..." parts manually by user later)
+            // Or better, just take it as 'quote_text'
+            $cleanMsg = strip_tags($msg);
+            $this->couple['quote_structured'] = [
+                'type' => 'quote',
+                'quote_text' => $cleanMsg,
+                'source' => 'AI Generated',
+            ];
+            $this->couple['quote'] = $cleanMsg;
+        }
+
+        $this->dispatch('notify', message: 'Kata-kata diterapkan! Silakan cek preview.', type: 'success');
+        $this->useAiQuote = false; // Show preview
+        
+        // Dispatch event for smooth scrolling to result
+        $this->dispatch('scroll-to-result');
+    }
+
+
 
     public function closeModal()
     {
@@ -301,35 +393,7 @@ class Edit extends Component
     }
 
     // --- FITUR: AI WRITER ---
-    public function generateQuote()
-    {
-        // Validasi nama harus ada dulu
-        $groom = $this->couple['groom']['nickname'] ?? null;
-        $bride = $this->couple['bride']['nickname'] ?? null;
-
-        if (empty($groom) || empty($bride)) {
-            $this->dispatch('notify', message: 'Isi nama panggilan mempelai dulu ya!', type: 'error');
-            return;
-        }
-
-        $this->isGeneratingAi = true;
-        $options = [];
-        if ($this->aiContentMode === 'quran') {
-            if (empty($this->quranPreset)) {
-                $this->dispatch('notify', message: 'Pilih ayat Qur\'an dulu.', type: 'error');
-                $this->isGeneratingAi = false;
-                return;
-            }
-            $options['source'] = $this->mapQuranPresetLabel($this->quranPreset);
-        }
-
-        $structured = OpenAIService::generateWeddingInspiration($groom, $bride, $this->aiContentMode, $this->aiLanguage, $options);
-        $this->couple['quote_structured'] = $structured;
-        $this->couple['quote'] = $structured['display_text'] ?? ($structured['quote_text'] ?? ($structured['verse_text'] ?? ''));
-        $this->isGeneratingAi = false;
-
-        $this->dispatch('notify', message: 'Kata-kata berhasil dibuat AI!', type: 'success');
-    }
+    // (Deprecated Wizard methods removed)
 
     public function composeManualQuote()
     {

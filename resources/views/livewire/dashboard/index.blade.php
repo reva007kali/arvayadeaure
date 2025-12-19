@@ -87,7 +87,7 @@
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         @forelse($invitations as $invitation)
             <div x-data="{ expanded: false }"
-                class="group bg-[#1a1a1a] rounded-[2rem] border-2 border-[#333333] shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden relative">
+                class="group bg-[#1a1a1a] rounded-[1.3rem] border-2 border-[#333333] shadow-xl hover:shadow-2xl hover:-translate-y-1 transition-all duration-300 flex flex-col overflow-hidden relative">
 
                 {{-- LOGIC BADGE STATUS & LINK --}}
                 @php
@@ -138,7 +138,7 @@
                 @endphp
 
                 <div @click="if(window.innerWidth < 768) expanded = !expanded"
-                    class="relative h-64 overflow-hidden p-6 cursor-pointer md:cursor-default transition-all bg-cover bg-center group/card"
+                    class="relative overflow-hidden p-6 cursor-pointer md:cursor-default transition-all bg-cover bg-center group/card"
                     style="background-image: url('{{ $coverImage }}');">
 
                     {{-- Dark Overlay --}}
@@ -154,7 +154,7 @@
                         <div class="flex justify-between items-start">
                             {{-- Icon Box --}}
                             <div
-                                class="w-10 h-10 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-[#D4AF37] shadow-lg border border-white/10 shrink-0">
+                                class="w-8 h-8 rounded-xl bg-white/10 backdrop-blur-md flex items-center justify-center text-[#D4AF37] shadow-lg border border-white/10 shrink-0">
                                 <i class="fa-solid fa-envelope-open-text text-lg"></i>
                             </div>
 

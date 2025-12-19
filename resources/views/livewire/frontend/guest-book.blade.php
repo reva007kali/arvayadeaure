@@ -1,11 +1,7 @@
 <div class="max-w-3xl mx-auto relative z-10 font-display">
 
     {{-- FORM KIRIM UCAPAN --}}
-    <div class="p-8 shadow-[0_10px_40px_-10px_rgba(184,151,96,0.15)] border mb-12 relative overflow-hidden group">
-
-
-        <h3 class=" text-2xl font-bold mb-2 text-center theme-text">Kirim Doa & Ucapan</h3>
-        <p class="text-center text-sm mb-6">"Doa restu Anda adalah kado terindah bagi kami"</p>
+    <div class="p-2 mb-12 relative overflow-hidden group">
 
         <form wire:submit="sendMessage" class="space-y-5 relative z-10">
             <div>
@@ -33,9 +29,9 @@
                 @enderror
             </div>
 
-            <div class="text-right">
+            <div class="text-center">
                 <button type="submit"
-                    class="px-8 py-3 theme-bg text-white rounded-full font-bold shadow-lg hover:shadow-xl transition transform hover:-translate-y-0.5 text-sm flex items-center gap-2 ml-auto">
+                    class="px-8 py-3 theme-bg text-white rounded-lg font-bold hover:shadow-xl transition transform hover:-translate-y-0.5 text-sm flex items-center gap-2 mx-auto">
                     <span wire:loading.remove>Kirim Ucapan <i class="fa-solid fa-paper-plane ml-1"></i></span>
                     <span wire:loading><i class="fa-solid fa-circle-notch fa-spin"></i> Mengirim...</span>
                 </button>
@@ -51,53 +47,58 @@
     </div>
 
     {{-- LIST UCAPAN --}}
-    <div class="space-y-6">
-        <h4 class=" font-bold text-xl theme-text mb-4 text-center border-b pb-4 mx-auto w-1/2">
+    <div class="space-y-4 p-2">
+        <h4 class="font-bold text-xl theme-text mb-4 text-center border-b pb-4 mx-auto">
             {{ $messages->total() }} Doa Terkumpul
         </h4>
 
         @foreach ($messages as $msg)
-            <div class="bg-white p-6 rounded-2xl shadow-sm border relative transition hover:shadow-md">
+            <div class="relative transition">
 
-                {{-- Quote Icon Dekorasi --}}
-                <i class="fa-solid fa-quote-right absolute top-6 right-6 text-[#F2ECDC] text-4xl -z-0"></i>
-
-                <div class="flex gap-4 relative z-10">
+                <div class="flex gap-4 items-center relative z-10">
                     {{-- Avatar Inisial --}}
                     <div
-                        class="w-10 h-10 rounded-full bg-white border flex items-center justify-center theme-text  font-bold text-lg shrink-0">
+                        class="w-8 h-8 p-2 rounded-full theme-bg text-white  flex items-center justify-center font-bold text-lg shrink-0">
                         {{ substr($msg->sender_name, 0, 1) }}
                     </div>
 
                     <div class="flex-1">
-                        <div class="flex justify-between items-start mb-1">
+                        <div class="flex justify-between items-center mb-1">
                             <h4 class="font-bold theme-text text-lg">{{ $msg->sender_name }}</h4>
-                            <span
-                                class="text-[10px] uppercase tracking-wider text-[#7C6339] bg-white px-2 py-1 rounded-full border">
+                            <span class="text-[10px]">
                                 {{ $msg->created_at->diffForHumans() }}
                             </span>
                         </div>
 
-                        <p class="text-[#7C6339] text-sm leading-relaxed mb-4 font-medium">
+                        <p class="text-sm w-fit bg-white p-2 rounded-md leading-relaxed font-medium">
                             {{ $msg->content }}
                         </p>
-
-                        {{-- Balasan Mempelai (Reply) --}}
-                        @foreach ($msg->replies as $reply)
-                            <div class="mt-4 bg-white p-4 rounded-xl border relative">
-                                {{-- Icon Crown --}}
-                                <div
-                                    class="absolute -top-3 -left-2 theme-bg text-white text-[10px] font-bold px-2 py-0.5 rounded-full shadow-sm flex items-center gap-1">
-                                    <i class="fa-solid fa-crown"></i> Mempelai
-                                </div>
-
-                                <p class="text-xs text-[#12110E] mt-1 leading-relaxed italic">
-                                    "{{ $reply->content }}"
-                                </p>
-                            </div>
-                        @endforeach
                     </div>
                 </div>
+                {{-- Balasan Mempelai (Reply) --}}
+                @foreach ($msg->replies as $reply)
+                    <div class="flex gap-4 items-center relative z-10">
+                        <div class="flex-1">
+                            <div class="flex justify-end items-center mt-2 ml-4">
+                                <h4 class="font-bold">{{ $reply->sender_name }}</h4>
+                            </div>
+                            <div class="relative ml-auto w-fit text-right bg-white p-2 rounded-md border shadow-sm">
+                                <p class="text-sm  leading-relaxed font-medium">
+                                    {{ $reply->content }}
+                                </p>
+                                <div
+                                    class="absolute -right-2 top-1 w-0 h-0 rotate-180 border-t-8 border-t-transparent border-r-8 border-r-white border-b-8 border-b-transparent">
+                                </div>
+                            </div>
+
+                        </div>
+                        {{-- Avatar Inisial --}}
+                        <div
+                            class="w-8 h-8 p-2 rounded-full theme-bg text-white flex items-center justify-center  font-bold text-lg shrink-0">
+                            <i class="fa-solid fa-crown"></i>
+                        </div>
+                    </div>
+                @endforeach
             </div>
         @endforeach
 
