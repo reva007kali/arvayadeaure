@@ -1,18 +1,22 @@
 <x-layouts.auth.login-page>
     <div class="w-full max-w-md">
-        {{-- Logo --}}
-        <div class="flex justify-center mb-8">
-            <img src="/logo.png" alt="Arvaya Logo" class="h-24 w-auto">
-        </div>
+
 
         {{-- Form Container with Dark Golden Neomorphism --}}
-        <div
-            class="bg-arvaya-bg rounded-xl p-8 relative overflow-hidden border border-arvaya-400/10">
+        <div class="bg-arvaya-bg rounded-xl p-8 relative overflow-hidden border border-arvaya-400/10">
 
             <div class="relative z-10">
-                <h2
-                    class="text-2xl font-serif text-center text-arvaya-400 mb-6 font-bold tracking-wider uppercase drop-shadow-md">
-                    Welcome Back</h2>
+                <div class="flex items-center justify-center gap-x-2">
+                    {{-- Logo --}}
+                    <div class="flex justify-center mb-8">
+                        <img src="/logo.png" alt="Arvaya Logo" class="h-10">
+                    </div>
+                    <h2
+                        class="text-2xl font-serif text-center text-arvaya-400 mb-6 font-bold tracking-wider uppercase drop-shadow-md">
+                        Welcome Back
+                    </h2>
+                </div>
+
 
                 <!-- Session Status -->
                 <x-auth-session-status class="mb-4 text-center" :status="session('status')" />
@@ -132,7 +136,7 @@
 
         <!-- Register Link -->
         @if (Route::has('register'))
-            <div class="mt-8 text-center text-sm">
+            <div class="mt-4 text-center text-sm bg-arvaya-bg p-3 rounded-lg border border-arvaya-400/5">
                 <span class="text-arvaya-400/80 shadow-black drop-shadow-md">{{ __('Don\'t have an account?') }}</span>
                 <a href="{{ route('register') }}"
                     class="font-bold text-arvaya-400 hover:text-white hover:underline transition ml-1 drop-shadow-md">

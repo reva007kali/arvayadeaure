@@ -13,7 +13,7 @@
     </div>
 
     {{-- GRID TEMPLATES --}}
-    <div class="grid grid-cols-3 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
         @foreach ($templates as $item)
             <div class="group rounded-xl overflow-hidden border border-[#333333] bg-[#1a1a1a] cursor-pointer hover:border-[#D4AF37] transition-all"
                 wire:click="edit({{ $item->id }})">
@@ -31,6 +31,12 @@
                             class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-black/60 backdrop-blur-md border border-white/10 text-[#E0E0E0]">
                             {{ ucfirst($item->tier ?? $item->type) }}
                         </span>
+                        @if ($item->category)
+                            <span
+                                class="px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider bg-blue-500/20 backdrop-blur-md border border-blue-500/30 text-blue-400">
+                                {{ $item->category }}
+                            </span>
+                        @endif
                         @if ($item->price > 0)
                             <span
                                 class="px-2 py-0.5 rounded text-[10px] font-bold bg-[#D4AF37] text-[#121212] border border-[#D4AF37]">
@@ -46,7 +52,7 @@
                     <div class="absolute top-2 right-2">
                         <button wire:click.stop="toggleActive({{ $item->id }})"
                             class="px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wider border backdrop-blur-md
-                                {{ $item->is_active ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-800/80 text-gray-400 border-gray-600' }}">
+                                    {{ $item->is_active ? 'bg-green-500/20 text-green-400 border-green-500/30' : 'bg-gray-800/80 text-gray-400 border-gray-600' }}">
                             {{ $item->is_active ? 'Visible' : 'Hidden' }}
                         </button>
                     </div>
@@ -101,7 +107,7 @@
                     </div>
 
                     {{-- Type & Price Row --}}
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-3 gap-4">
                         {{-- Type --}}
                         <div>
                             <label class="block text-xs font-bold text-[#A0A0A0] uppercase mb-1">Kategori Tier</label>
@@ -111,6 +117,24 @@
                                 <option value="premium">Premium (Fitur Lengkap)</option>
                                 <option value="exclusive">Exclusive (Full Custom)</option>
                             </select>
+                        </div>
+
+                        {{-- Category --}}
+                        <div>
+                            <label class="block text-xs font-bold text-[#A0A0A0] uppercase mb-1">Kategori Acara</label>
+                            <select wire:model="category"
+                                class="w-full rounded-xl bg-[#252525] border-[#333333] text-[#E0E0E0] text-sm focus:border-[#D4AF37] focus:ring-[#D4AF37]">
+                                <option value="Wedding">Wedding</option>
+                                <option value="Engagement">Engagement</option>
+                                <option value="Birthday">Birthday</option>
+                                <option value="Aqiqah">Aqiqah</option>
+                                <option value="Khitan">Khitan</option>
+                                <option value="Event">Event</option>
+                                <option value="Other">Other</option>
+                            </select>
+                            @error('category')
+                                <span class="text-red-500 text-xs">{{ $message }}</span>
+                            @enderror
                         </div>
 
                         {{-- Harga --}}
@@ -126,6 +150,17 @@
                                 <span class="text-red-500 text-xs">{{ $message }}</span>
                             @enderror
                         </div>
+                    </div>
+
+                    {{-- Preview URL --}}
+                    <div>
+                        <label class="block text-xs font-bold text-[#A0A0A0] uppercase mb-1">Preview URL (Sample Invitation)</label>
+                        <input type="text" wire:model="preview_url" placeholder="https://arvayadeaure.com/sample-wedding"
+                            class="w-full rounded-xl bg-[#252525] border-[#333333] text-[#E0E0E0] text-sm focus:border-[#D4AF37] focus:ring-[#D4AF37]">
+                        <p class="text-[10px] text-[#666] mt-1">Masukkan link undangan sample yang sudah dibuat admin.</p>
+                        @error('preview_url')
+                            <span class="text-red-500 text-xs">{{ $message }}</span>
+                        @enderror
                     </div>
 
                     {{-- Description --}}

@@ -78,7 +78,7 @@
                         class="text-sm font-bold text-arvaya-400 hover:text-arvaya-200 transition hidden sm:block">
                         Masuk
                     </a>
-                    <a href="{{ route('register') }}"
+                    <a href="{{ route('login') }}"
                         class="px-5 py-2.5 rounded-lg text-sm font-bold text-arvaya-bg bg-arvaya-400 hover:bg-arvaya-300 transition shadow-[4px_4px_10px_#0a0a0a,-4px_-4px_10px_#1e1e1e]">
                         Buat Undangan
                     </a>
@@ -149,7 +149,7 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-            navigator.serviceWorker.register('/service-worker.js')
+            navigator.serviceWorker.login('/service-worker.js')
                 .catch(function (e) { console.warn('SW registration failed', e) })
         })
     }

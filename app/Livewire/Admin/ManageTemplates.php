@@ -16,7 +16,9 @@ class ManageTemplates extends Component
 
     // Form Inputs
     public $name, $slug, $description, $tier = 'basic';
+    public $category = 'Wedding'; // Default category
     public $price = 0; // Tambahan: Harga Template
+    public $preview_url; // Link ke Sample Undangan
     public $thumbnail, $preview_video;
     public $templateId = null;
     public $is_active = true;
@@ -35,7 +37,7 @@ class ManageTemplates extends Component
     {
         $this->resetValidation();
         // Reset form inputs termasuk price
-        $this->reset(['name', 'slug', 'description', 'tier', 'price', 'thumbnail', 'preview_video', 'templateId', 'is_active']);
+        $this->reset(['name', 'slug', 'description', 'tier', 'category', 'price', 'preview_url', 'thumbnail', 'preview_video', 'templateId', 'is_active']);
         $this->isOpen = true;
         $this->isEdit = false;
     }
@@ -49,7 +51,9 @@ class ManageTemplates extends Component
         $this->slug = $t->slug;
         $this->description = $t->description;
         $this->tier = $t->tier;
+        $this->category = $t->category;
         $this->price = $t->price; // Load harga
+        $this->preview_url = $t->preview_url; // Load Preview URL
         $this->is_active = (bool) $t->is_active;
 
         $this->isOpen = true;
@@ -62,7 +66,9 @@ class ManageTemplates extends Component
             'name' => 'required|string|max:255',
             'slug' => 'required|alpha_dash|unique:templates,slug,' . $this->templateId,
             'tier' => 'required|in:basic,premium,exclusive',
+            'category' => 'required|string|max:100',
             'price' => 'required|numeric|min:0', // Validasi harga
+            'preview_url' => 'nullable|url|max:255', // Validasi URL
             'is_active' => 'boolean',
         ];
 
@@ -77,7 +83,9 @@ class ManageTemplates extends Component
             'slug' => $this->slug,
             'description' => $this->description,
             'tier' => $this->tier,
+            'category' => $this->category,
             'price' => $this->price, // Simpan harga
+            'preview_url' => $this->preview_url, // Simpan Preview URL
             'is_active' => (bool) $this->is_active,
         ];
 

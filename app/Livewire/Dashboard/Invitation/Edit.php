@@ -26,6 +26,7 @@ class Edit extends Component
     // --- PROPERTI UTAMA ---
     public Invitation $invitation;
     public $activeTab = null; // Tidak ada tab aktif saat halaman dimuat
+    public $category = 'Wedding'; // Kategori Template (Wedding, Birthday, dll)
 
     // --- PROPERTI DATA (MODEL BINDING) ---
     // Variabel ini terhubung langsung dengan input form di view (wire:model)
@@ -85,16 +86,31 @@ class Edit extends Component
     // --- RULES VALIDASI ---
     protected function rules()
     {
-        return [
+        $rules = [
             'theme_template' => 'required|string',
-            'couple.groom.nickname' => 'required',
-            'couple.bride.nickname' => 'required',
             'events.*.title' => 'required',
             'events.*.date' => 'required',
-            // Validasi gifts hanya jika user mengisi salah satunya
             'gifts.*.bank_name' => 'required_with:gifts.*.account_number',
             'gifts.*.account_number' => 'numeric|nullable',
         ];
+
+        if ($this->category === 'Wedding' || $this->category === 'Engagement') {
+            $rules['couple.groom.nickname'] = 'required';
+            $rules['couple.bride.nickname'] = 'required';
+        } elseif ($this->category === 'Birthday') {
+            $rules['couple.name'] = 'required';
+            $rules['couple.age'] = 'nullable';
+        } elseif ($this->category === 'Aqiqah' || $this->category === 'Khitan') {
+            $rules['couple.child_name'] = 'required';
+        } elseif ($this->category === 'Event') {
+            $rules['couple.title'] = 'required';
+            $rules['couple.organizer'] = 'required';
+        } else {
+            // Generic validation for other categories
+            $rules['couple.name'] = 'nullable';
+        }
+
+        return $rules;
     }
 
     // --- LIFECYCLE: MOUNT (Saat Halaman Pertama Kali Dibuka) ---
@@ -110,8 +126,12 @@ class Edit extends Component
         // 2. Load Templates awal (hanya yang aktif) dengan paging ringan
         $this->loadTemplates(reset: true);
 
-        // 3. Set Template Awal
+        // 3. Set Template Awal & Kategori
         $this->theme_template = $invitation->theme_template ?? 'default';
+        
+        // Ambil kategori dari template yang dipakai
+        $currentTemplate = Template::where('slug', $this->theme_template)->first();
+        $this->category = $currentTemplate ? ($currentTemplate->category ?? 'Wedding') : 'Wedding';
 
         // 4. Load Data JSON & Merge dengan Default
         // Tujuannya agar tidak error "Undefined index" jika data di DB masih kosong/null
@@ -204,12 +224,52 @@ class Edit extends Component
     // --- HELPER: LOAD DATA ---
     private function loadInvitationData()
     {
-        // Default Couple
-        $defaultCouple = [
-            'groom' => ['nickname' => '', 'fullname' => '', 'father' => '', 'mother' => '', 'instagram' => ''],
-            'bride' => ['nickname' => '', 'fullname' => '', 'father' => '', 'mother' => '', 'instagram' => ''],
-            'quote' => ''
-        ];
+        // Default Couple (Dynamic based on Category)
+        $defaultCouple = [];
+        
+        if ($this->category === 'Wedding' || $this->category === 'Engagement') {
+            $defaultCouple = [
+                'groom' => ['nickname' => '', 'fullname' => '', 'father' => '', 'mother' => '', 'instagram' => ''],
+                'bride' => ['nickname' => '', 'fullname' => '', 'father' => '', 'mother' => '', 'instagram' => ''],
+                'quote' => ''
+            ];
+        } elseif ($this->category === 'Birthday') {
+            $defaultCouple = [
+                'name' => '', 
+                'fullname' => '', 
+                'age' => '', 
+                'birth_date' => '',
+                'father' => '', 
+                'mother' => '', 
+                'instagram' => '',
+                'quote' => ''
+            ];
+        } elseif ($this->category === 'Aqiqah' || $this->category === 'Khitan') {
+             $defaultCouple = [
+                'child_name' => '', 
+                'child_fullname' => '', 
+                'birth_date' => '',
+                'father' => '', 
+                'mother' => '', 
+                'quote' => ''
+            ];
+        } elseif ($this->category === 'Event') {
+             $defaultCouple = [
+                'title' => '', 
+                'organizer' => '', 
+                'description' => '',
+                'quote' => ''
+            ];
+        } else {
+             // Generic Fallback
+             $defaultCouple = [
+                'name' => '', 
+                'fullname' => '',
+                'description' => '',
+                'quote' => ''
+            ];
+        }
+
         // array_replace_recursive: Data DB menimpa Default, tapi key yang hilang di DB akan diisi Default
         $this->couple = array_replace_recursive($defaultCouple, $this->invitation->couple_data ?? []);
 

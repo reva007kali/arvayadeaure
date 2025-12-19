@@ -5,7 +5,7 @@
     @include('partials.head')
 </head>
 
-<body class="min-h-screen font-sans antialiased overflow-hidden">
+<body class="min-h-screen font-sans antialiased">
 
     <div class="fixed inset-0 z-0">
         <img src="/img/login.png" alt="Background" class="w-full h-full object-cover">
@@ -14,7 +14,7 @@
     </div>
 
     {{-- Content --}}
-    <div class="relative z-10 min-h-screen flex flex-col items-center justify-center p-4">
+    <div class="relative z-10 min-h-screen flex flex-col items-center justify-center p-5 md:p-10">
         {{ $slot }}
     </div>
 

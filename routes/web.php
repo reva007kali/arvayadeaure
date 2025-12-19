@@ -25,6 +25,8 @@ use App\Livewire\Dashboard\Notification\Index as NotificationManager;
 
 
 
+use App\Livewire\Frontend\TemplateShowcase;
+
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -33,9 +35,9 @@ use App\Livewire\Dashboard\Notification\Index as NotificationManager;
 
 // 1. LANDING PAGE UTAMA (Halaman depan aplikasi SaaS kamu)
 Route::get('/', LandingPage::class)->name('home');
-// Route::get('/', function () {
-//     return view('welcome');
-// })->name('home');
+
+// 2. TEMPLATE SHOWCASE (Public)
+Route::get('/templates', TemplateShowcase::class)->name('templates.index');
 
 Route::get('/invitation/inactive', function () {
     return view('errors.invitation-inactive');

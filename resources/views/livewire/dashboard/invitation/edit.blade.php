@@ -86,9 +86,23 @@
                 <div>
                     <div class="grid grid-cols-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-7 gap-5">
                         @php
+                            $coupleLabel = match($category) {
+                                'Birthday' => 'Profil',
+                                'Aqiqah', 'Khitan' => 'Data Anak',
+                                'Engagement' => 'Pasangan',
+                                'Event' => 'Detail Acara',
+                                default => 'Mempelai'
+                            };
+                            
+                            $quoteLabel = match($category) {
+                                'Aqiqah', 'Khitan' => 'Doa & Harapan',
+                                'Event' => 'Deskripsi Acara',
+                                default => 'Kata Pengantar'
+                            };
+                            
                             $menus = [
-                                ['id' => 'couple_bio', 'icon' => 'fa-user-group', 'label' => 'Mempelai'],
-                                ['id' => 'couple_quote', 'icon' => 'fa-quote-left', 'label' => 'Kata Pengantar'],
+                                ['id' => 'couple_bio', 'icon' => 'fa-user-group', 'label' => $coupleLabel],
+                                ['id' => 'couple_quote', 'icon' => 'fa-quote-left', 'label' => $quoteLabel],
                                 ['id' => 'events', 'icon' => 'fa-calendar-days', 'label' => 'Acara'],
                                 ['id' => 'gallery', 'icon' => 'fa-images', 'label' => 'Galeri'],
                                 ['id' => 'gifts', 'icon' => 'fa-gift', 'label' => 'Kado'],
@@ -188,61 +202,215 @@
 
                         {{-- TAB: COUPLE BIO --}}
                         @if ($activeTab === 'couple_bio')
-                            <div class="grid md:grid-cols-2 gap-8">
-                                @foreach (['groom' => 'Mempelai Pria', 'bride' => 'Mempelai Wanita'] as $type => $label)
-                                    <div
-                                        class="bg-[#1a1a1a] p-6 rounded-3xl border border-[#333333] shadow-[0_4px_20px_-10px_rgba(0,0,0,0.5)]">
-                                        <div class="flex items-center gap-3 mb-6 pb-3 border-b border-[#333333]">
-                                            <div
-                                                class="w-8 h-8 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37]">
-                                                <i class="fa-solid {{ $type == 'groom' ? 'fa-mars' : 'fa-venus' }}"></i>
+                            
+                            {{-- FORM: WEDDING / ENGAGEMENT --}}
+                            @if ($category === 'Wedding' || $category === 'Engagement')
+                                <div class="grid md:grid-cols-2 gap-8">
+                                    @php
+                                        $labels = $category === 'Engagement' 
+                                            ? ['groom' => 'Pria', 'bride' => 'Wanita']
+                                            : ['groom' => 'Mempelai Pria', 'bride' => 'Mempelai Wanita'];
+                                    @endphp
+                                    @foreach ($labels as $type => $label)
+                                        <div class="bg-[#1a1a1a] p-6 rounded-3xl border border-[#333333] shadow-[0_4px_20px_-10px_rgba(0,0,0,0.5)]">
+                                            <div class="flex items-center gap-3 mb-6 pb-3 border-b border-[#333333]">
+                                                <div class="w-8 h-8 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37]">
+                                                    <i class="fa-solid {{ $type == 'groom' ? 'fa-mars' : 'fa-venus' }}"></i>
+                                                </div>
+                                                <h4 class="font-serif font-bold text-xl text-[#E0E0E0]">{{ $label }}</h4>
                                             </div>
-                                            <h4 class="font-serif font-bold text-xl text-[#E0E0E0]">{{ $label }}
-                                            </h4>
-                                        </div>
-                                        <div class="space-y-4">
-                                            <div>
-                                                <label
-                                                    class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Panggilan</label>
-                                                <input type="text" wire:model="couple.{{ $type }}.nickname"
-                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
-                                            </div>
-                                            <div>
-                                                <label
-                                                    class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama
-                                                    Lengkap</label>
-                                                <input type="text" wire:model="couple.{{ $type }}.fullname"
-                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
-                                            </div>
-                                            <div>
-                                                <label
-                                                    class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama
-                                                    Ayah</label>
-                                                <input type="text" wire:model="couple.{{ $type }}.father"
-                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
-                                            </div>
-                                            <div>
-                                                <label
-                                                    class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama
-                                                    Ibu</label>
-                                                <input type="text" wire:model="couple.{{ $type }}.mother"
-                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
-                                            </div>
-                                            <div>
-                                                <label
-                                                    class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Instagram
-                                                    (Tanpa @)
-                                                </label>
-                                                <div class="relative flex items-center gap-x-2">
-                                                    <span class=" text-[#D4AF37]"><i class="fa-brands fa-instagram"></i></span>
-                                                    <input type="text" wire:model="couple.{{ $type }}.instagram"
-                                                        class="w-full pl-10 rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            <div class="space-y-4">
+                                                <div>
+                                                    <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Panggilan</label>
+                                                    <input type="text" wire:model="couple.{{ $type }}.nickname"
+                                                        class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                                </div>
+                                                <div>
+                                                    <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Lengkap</label>
+                                                    <input type="text" wire:model="couple.{{ $type }}.fullname"
+                                                        class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                                </div>
+                                                <div>
+                                                    <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Ayah</label>
+                                                    <input type="text" wire:model="couple.{{ $type }}.father"
+                                                        class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                                </div>
+                                                <div>
+                                                    <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Ibu</label>
+                                                    <input type="text" wire:model="couple.{{ $type }}.mother"
+                                                        class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                                </div>
+                                                <div>
+                                                    <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Instagram (Tanpa @)</label>
+                                                    <div class="relative flex items-center gap-x-2">
+                                                        <span class=" text-[#D4AF37]"><i class="fa-brands fa-instagram"></i></span>
+                                                        <input type="text" wire:model="couple.{{ $type }}.instagram"
+                                                            class="w-full pl-10 rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                                    </div>
                                                 </div>
                                             </div>
                                         </div>
+                                    @endforeach
+                                </div>
+                            
+                            {{-- FORM: BIRTHDAY --}}
+                            @elseif ($category === 'Birthday')
+                                <div class="bg-[#1a1a1a] p-8 rounded-3xl border border-[#333333] shadow-sm max-w-2xl mx-auto">
+                                    <div class="flex items-center gap-3 mb-6 pb-3 border-b border-[#333333]">
+                                        <div class="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37]">
+                                            <i class="fa-solid fa-cake-candles"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-serif font-bold text-xl text-[#E0E0E0]">Profil Yang Ulang Tahun</h4>
+                                            <p class="text-xs text-[#A0A0A0]">Isi detail lengkap yang berulang tahun</p>
+                                        </div>
                                     </div>
-                                @endforeach
-                            </div>
+                                    <div class="space-y-5">
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Panggilan</label>
+                                                <input type="text" wire:model="couple.name"
+                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Ulang Tahun Ke-</label>
+                                                <input type="text" wire:model="couple.age" placeholder="Contoh: 17th"
+                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Lengkap</label>
+                                            <input type="text" wire:model="couple.fullname"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Tanggal Lahir</label>
+                                            <input type="date" wire:model="couple.birth_date"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Ayah (Opsional)</label>
+                                                <input type="text" wire:model="couple.father"
+                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Ibu (Opsional)</label>
+                                                <input type="text" wire:model="couple.mother"
+                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            </div>
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Instagram (Tanpa @)</label>
+                                            <div class="relative flex items-center gap-x-2">
+                                                <span class=" text-[#D4AF37]"><i class="fa-brands fa-instagram"></i></span>
+                                                <input type="text" wire:model="couple.instagram"
+                                                    class="w-full pl-10 rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                            {{-- FORM: AQIQAH / KHITAN --}}
+                            @elseif ($category === 'Aqiqah' || $category === 'Khitan')
+                                <div class="bg-[#1a1a1a] p-8 rounded-3xl border border-[#333333] shadow-sm max-w-2xl mx-auto">
+                                    <div class="flex items-center gap-3 mb-6 pb-3 border-b border-[#333333]">
+                                        <div class="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37]">
+                                            <i class="fa-solid fa-baby"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-serif font-bold text-xl text-[#E0E0E0]">Data Anak</h4>
+                                            <p class="text-xs text-[#A0A0A0]">Isi detail lengkap anak untuk {{ $category }}</p>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Panggilan Anak</label>
+                                            <input type="text" wire:model="couple.child_name"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Lengkap Anak</label>
+                                            <input type="text" wire:model="couple.child_fullname"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Tanggal Lahir</label>
+                                            <input type="date" wire:model="couple.birth_date"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div class="grid grid-cols-2 gap-4">
+                                            <div>
+                                                <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Ayah</label>
+                                                <input type="text" wire:model="couple.father"
+                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            </div>
+                                            <div>
+                                                <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama Ibu</label>
+                                                <input type="text" wire:model="couple.mother"
+                                                    class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            {{-- FORM: EVENT --}}
+                            @elseif ($category === 'Event')
+                                <div class="bg-[#1a1a1a] p-8 rounded-3xl border border-[#333333] shadow-sm max-w-2xl mx-auto">
+                                    <div class="flex items-center gap-3 mb-6 pb-3 border-b border-[#333333]">
+                                        <div class="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37]">
+                                            <i class="fa-solid fa-calendar-star"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-serif font-bold text-xl text-[#E0E0E0]">Detail Acara</h4>
+                                            <p class="text-xs text-[#A0A0A0]">Informasi utama mengenai acara Anda</p>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Judul / Nama Acara</label>
+                                            <input type="text" wire:model="couple.title"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Penyelenggara / Host</label>
+                                            <input type="text" wire:model="couple.organizer"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Deskripsi Acara</label>
+                                            <textarea wire:model="couple.description" rows="5"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            
+                            {{-- FORM: DEFAULT/GENERIC --}}
+                            @else
+                                <div class="bg-[#1a1a1a] p-8 rounded-3xl border border-[#333333] shadow-sm max-w-2xl mx-auto">
+                                    <div class="flex items-center gap-3 mb-6 pb-3 border-b border-[#333333]">
+                                        <div class="w-10 h-10 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37]">
+                                            <i class="fa-solid fa-user"></i>
+                                        </div>
+                                        <div>
+                                            <h4 class="font-serif font-bold text-xl text-[#E0E0E0]">Profil Utama</h4>
+                                        </div>
+                                    </div>
+                                    <div class="space-y-5">
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Nama / Judul</label>
+                                            <input type="text" wire:model="couple.name"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all">
+                                        </div>
+                                        <div>
+                                            <label class="text-xs text-[#A0A0A0] font-bold uppercase tracking-wide mb-1 block">Deskripsi Singkat</label>
+                                            <textarea wire:model="couple.description" rows="4"
+                                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] font-medium transition-all"></textarea>
+                                        </div>
+                                    </div>
+                                </div>
+                            @endif
+
                         @endif
 
                         {{-- TAB: COUPLE QUOTE --}}

@@ -28,10 +28,10 @@ class LandingPage extends Component
             })
             ->when($this->tier !== 'all', fn($q) => $q->where('tier', $this->tier))
             ->orderBy('created_at', 'desc')
-            ->take(24)
+            ->take(10)
             ->get();
 
-        $tiers = \App\Models\Template::TIERS;
+        $tiers = Template::TIERS;
 
         return view('livewire.landing-page', compact('templates', 'tiers'));
     }
