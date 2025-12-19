@@ -71,7 +71,7 @@
             </div>
 
             <!-- Right: Clean Visual -->
-            <div class="relative" data-anim="fade-up">
+            <div class="relative">
 
                 <div class="relative z-10">
                     <img src="img/phone-mockup.png" alt="App Preview"
