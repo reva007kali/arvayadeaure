@@ -55,7 +55,7 @@
         @foreach ($messages as $msg)
             <div class="relative transition">
 
-                <div class="flex gap-4 items-center relative z-10">
+                <div class="flex gap-2 items-center relative z-10">
                     {{-- Avatar Inisial --}}
                     <div
                         class="w-8 h-8 p-2 rounded-full theme-bg text-white  flex items-center justify-center font-bold text-lg shrink-0">
@@ -77,7 +77,7 @@
                 </div>
                 {{-- Balasan Mempelai (Reply) --}}
                 @foreach ($msg->replies as $reply)
-                    <div class="flex gap-4 items-center relative z-10">
+                    <div class="flex gap-2 items-center relative z-10">
                         <div class="flex-1">
                             <div class="flex justify-end items-center text-sm mt-2 ml-4">
                                 <h4 class="font-bold">{{ $reply->sender_name }}</h4>
