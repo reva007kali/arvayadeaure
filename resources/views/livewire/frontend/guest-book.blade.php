@@ -63,14 +63,14 @@
                     </div>
 
                     <div class="flex-1">
-                        <div class="flex justify-between items-center mb-1">
-                            <h4 class="font-bold theme-text text-md">{{ $msg->sender_name }}</h4>
+                        <div class="flex justify-between items-center">
+                            <h4 class="font-bold theme-text text-sm">{{ $msg->sender_name }}</h4>
                             <span class="text-[10px]">
                                 {{ $msg->created_at->diffForHumans() }}
                             </span>
                         </div>
 
-                        <p class="text-sm w-fit bg-white p-2 rounded-md leading-relaxed font-medium">
+                        <p class="text-xs w-fit bg-white p-2 rounded-md leading-relaxed font-medium">
                             {{ $msg->content }}
                         </p>
                     </div>
@@ -79,11 +79,11 @@
                 @foreach ($msg->replies as $reply)
                     <div class="flex gap-4 items-center relative z-10">
                         <div class="flex-1">
-                            <div class="flex justify-end items-center mt-2 ml-4">
+                            <div class="flex justify-end items-center text-sm mt-2 ml-4">
                                 <h4 class="font-bold">{{ $reply->sender_name }}</h4>
                             </div>
                             <div class="relative ml-auto w-fit text-right bg-white p-2 rounded-md border shadow-sm">
-                                <p class="text-sm  leading-relaxed font-medium">
+                                <p class="text-xs  leading-relaxed font-medium">
                                     {{ $reply->content }}
                                 </p>
                                 <div
