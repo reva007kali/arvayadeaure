@@ -47,9 +47,9 @@
     </div>
 
     {{-- LIST UCAPAN --}}
-    <div class="space-y-4 p-2">
+    <div id="guestbook-section" class="space-y-4 p-2">
         <h4 class="font-bold text-xl theme-text mb-4 text-center border-b pb-4 mx-auto">
-            {{ $messages->total() }} Doa Terkumpul
+            {{ $total_messages }} Doa Terkumpul
         </h4>
 
         @foreach ($messages as $msg)
@@ -102,8 +102,16 @@
             </div>
         @endforeach
 
-        <div class="pt-6 flex justify-center">
-            {{ $messages->links() }}
-        </div>
+@if($hasMoreMessages)
+    <div class="pt-6 flex justify-center">
+        <button wire:click="loadMore"
+            class="px-6 py-2 theme-bg text-white rounded-full text-sm font-bold shadow-md hover:shadow-lg transition transform hover:-translate-y-0.5 flex items-center gap-2">
+            <span wire:loading.remove wire:target="loadMore">Muat Lebih Banyak <i
+                    class="fa-solid fa-chevron-down ml-1"></i></span>
+            <span wire:loading.delay.shortest wire:target="loadMore"><i class="fa-solid fa-circle-notch fa-spin"></i>
+                Memuat...</span>
+        </button>
+    </div>
+@endif
     </div>
 </div>

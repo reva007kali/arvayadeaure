@@ -11,7 +11,8 @@ use App\Notifications\NewMessageNotification;
 
 class GuestBook extends Component
 {
-    use WithPagination;
+    // Remove WithPagination trait as we are implementing custom load more logic
+    // use WithPagination;
 
     public Invitation $invitation;
     public ?Guest $guest = null;
@@ -20,8 +21,20 @@ class GuestBook extends Component
     public $sender_name = '';
     public $content = '';
 
-    // Config
-    protected $paginationTheme = 'tailwind';
+    // Load More Config
+    public $perPage = 5;
+    public $hasMoreMessages = true;
+
+    public function loadMore()
+    {
+        $this->perPage += 5;
+    }
+
+    // Config (Removed paginationView as it's no longer needed)
+    // protected function paginationView()
+    // {
+    //    return 'livewire.guestbook-pagination';
+    // }
 
     public function mount($invitation, $guest = null)
     {
@@ -64,15 +77,24 @@ class GuestBook extends Component
 
     public function render()
     {
+        // Get total count first to determine if there are more messages
+        $totalMessages = $this->invitation->messages()
+            ->whereNull('parent_id')
+            ->count();
+
+        $this->hasMoreMessages = $totalMessages > $this->perPage;
+
         // Ambil pesan utama (bukan reply), urutkan terbaru
         $messages = $this->invitation->messages()
             ->whereNull('parent_id')
             ->with('replies') // Eager load reply dari mempelai
             ->latest()
-            ->paginate(5);
+            ->take($this->perPage)
+            ->get();
 
         return view('livewire.frontend.guest-book', [
-            'messages' => $messages
+            'messages' => $messages,
+            'total_messages' => $totalMessages
         ]);
     }
 }
