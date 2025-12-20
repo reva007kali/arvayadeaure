@@ -12,7 +12,9 @@
         {{-- Card 1: Revenue --}}
         <div
             class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 relative overflow-hidden group hover:border-[#D4AF37]/50 transition-all">
-            <div class="absolute right-0 top-0 w-24 h-24 bg-[#D4AF37]/5 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-[#D4AF37]/10"></div>
+            <div
+                class="absolute right-0 top-0 w-24 h-24 bg-[#D4AF37]/5 rounded-bl-full -mr-4 -mt-4 transition-all group-hover:bg-[#D4AF37]/10">
+            </div>
             <div
                 class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37] text-xl z-10 border border-[#333333] group-hover:border-[#D4AF37] transition-colors">
                 <i class="fa-solid fa-money-bill-wave"></i>
@@ -20,13 +22,16 @@
             <div class="z-10">
                 <p class="text-[10px] text-[#A0A0A0] font-bold uppercase tracking-wider">Total Pendapatan</p>
                 <h3 class="font-serif font-bold text-2xl text-[#E0E0E0]">Rp
-                    {{ number_format($stats['total_revenue'], 0, ',', '.') }}</h3>
+                    {{ number_format($stats['total_revenue'], 0, ',', '.') }}
+                </h3>
             </div>
         </div>
 
         {{-- Card 2: Pending --}}
-        <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-yellow-500/30 shadow-lg flex items-center gap-4 group hover:border-yellow-500/60 transition-all">
-            <div class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 text-xl border border-yellow-500/20 group-hover:border-yellow-500 transition-colors">
+        <div
+            class="bg-[#1a1a1a] p-5 rounded-2xl border border-yellow-500/30 shadow-lg flex items-center gap-4 group hover:border-yellow-500/60 transition-all">
+            <div
+                class="w-12 h-12 rounded-full bg-yellow-500/10 flex items-center justify-center text-yellow-500 text-xl border border-yellow-500/20 group-hover:border-yellow-500 transition-colors">
                 <i class="fa-solid fa-hourglass-half"></i>
             </div>
             <div>
@@ -36,8 +41,10 @@
         </div>
 
         {{-- Card 3: Paid --}}
-        <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-green-500/30 shadow-lg flex items-center gap-4 group hover:border-green-500/60 transition-all">
-            <div class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 text-xl border border-green-500/20 group-hover:border-green-500 transition-colors">
+        <div
+            class="bg-[#1a1a1a] p-5 rounded-2xl border border-green-500/30 shadow-lg flex items-center gap-4 group hover:border-green-500/60 transition-all">
+            <div
+                class="w-12 h-12 rounded-full bg-green-500/10 flex items-center justify-center text-green-500 text-xl border border-green-500/20 group-hover:border-green-500 transition-colors">
                 <i class="fa-solid fa-check-circle"></i>
             </div>
             <div>
@@ -47,8 +54,10 @@
         </div>
 
         {{-- Card 4: Rejected --}}
-        <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-red-500/30 shadow-lg flex items-center gap-4 group hover:border-red-500/60 transition-all">
-            <div class="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 text-xl border border-red-500/20 group-hover:border-red-500 transition-colors">
+        <div
+            class="bg-[#1a1a1a] p-5 rounded-2xl border border-red-500/30 shadow-lg flex items-center gap-4 group hover:border-red-500/60 transition-all">
+            <div
+                class="w-12 h-12 rounded-full bg-red-500/10 flex items-center justify-center text-red-500 text-xl border border-red-500/20 group-hover:border-red-500 transition-colors">
                 <i class="fa-solid fa-ban"></i>
             </div>
             <div>
@@ -57,8 +66,10 @@
             </div>
         </div>
         {{-- Card 5: Upgraded --}}
-        <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-[#D4AF37]/50 transition-all">
-            <div class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37] text-xl border border-[#333333] group-hover:border-[#D4AF37] transition-colors">
+        <div
+            class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-[#D4AF37]/50 transition-all">
+            <div
+                class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37] text-xl border border-[#333333] group-hover:border-[#D4AF37] transition-colors">
                 <i class="fa-solid fa-arrow-up"></i>
             </div>
             <div>
@@ -67,8 +78,10 @@
             </div>
         </div>
         {{-- Card 6: Downgraded --}}
-        <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-[#D4AF37]/50 transition-all">
-            <div class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37] text-xl border border-[#333333] group-hover:border-[#D4AF37] transition-colors">
+        <div
+            class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-[#D4AF37]/50 transition-all">
+            <div
+                class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37] text-xl border border-[#333333] group-hover:border-[#D4AF37] transition-colors">
                 <i class="fa-solid fa-arrow-down"></i>
             </div>
             <div>
@@ -77,8 +90,10 @@
             </div>
         </div>
         {{-- Card 7: Refund --}}
-        <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-[#D4AF37]/50 transition-all">
-            <div class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37] text-xl border border-[#333333] group-hover:border-[#D4AF37] transition-colors">
+        <div
+            class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-[#D4AF37]/50 transition-all">
+            <div
+                class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-[#D4AF37] text-xl border border-[#333333] group-hover:border-[#D4AF37] transition-colors">
                 <i class="fa-solid fa-receipt"></i>
             </div>
             <div>
@@ -87,8 +102,10 @@
             </div>
         </div>
         {{-- Card 8: Cancel --}}
-        <div class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-red-500/50 transition-all">
-            <div class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-red-500 text-xl border border-[#333333] group-hover:border-red-500 transition-colors">
+        <div
+            class="bg-[#1a1a1a] p-5 rounded-2xl border border-[#333333] shadow-lg flex items-center gap-4 group hover:border-red-500/50 transition-all">
+            <div
+                class="w-12 h-12 rounded-full bg-[#252525] flex items-center justify-center text-red-500 text-xl border border-[#333333] group-hover:border-red-500 transition-colors">
                 <i class="fa-solid fa-ban"></i>
             </div>
             <div>
@@ -146,7 +163,8 @@
                                     <div>
                                         <p class="font-bold text-[#E0E0E0] text-sm">{{ $trx->title }}</p>
                                         <p class="text-[10px] text-[#A0A0A0]">{{ $trx->user->name }} •
-                                            {{ $trx->updated_at->diffForHumans() }}</p>
+                                            {{ $trx->updated_at->diffForHumans() }}
+                                        </p>
                                     </div>
                                 </div>
                             </td>
@@ -157,11 +175,13 @@
                                     class="text-[10px] text-[#A0A0A0] uppercase tracking-wider">{{ $trx->package_type }}</span>
                                 @if ($trx->payment_action === 'upgraded' && $trx->due_amount > 0)
                                     <div class="text-[10px] text-[#D4AF37] mt-1">Tambah bayar: Rp
-                                        {{ number_format($trx->due_amount, 0, ',', '.') }}</div>
+                                        {{ number_format($trx->due_amount, 0, ',', '.') }}
+                                    </div>
                                 @endif
                                 @if ($trx->payment_action === 'downgraded' && $trx->refund_amount > 0)
                                     <div class="text-[10px] text-[#A0A0A0] mt-1">Refund disarankan: Rp
-                                        {{ number_format($trx->refund_amount, 0, ',', '.') }}</div>
+                                        {{ number_format($trx->refund_amount, 0, ',', '.') }}
+                                    </div>
                                 @endif
                             </td>
                             <td class="px-6 py-4">
@@ -215,12 +235,10 @@
                                     @if ($trx->payment_status == 'pending')
                                         <div class="h-4 w-px bg-[#333333]"></div>
                                         <button wire:click="openRejectModal({{ $trx->id }})"
-                                            class="p-2 text-red-500 hover:bg-red-900/20 rounded-lg transition"
-                                            title="Tolak">
+                                            class="p-2 text-red-500 hover:bg-red-900/20 rounded-lg transition" title="Tolak">
                                             <i class="fa-solid fa-xmark"></i>
                                         </button>
-                                        <button wire:click="approve({{ $trx->id }})"
-                                            wire:confirm="Setujui pembayaran ini?"
+                                        <button wire:click="approve({{ $trx->id }})" wire:confirm="Setujui pembayaran ini?"
                                             class="p-2 text-green-500 hover:bg-green-900/20 rounded-lg transition"
                                             title="Approve">
                                             <i class="fa-solid fa-check"></i>
@@ -245,8 +263,7 @@
 
     {{-- 1. MODAL DETAIL TRANSAKSI --}}
     @if ($showDetailModal && $detailTransaction)
-        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4"
-            x-transition>
+        <div class="fixed inset-0 z-50 flex items-center justify-center bg-black/80 backdrop-blur-sm p-4" x-transition>
             <div
                 class="bg-[#1a1a1a] rounded-3xl w-full max-w-2xl shadow-2xl overflow-hidden border border-[#333333] flex flex-col max-h-[90vh]">
 
@@ -256,7 +273,8 @@
                         <h3 class="font-serif font-bold text-xl text-[#E0E0E0]">Detail Transaksi
                             #{{ $detailTransaction->id }}</h3>
                         <p class="text-xs text-[#A0A0A0] uppercase tracking-wider">
-                            {{ $detailTransaction->created_at->format('d M Y, H:i') }}</p>
+                            {{ $detailTransaction->created_at->format('d M Y, H:i') }}
+                        </p>
                     </div>
                     <button wire:click="closeDetail"
                         class="w-8 h-8 rounded-full bg-[#1a1a1a] border border-[#333333] text-[#A0A0A0] hover:bg-[#D4AF37] hover:text-[#121212] transition flex items-center justify-center">
@@ -278,7 +296,8 @@
                                 Pembelian</label>
                             <p class="font-bold text-[#D4AF37] uppercase">{{ $detailTransaction->package_type }}</p>
                             <p class="text-sm font-mono text-[#E0E0E0]">Rp
-                                {{ number_format($detailTransaction->amount, 0, ',', '.') }}</p>
+                                {{ number_format($detailTransaction->amount, 0, ',', '.') }}
+                            </p>
                         </div>
                     </div>
 
@@ -333,8 +352,7 @@
 
     {{-- 2. MODAL LIGHTBOX BUKTI --}}
     @if ($showProofModal)
-        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-md p-4"
-            x-transition>
+        <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/90 backdrop-blur-md p-4" x-transition>
             <div class="relative max-w-4xl w-full h-full flex flex-col justify-center">
                 <button wire:click="$set('showProofModal', false)"
                     class="absolute top-4 right-4 text-white hover:text-gray-300 z-50">
@@ -348,8 +366,7 @@
     {{-- 3. MODAL REJECT (Sama seperti sebelumnya) --}}
     @if ($showRejectModal)
         <div class="fixed inset-0 z-[60] flex items-center justify-center bg-black/80 backdrop-blur-sm px-4">
-            <div
-                class="bg-[#1a1a1a] rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-[#333333] animate-fade-in-up">
+            <div class="bg-[#1a1a1a] rounded-2xl p-6 max-w-sm w-full shadow-2xl border border-[#333333] animate-fade-in-up">
                 <h3 class="font-serif font-bold text-xl text-[#E0E0E0] mb-2">Tolak Pembayaran</h3>
                 <textarea wire:model="rejectReason" rows="3"
                     class="w-full rounded-xl bg-[#252525] border-[#333333] text-[#E0E0E0] text-sm mb-2 focus:border-[#D4AF37] focus:ring-[#D4AF37]"

@@ -368,7 +368,14 @@ class Edit extends Component
         // Default Events
         $this->events = $this->invitation->event_data ?? [];
         if (empty($this->events)) {
-            $this->events[] = ['title' => 'Akad Nikah', 'date' => '', 'location' => '', 'address' => '', 'map_link' => ''];
+            $this->events[] = [
+                'title' => 'Akad Nikah',
+                'date' => '',
+                'location' => '',
+                'address' => '',
+                'map_link' => '',
+                'timezone' => 'WIB', // Default timezone
+            ];
         }
 
         // Default Theme Config
@@ -500,7 +507,14 @@ class Edit extends Component
 
     public function addEvent()
     {
-        $this->events[] = ['title' => 'Acara Baru', 'date' => '', 'location' => '', 'address' => '', 'map_link' => ''];
+        $this->events[] = [
+            'title' => '',
+            'date' => '',
+            'location' => '',
+            'address' => '',
+            'map_link' => '',
+            'timezone' => 'WIB'
+        ];
     }
 
     public function removeEvent($index)

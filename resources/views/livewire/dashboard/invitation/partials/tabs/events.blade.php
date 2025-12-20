@@ -35,8 +35,16 @@
                 <div>
                     <label class="text-xs font-bold text-[#A0A0A0] uppercase mb-1 block">Waktu
                         & Tanggal</label>
-                    <input type="datetime-local" wire:model="events.{{ $index }}.date"
-                        class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all">
+                    <div class="flex gap-2">
+                        <input type="datetime-local" wire:model="events.{{ $index }}.date"
+                            class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all">
+                        <select wire:model="events.{{ $index }}.timezone"
+                            class="w-24 rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all font-bold">
+                            <option value="WIB">WIB</option>
+                            <option value="WITA">WITA</option>
+                            <option value="WIT">WIT</option>
+                        </select>
+                    </div>
                 </div>
                 <div class="md:col-span-2">
                     <label class="text-xs font-bold text-[#A0A0A0] uppercase mb-1 block">Nama

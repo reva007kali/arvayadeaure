@@ -205,42 +205,40 @@
         @endif
 
         {{-- ADMIN AUTO SCROLL --}}
-@auth
-    @if(auth()->user()->role === 'admin')
-        <div x-data="{
-            scrolling: false,
-            rafId: null,
-            speed: 8, // px per frame (~75 px/s at 60fps)
-            toggleScroll() {
-                this.scrolling ? this.stopScroll() : this.startScroll();
-            },
-            startScroll() {
-                this.scrolling = true;
-                const step = () => {
-                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
-                        this.stopScroll();
-                    } else {
-                        window.scrollBy(0, this.speed);
+        @auth
+            @if(auth()->user()->role === 'admin')
+                <div x-data="{
+                    scrolling: false,
+                    rafId: null,
+                    speed: 8, // px per frame (~75 px/s at 60fps)
+                    toggleScroll() {
+                        this.scrolling ? this.stopScroll() : this.startScroll();
+                    },
+                    startScroll() {
+                        this.scrolling = true;
+                        const step = () => {
+                            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+                                this.stopScroll();
+                            } else {
+                                window.scrollBy(0, this.speed);
+                                this.rafId = requestAnimationFrame(step);
+                            }
+                        };
                         this.rafId = requestAnimationFrame(step);
+                    },
+                    stopScroll() {
+                        this.scrolling = false;
+                        cancelAnimationFrame(this.rafId);
                     }
-                };
-                this.rafId = requestAnimationFrame(step);
-            },
-            stopScroll() {
-                this.scrolling = false;
-                cancelAnimationFrame(this.rafId);
-            }
-        }"
-        class="fixed bottom-24 right-6 z-[995] print:hidden">
-            <button @click="toggleScroll"
-                class="w-8 h-8 bg-black text-[#FFE66D] border-[3px] border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center hover:scale-110 transition-transform rounded-full"
-                :class="scrolling ? 'animate-pulse' : ''"
-                title="Auto Scroll (Admin Only)">
-                <i class="fa-solid" :class="scrolling ? 'fa-pause' : 'fa-arrow-down'"></i>
-            </button>
-        </div>
-    @endif
-@endauth
+                }" class="fixed bottom-24 right-6 z-[995] print:hidden">
+                    <button @click="toggleScroll"
+                        class="w-8 h-8 bg-black text-[#FFE66D] border-[3px] border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center hover:scale-110 transition-transform rounded-full"
+                        :class="scrolling ? 'animate-pulse' : ''" title="Auto Scroll (Admin Only)">
+                        <i class="fa-solid" :class="scrolling ? 'fa-pause' : 'fa-arrow-down'"></i>
+                    </button>
+                </div>
+            @endif
+        @endauth
 
         {{-- 1. HERO SECTION --}}
         <section class="min-h-screen relative flex flex-col pt-10">
@@ -423,7 +421,7 @@
 
                             <div class="font-mono text-base mb-8" data-anim="fade-up" data-delay="0.2s">
                                 <p class="bg-[#FFE66D] inline-block px-2 border border-black transform -rotate-1 text-sm">
-                                    TIME: {{ $eventDate->format('H:i') }} WIB
+                                    TIME: {{ $eventDate->format('H:i') }} {{ $event['timezone'] ?? 'WIB' }}
                                 </p>
                                 <div class="mt-4">
                                     <p class="font-bold text-lg">{{ $event['location'] ?? 'TBA' }}</p>
@@ -469,7 +467,8 @@
                 <div class="bg-white border-[4px] border-black shadow-[10px_10px_0px_0px_#FF6B6B] p-6 text-center transform -rotate-1"
                     data-anim="fade-up">
                     <i class="fa-solid fa-heart text-[#FF6B6B] text-2xl mb-3"></i>
-                    <p class="font-head text-xl leading-relaxed">“Becasue I see you, I feel it. You are the one, and you are my home.”</p>
+                    <p class="font-head text-xl leading-relaxed">“Becasue I see you, I feel it. You are the one, and you
+                        are my home.”</p>
                     <div
                         class="mt-4 inline-flex items-center gap-2 bg-black text-white px-3 py-1 border-[3px] border-white font-mono text-xs">
                         LOVE QUOTE</div>

@@ -404,7 +404,7 @@
                         </div>
                         <div data-anim="fade-up" class="text-center text-[#5E4926]">
                             <p class="text-xs uppercase">Pukul</p>
-                            <p class="font-serif text-lg font-semibold">{{ $eventDate->format('H:i') }} WIB - Selesai</p>
+                            <p class="font-serif text-lg font-semibold">{{ $eventDate->format('H:i') }} {{ $event['timezone'] ?? 'WIB' }} - Selesai</p>
                         </div>
                     @endif
                 </div>
