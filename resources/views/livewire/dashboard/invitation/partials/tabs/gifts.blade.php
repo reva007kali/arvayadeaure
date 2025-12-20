@@ -3,13 +3,32 @@
         <h4 class="font-bold text-[#E0E0E0]">Rekening & Dompet Digital</h4>
         <p class="text-xs text-[#A0A0A0]">Tamu dapat memberikan kado secara cashless.</p>
     </div>
-    <button wire:click="addGift"
-        class="bg-[#D4AF37] text-[#121212] text-xs px-5 py-2.5 rounded-xl font-bold hover:bg-[#B4912F] hover:shadow-lg transition flex items-center gap-2">
-        Tambah
-    </button>
+
+    {{-- Toggle Enable/Disable --}}
+    <div class="flex items-center gap-3">
+        <span class="text-xs font-bold {{ $theme['gifts_enabled'] ? 'text-[#D4AF37]' : 'text-[#555]' }}">
+            {{ $theme['gifts_enabled'] ? 'Aktif' : 'Nonaktif' }}
+        </span>
+        <button wire:click="$toggle('theme.gifts_enabled')" 
+            class="w-12 h-6 rounded-full p-1 transition-colors duration-300 {{ $theme['gifts_enabled'] ? 'bg-[#D4AF37]' : 'bg-[#333]' }}">
+            <div class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 {{ $theme['gifts_enabled'] ? 'translate-x-6' : '' }}"></div>
+        </button>
+    </div>
 </div>
 
-<div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+@if(!$theme['gifts_enabled'])
+    <div class="bg-[#1a1a1a] border border-[#333] rounded-xl p-8 text-center opacity-50">
+        <p class="text-sm text-[#A0A0A0]">Bagian Kado/Rekening dinonaktifkan. Aktifkan toggle di atas untuk mulai mengedit.</p>
+    </div>
+@else
+    <div class="flex justify-end mb-4">
+        <button wire:click="addGift"
+            class="bg-[#D4AF37] text-[#121212] text-xs px-5 py-2.5 rounded-xl font-bold hover:bg-[#B4912F] hover:shadow-lg transition flex items-center gap-2">
+            Tambah
+        </button>
+    </div>
+
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
     <div
         class="md:col-span-2 bg-gradient-to-br from-[#1a1a1a] to-[#252525] p-6 rounded-3xl border border-[#333333] shadow-sm">
         <label class="block text-xs font-bold text-[#A0A0A0] uppercase mb-1">Alamat
@@ -80,3 +99,4 @@
         </div>
     @endforelse
 </div>
+@endif

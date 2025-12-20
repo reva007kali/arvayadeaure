@@ -21,10 +21,12 @@ class Invitation extends Model
         'event_data' => 'array', // Akan jadi array of objects
         'gallery_data' => 'array',
         'gifts_data' => 'array',
+        'dress_code_data' => 'array',
         'is_active' => 'boolean',
         'amount' => 'integer',
         'due_amount' => 'integer',
         'refund_amount' => 'integer',
+        'expires_at' => 'datetime',
     ];
 
     // // Definisi Paket (Bisa ditaruh di Config, tapi di sini biar cepat)
@@ -35,6 +37,7 @@ class Invitation extends Model
             'price' => 49000,
             'original_price' => 150000, // Harga coret
             'is_best_seller' => true,
+            'duration_months' => 3, // Aktif 3 bulan
             // Fitur visual untuk ditampilkan di Card (UI)
             'benefits' => [
                 'Pengerjaan 1 hari',
@@ -43,23 +46,20 @@ class Invitation extends Model
                 'Sebar undangan tanpa batas',
                 'Request Backsound',
                 'Google maps lokasi acara',
-                'Countdown Event', // <-- Added
-                'Fitur RSVP',
+                'Countdown Event',
                 'Angpao Digital',
                 'Unlimited Galeri',
                 'Wedding gift',
-                "Fitur kirim do'a & ucapan"
             ],
             // Fitur yang DIBATASI secara sistem (Logic Backend)
-            // Regular di gambar punya Musik & Galeri, jadi kita hapus dari limitations.
-            // Kita batasi 'love_story' karena itu ada di Custom.
-            'limitations' => ['love_story', 'custom_css']
+            'limitations' => ['love_story', 'custom_css', 'dress_code', 'rsvp', 'guest_book']
         ],
         'premium' => [
             'name' => 'Undangan Digital Custom',
             'price' => 150000,
             'original_price' => 500000, // Harga coret
             'is_best_seller' => true,
+            'duration_months' => 6, // Aktif 6 bulan
             'benefits' => [
                 'Pengerjaan 1-2 hari',
                 'Bebas custom',
@@ -69,16 +69,30 @@ class Invitation extends Model
                 'Sebar undangan tanpa batas',
                 'Request Backsound',
                 'Google maps lokasi acara',
-                'Countdown Event', // <-- Added
+                'Countdown Event',
                 'Fitur RSVP',
                 'Angpao Digital',
                 'Unlimited Galeri',
                 'Wedding gift',
-                // 'Filter Instagram', // <-- Removed
-                'Custom love story',
-                "Fitur kirim do'a & ucapan"
+                'Fitur kirim do\'a & ucapan',
+                'Dress Code Guide',
             ],
-            'limitations' => [] // Full Access
+            'limitations' => [] // Full Access (kecuali exclusive features jika ada)
+        ],
+        'exclusive' => [
+            'name' => 'Undangan Digital Exclusive',
+            'price' => 250000,
+            'original_price' => 750000,
+            'is_best_seller' => false,
+            'duration_months' => null, // Aktif Selamanya (Forever)
+            'benefits' => [
+                'Aktif Selamanya',
+                'Prioritas Pengerjaan',
+                'Semua Fitur Premium',
+                'Custom Domain (.com)',
+                'Dedicated Support',
+            ],
+            'limitations' => []
         ],
     ];
 
@@ -119,16 +133,13 @@ class Invitation extends Model
 
     public function hasFeature($feature)
     {
-        // 1. Ambil template yang dipakai
-        $template = Template::where('slug', $this->theme_template)->first();
+        // 1. Ambil package_type dari Invitation (Fallback ke Basic jika null)
+        $package = $this->package_type ?? 'basic';
 
-        // 2. Jika template tidak ditemukan (misal dihapus), fallback ke basic
-        $tier = $template ? $template->tier : 'basic';
+        // 2. Ambil limitations dari konstanta PACKAGES
+        $limitations = self::PACKAGES[$package]['limitations'] ?? [];
 
-        // 3. Cek definisi tier di Model Template
-        $limitations = Template::TIERS[$tier]['limitations'] ?? [];
-
-        // 4. Return true jika fitur TIDAK ada di limitations
+        // 3. Return true jika fitur TIDAK ada di limitations
         return !in_array($feature, $limitations);
     }
 
@@ -137,8 +148,7 @@ class Invitation extends Model
      */
     public function getCurrentTierInfo()
     {
-        $template = Template::where('slug', $this->theme_template)->first();
-        $tier = $template ? $template->tier : 'basic';
-        return Template::TIERS[$tier];
+        $package = $this->package_type ?? 'basic';
+        return self::PACKAGES[$package] ?? self::PACKAGES['basic'];
     }
 }

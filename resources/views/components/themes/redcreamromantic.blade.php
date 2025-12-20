@@ -379,6 +379,7 @@
     </section>
 
     {{-- 4. EVENT DETAILS --}}
+    @if($invitation->events_enabled ?? true)
     <section class="bg-cover bg-no-repeat bg-[url('/public/img/bg/paper2.png')]">
         <div data-anim="fade-up" class="text-center p-8 text-2xl font-semibold mb-6">
             <h1 class="uppercase underline">We Invite You to Join Our Wedding</h1>
@@ -448,6 +449,7 @@
             @endif
         </div>
     </section>
+    @endif
 
     {{-- 5. GALLERY SECTION --}}
     @if (!empty($moments))
@@ -484,7 +486,7 @@
     @endif
 
     {{-- 6. GIFT SECTION --}}
-    @if (!empty($gifts))
+    @if (!empty($gifts) && ($invitation->theme_config['gifts_enabled'] ?? true))
         <section class="p-8">
             <div data-anim-stagger="0.3">
                 <h1 data-anim="fade-up" class="text-3xl font-title text-center py-3">Wedding Gift</h1>
@@ -562,23 +564,79 @@
         </section>
     @endif
 
+    {{-- DRESS CODE --}}
+    @php
+        $dressCode = $invitation->dress_code_data ?? [];
+        $isDressCodeEnabled = $invitation->hasFeature('dress_code') && ($dressCode['enabled'] ?? false);
+    @endphp
+    @if($isDressCodeEnabled)
+        <section class="p-8 bg-cover bg-no-repeat bg-[url('/public/img/bg/paper2.png')]">
+            <div data-anim="fade-up" class="text-center mb-8">
+                 <div class="py-4 mx-auto w-fit px-6 flex justify-center items-center text-center bg-contain p-2 bg-no-repeat bg-[url('/public/img/assets/masking-tape-red.png')]">
+                    <h1 class="font-serif font-semibold mt-3 text-white/80 text-xl uppercase">{{ $dressCode['title'] ?? 'Dress Code' }}</h1>
+                </div>
+            </div>
+
+            <div class="max-w-lg mx-auto text-center" data-anim="fade-up">
+                <p class="font-serif text-lg text-[#7C6339] mb-8 leading-relaxed">{{ $dressCode['description'] ?? '' }}</p>
+
+                @if(!empty($dressCode['colors']))
+                    <div class="flex flex-wrap justify-center gap-6 mb-10">
+                        @foreach($dressCode['colors'] as $color)
+                            <div class="flex flex-col items-center gap-2">
+                                <div class="w-10 h-10 rounded-full shadow-md border-2 border-white" style="background-color: {{ $color }}"></div>
+                            </div>
+                        @endforeach
+                    </div>
+                @endif
+
+                @if(!empty($dressCode['image']))
+                    <div class="mb-10 p-3 bg-white shadow-lg rotate-1 transform hover:rotate-0 transition duration-500 rounded-sm">
+                        <img src="{{ asset($dressCode['image']) }}" class="w-full object-cover">
+                    </div>
+                @endif
+
+                 @if(!empty($dressCode['notes']))
+                    <div class="border-t border-b border-[#7C6339]/30 py-4 my-4">
+                        <p class="font-serif italic text-[#7C6339] text-sm">
+                            <span class="font-bold not-italic block mb-1">Note:</span>
+                            {{ $dressCode['notes'] }}
+                        </p>
+                    </div>
+                @endif
+            </div>
+        </section>
+    @endif
+
     {{-- 7. RSVP & GUEST BOOK --}}
+    @php
+        $hasRsvp = $invitation->hasFeature('rsvp');
+        $hasGuestbook = $invitation->hasFeature('guestbook');
+    @endphp
+    @if($hasRsvp || $hasGuestbook)
     <div class="shadow-2xl shadow-black/50 bg-[url('/public/img/bg/paper2.png')] pb-12">
-        <div class="p-4 theme-scope" data-anim="fade-up">
-            @livewire('frontend.rsvp-form', ['invitation' => $invitation, 'guest' => $guest])
-        </div>
+        @if($hasRsvp)
+            <div class="p-4 theme-scope" data-anim="fade-up">
+                @livewire('frontend.rsvp-form', ['invitation' => $invitation, 'guest' => $guest])
+            </div>
+        @endif
 
-        <div class="flex items-center gap-4 my-8 justify-center opacity-50">
-            <div class="h-px theme-bg w-16"></div>
-            <i class="fa-solid fa-heart theme-text"></i>
-            <div class="h-px theme-bg w-16"></div>
-        </div>
+        @if($hasRsvp && $hasGuestbook)
+            <div class="flex items-center gap-4 my-8 justify-center opacity-50">
+                <div class="h-px theme-bg w-16"></div>
+                <i class="fa-solid fa-heart theme-text"></i>
+                <div class="h-px theme-bg w-16"></div>
+            </div>
+        @endif
 
-        <div class="p-4 bg-white/80 mx-4 rounded-xl"
-            data-anim="fade-up">
-            @livewire('frontend.guest-book', ['invitation' => $invitation, 'guest' => $guest])
-        </div>
+        @if($hasGuestbook)
+            <div class="p-4 bg-white/80 mx-4 rounded-xl"
+                data-anim="fade-up">
+                @livewire('frontend.guest-book', ['invitation' => $invitation, 'guest' => $guest])
+            </div>
+        @endif
     </div>
+    @endif
 
     {{-- 8. CLOSING / THANK YOU --}}
     <div class="bg-[#FDFBF7] py-16 px-6 font-sans text-[#333]">

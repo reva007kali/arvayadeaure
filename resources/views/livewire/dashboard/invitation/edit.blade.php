@@ -108,6 +108,7 @@
                                 ['id' => 'gifts', 'icon' => 'fa-gift', 'label' => 'Kado'],
                                 ['id' => 'theme', 'icon' => 'fa-palette', 'label' => 'Tema'],
                                 ['id' => 'music', 'icon' => 'fa-music', 'label' => 'Musik'],
+                                ['id' => 'dress_code', 'icon' => 'fa-shirt', 'label' => 'Dress Code'],
                             ];
                         @endphp
 
@@ -231,6 +232,11 @@
                         {{-- TAB: GIFTS --}}
                         @if ($activeTab === 'gifts')
                             @include('livewire.dashboard.invitation.partials.tabs.gifts')
+                        @endif
+
+                        {{-- TAB: DRESS CODE --}}
+                        @if ($activeTab === 'dress_code')
+                            @include('livewire.dashboard.invitation.partials.tabs.dress-code')
                         @endif
 
                     </div>

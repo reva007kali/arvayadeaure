@@ -5,8 +5,29 @@
         }
     </style>
     {{-- Main Photos --}}
-    <div>
-        <h4 class="font-bold text-[#E0E0E0] mb-4">Foto Utama</h4>
+    <div class="flex justify-between items-center mb-6">
+        <div>
+            <h4 class="font-bold text-[#E0E0E0] mb-1">Foto Utama</h4>
+            <p class="text-xs text-[#A0A0A0]">Atur foto sampul dan foto mempelai.</p>
+        </div>
+        
+        {{-- Toggle Enable/Disable --}}
+        <div class="flex items-center gap-3">
+            <span class="text-xs font-bold {{ $gallery['enabled'] ? 'text-[#D4AF37]' : 'text-[#555]' }}">
+                {{ $gallery['enabled'] ? 'Aktif' : 'Nonaktif' }}
+            </span>
+            <button wire:click="$toggle('gallery.enabled')" 
+                class="w-12 h-6 rounded-full p-1 transition-colors duration-300 {{ $gallery['enabled'] ? 'bg-[#D4AF37]' : 'bg-[#333]' }}">
+                <div class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 {{ $gallery['enabled'] ? 'translate-x-6' : '' }}"></div>
+            </button>
+        </div>
+    </div>
+
+    @if(!$gallery['enabled'])
+        <div class="bg-[#1a1a1a] border border-[#333] rounded-xl p-8 text-center opacity-50">
+            <p class="text-sm text-[#A0A0A0]">Galeri Foto dinonaktifkan. Aktifkan toggle di atas untuk mulai mengedit.</p>
+        </div>
+    @else
         <div class="grid grid-cols-2 md:grid-cols-3 gap-6">
             @foreach (['cover' => 'Sampul Undangan', 'groom' => 'Foto Pria', 'bride' => 'Foto Wanita'] as $key => $label)
                 <div x-data="{ isUploading: false, progress: 0 }" x-on:livewire-upload-start="isUploading = true"
@@ -76,7 +97,7 @@
                 </div>
             @endforeach
         </div>
-    </div>
+    @endif
 
     <hr class="border-[#333333] border-dashed">
 
