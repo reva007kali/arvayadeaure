@@ -15,12 +15,8 @@
     "file": "assets/paper2-DlTX6eXu.png",
     "src": "public/img/bg/paper2.png"
   },
-  "public/img/login.png": {
-    "file": "assets/login-CPCJmlIj.png",
-    "src": "public/img/login.png"
-  },
   "resources/css/app.css": {
-    "file": "assets/app-BoN7t6mu.css",
+    "file": "assets/app-CxbRGreD.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [
