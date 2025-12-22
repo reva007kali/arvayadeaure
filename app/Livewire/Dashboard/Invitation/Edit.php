@@ -5,6 +5,8 @@ namespace App\Livewire\Dashboard\Invitation;
 // 1. IMPORTS
 // Kita memanggil class-class yang dibutuhkan oleh component ini
 use Livewire\Component;
+use Illuminate\Support\Facades\Auth;
+
 use Livewire\WithFileUploads;
 use Livewire\Attributes\Layout;
 use Illuminate\Support\Facades\Storage;
@@ -48,7 +50,19 @@ class Edit extends Component
         'groom' => null,
         'bride' => null,
         'moments' => [],
+        'enabled' => true,
     ];
+
+    // --- PROPERTI DRESS CODE ---
+    public $dressCode = [
+        'enabled' => true,
+        'description' => '',
+        'colors' => [],
+        'palette_image' => null,
+        'note' => ''
+    ];
+    public $newPaletteImage; // Temp upload
+
 
     // Penampung file sementara (sebelum di-save)
     public $newCover;
@@ -184,6 +198,9 @@ class Edit extends Component
             'events.*.date' => 'required',
             'gifts.*.bank_name' => 'required_with:gifts.*.account_number',
             'gifts.*.account_number' => 'numeric|nullable',
+            'dressCode.description' => 'nullable|string|max:500',
+            'dressCode.note' => 'nullable|string|max:255',
+            'newPaletteImage' => 'nullable|image|max:5120', // Max 5MB
         ];
 
         if ($this->category === 'Wedding' || $this->category === 'Engagement') {
@@ -373,7 +390,12 @@ class Edit extends Component
 
         // Default Theme Config
         $this->theme = array_replace_recursive(
-            ['primary_color' => '#B89760', 'music_url' => ''],
+            [
+                'primary_color' => '#B89760',
+                'music_url' => '',
+                'events_enabled' => true,
+                'gifts_enabled' => true,
+            ],
             $this->invitation->theme_config ?? []
         );
 
@@ -381,7 +403,7 @@ class Edit extends Component
         $this->gifts = $this->invitation->gifts_data ?? [];
 
         // Default Gallery
-        $defaultGallery = ['cover' => null, 'groom' => null, 'bride' => null, 'moments' => []];
+        $defaultGallery = ['cover' => null, 'groom' => null, 'bride' => null, 'moments' => [], 'enabled' => true];
         $dbGallery = $this->invitation->gallery_data ?? [];
 
         // Migrasi Data Lama (Jika gallery masih array biasa [0,1,2])
@@ -390,6 +412,16 @@ class Edit extends Component
         } else {
             $this->gallery = array_replace_recursive($defaultGallery, $dbGallery);
         }
+
+        // Default Dress Code
+        $defaultDressCode = [
+            'enabled' => true,
+            'description' => '',
+            'colors' => ['#000000', '#FFFFFF'], // Default colors
+            'palette_image' => null,
+            'note' => ''
+        ];
+        $this->dressCode = array_replace_recursive($defaultDressCode, $this->invitation->dress_code_data ?? []);
     }
 
     // --- FITUR: AI WRITER ---
@@ -494,6 +526,18 @@ class Edit extends Component
             // Fallback jika error (misal GD library tidak support WebP)
             return 'storage/' . $file->store($folder, 'public');
         }
+    }
+
+    // --- ACTIONS DRESS CODE ---
+    public function addDressCodeColor()
+    {
+        $this->dressCode['colors'][] = '#000000';
+    }
+
+    public function removeDressCodeColor($index)
+    {
+        unset($this->dressCode['colors'][$index]);
+        $this->dressCode['colors'] = array_values($this->dressCode['colors']);
     }
 
     // --- CRUD ACTIONS (Event, Gift, Gallery) ---
@@ -676,37 +720,56 @@ class Edit extends Component
             }
         }
 
+        // Proses Upload Dress Code Palette
+        if ($this->newPaletteImage) {
+            $this->dressCode['palette_image'] = $this->processImage($this->newPaletteImage);
+        }
+
         // 2. TENTUKAN PAKET & HARGA (CORE LOGIC)
         // Cari template yang dipilih di database
         $selectedTemplate = Template::where('slug', $this->theme_template)->first();
 
         // Fallback jika template tidak ditemukan (sangat jarang terjadi)
         $packageType = $selectedTemplate ? $selectedTemplate->tier : 'basic';
-        $amount = $selectedTemplate ? $selectedTemplate->price : 0;
 
-        // 2.a HANDLE UPGRADE/DOWNGRADE
-        $paymentAction = null;
-        $dueAmount = 0;
-        $refundAmount = 0;
+        if (Auth::user()->isAdmin()) {
+            // ADMIN: Selalu Gratis & Paid
+            $amount = 0;
+            $paymentAction = null;
+            $dueAmount = 0;
+            $refundAmount = 0;
 
-        $previousAmount = (int) ($this->invitation->amount ?? 0);
-        $previousStatus = $this->invitation->payment_status ?? 'unpaid';
+            // Pastikan status selalu paid dan aktif
+            $this->invitation->payment_status = 'paid';
+            $this->invitation->is_active = true;
+        } else {
+            // USER BIASA: Hitung Harga
+            $amount = $selectedTemplate ? $selectedTemplate->price : 0;
 
-        // Jika sebelumnya sudah paid dan memilih template lebih mahal -> unpaid lagi, bayar selisih
-        if ($previousStatus === 'paid' && $amount > $previousAmount) {
-            $paymentAction = 'upgraded';
-            $dueAmount = $amount - $previousAmount;
-            // Set unpaid agar user diarahkan ke pembayaran
-            $this->invitation->payment_status = 'unpaid';
-            $this->invitation->is_active = false;
-            // Amount merepresentasikan selisih yang harus dibayar
-            $amount = $dueAmount;
-        }
-        // Jika sebelumnya paid dan template lebih murah -> tandai downgraded dan hitung refund
-        if ($previousStatus === 'paid' && $amount < $previousAmount) {
-            $paymentAction = 'downgraded';
-            $refundAmount = $previousAmount - $amount;
-            // Tetap paid (admin bisa proses refund manual), undangan tetap aktif
+            // 2.a HANDLE UPGRADE/DOWNGRADE
+            $paymentAction = null;
+            $dueAmount = 0;
+            $refundAmount = 0;
+
+            $previousAmount = (int) ($this->invitation->amount ?? 0);
+            $previousStatus = $this->invitation->payment_status ?? 'unpaid';
+
+            // Jika sebelumnya sudah paid dan memilih template lebih mahal -> unpaid lagi, bayar selisih
+            if ($previousStatus === 'paid' && $amount > $previousAmount) {
+                $paymentAction = 'upgraded';
+                $dueAmount = $amount - $previousAmount;
+                // Set unpaid agar user diarahkan ke pembayaran
+                $this->invitation->payment_status = 'unpaid';
+                $this->invitation->is_active = false;
+                // Amount merepresentasikan selisih yang harus dibayar
+                $amount = $dueAmount;
+            }
+            // Jika sebelumnya paid dan template lebih murah -> tandai downgraded dan hitung refund
+            if ($previousStatus === 'paid' && $amount < $previousAmount) {
+                $paymentAction = 'downgraded';
+                $refundAmount = $previousAmount - $amount;
+                // Tetap paid (admin bisa proses refund manual), undangan tetap aktif
+            }
         }
 
         // 3. UPDATE DATABASE
@@ -728,13 +791,30 @@ class Edit extends Component
             'theme_config' => $this->theme,
             'gallery_data' => $this->gallery,
             'gifts_data' => $this->gifts,
+            'dress_code_data' => $this->dressCode,
         ]);
 
         // 4. BERSIHKAN
-        $this->reset(['newCover', 'newGroom', 'newBride', 'newMoments']);
+        $this->reset(['newCover', 'newGroom', 'newBride', 'newMoments', 'newPaletteImage']);
 
-        session()->flash('message', 'Perubahan disimpan! Paket & Harga disesuaikan dengan template.');
+        session()->flash('message', 'Perubahan disimpan!');
         $this->modalOpen = false;
+    }
+
+    public $deleteConfirmation = '';
+
+    public function deleteInvitation()
+    {
+        if ($this->deleteConfirmation !== 'delete') {
+            $this->addError('deleteConfirmation', 'Konfirmasi salah. Ketik "delete" untuk menghapus.');
+            return;
+        }
+
+        if ($this->invitation) {
+            $this->invitation->delete();
+            session()->flash('message', 'Undangan berhasil dihapus.');
+            return redirect()->route('dashboard.index');
+        }
     }
 
     public function render()

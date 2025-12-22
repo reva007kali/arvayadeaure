@@ -84,6 +84,10 @@
             Undangan
         </a>
     </div>
+    {{-- HEADER SECTION --}}
+
+
+    {{-- SEARCH BAR --}}
     <div class="mb-6">
         <div class="relative w-full md:w-80">
             <input type="text" wire:model.live.debounce.300ms="search"
@@ -94,6 +98,7 @@
             </div>
         </div>
     </div>
+    {{-- SEARCH BAR --}}
 
     <div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-8">
         @forelse($invitations as $invitation)
@@ -109,6 +114,17 @@
                 class="block rounded-2xl border-2 border-[#333333] bg-[#1a1a1a] overflow-hidden shadow-xl hover:shadow-2xl transition">
                 <div class="h-40 relative bg-cover bg-center" style="background-image: url('{{ $coverImage }}')">
                     <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
+                    <div class="flex justify-between items-end gap-1 shrink-0">
+                        <div
+                            class="px-2 py-1 bg-arvaya-500 rounded-br-2xl text-[10px] text-white uppercase tracking-wider">
+                            {{ $invitation->template->name ?? $invitation->theme_template }}
+                        </div>
+                        <div
+                            class="px-2 py-1 rounded-full text-[10px] font-bold
+                                    {{ $invitation->payment_status === 'paid' ? 'bg-green-90text-green-500 border border-green-900/30' : ($invitation->payment_st === 'pending' ? 'bg-yellow-900/20 text-yellow-500 border border-yellow30' : ($invitation->payment_status === 'rejected' ? 'bg-red-90text-red-500 border border-red-900/30' : 'bg-[#252525] text-[#E0Eborder border-[#333333]')) }}">
+                            {{ ucfirst($invitation->payment_status) }}
+                        </div>
+                    </div>
                 </div>
                 <div class="p-4 flex items-center justify-between">
                     <div class="min-w-0">
@@ -117,15 +133,6 @@
                             <i class="fa-regular fa-calendar"></i>
                             <span>{{ $eventDate ? $eventDate->translatedFormat('l, d F Y') : 'Tanggal belum ditentukan' }}</span>
                         </p>
-                    </div>
-                    <div class="flex flex-col items-end gap-1 shrink-0">
-                        <span
-                            class="px-2 py-1 rounded-full border border-[#333333] text-[10px] text-[#A0A0A0] uppercase tracking-wider">{{ $invitation->theme_template }}</span>
-                        <span
-                            class="px-2 py-1 rounded-full text-[10px] font-bold
-                                        {{ $invitation->payment_status === 'paid' ? 'bg-green-900/20 text-green-500 border border-green-900/30' : ($invitation->payment_status === 'pending' ? 'bg-yellow-900/20 text-yellow-500 border border-yellow-900/30' : ($invitation->payment_status === 'rejected' ? 'bg-red-900/20 text-red-500 border border-red-900/30' : 'bg-[#252525] text-[#E0E0E0] border border-[#333333]')) }}">
-                            {{ ucfirst($invitation->payment_status) }}
-                        </span>
                     </div>
                 </div>
             </a>

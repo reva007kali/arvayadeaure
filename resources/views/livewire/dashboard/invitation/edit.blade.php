@@ -52,34 +52,50 @@
                     class="px-4 py-2 text-center bg-[#1a1a1a] border border-[#333333] text-[#E0E0E0] rounded-xl hover:border-[#D4AF37] hover:text-[#D4AF37] transition-all duration-300 font-bold text-[10px] uppercase tracking-wide flex items-center gap-2 shadow-sm">
                     <i class="fa-solid fa-user-group"></i> Kelola Tamu
                 </a>
-                <div class="">
-                    @php
-                        $musicUrl = $invitation->theme_config['music_url'] ?? '';
-                        $isYoutube = $musicUrl && \Illuminate\Support\Str::contains($musicUrl, ['youtube.com', 'youtu.be']);
-                    @endphp
-                    @if($musicUrl)
-                        @if($isYoutube)
-                            <div x-data="youtubePlayer('{{ $musicUrl }}', false)" x-init="initPlayer()"
-                                class="">
-                                <button type="button"
-                                    class="px-4 py-2 bg-[#D4AF37] text-[#121212] rounded-full text-xs font-bold hover:bg-[#B4912F] transition shadow-lg"
-                                    @click="togglePlay">
-                                    <i class="fa-solid" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i></button>
-                                <div class="hidden">
-                                    <div id="yt-player-container"></div>
-                                </div>
-                            </div>
-                        @else
-                            <div class="">
-                                <button type="button"
-                                    class="px-4 py-2 bg-[#D4AF37] text-[#121212] rounded-full text-xs font-bold hover:bg-[#B4912F] transition shadow-lg"
-                                    onclick="const a=document.getElementById('inv-audio'); a.paused ? a.play() : a.pause();">
-                                    <i class="fa-solid fa-play"></i>
+                <div x-data="{ showDeleteModal: false }">
+                    <button @click="$wire.set('deleteConfirmation', ''); showDeleteModal = true"
+                        class="px-4 py-2 bg-[#1a1a1a] border border-[#333333] text-[#ff4d4d] rounded-xl hover:border-[#ff4d4d] hover:bg-[#ff4d4d] hover:text-white transition-all duration-300 font-bold text-[10px] uppercase tracking-wide flex items-center gap-2 shadow-sm">
+                        <i class="fa-solid fa-trash"></i> Hapus
+                    </button>
+
+                    {{-- Custom Delete Modal --}}
+                    <div x-show="showDeleteModal" style="display: none;"
+                        x-transition:enter="transition ease-out duration-300" x-transition:enter-start="opacity-0"
+                        x-transition:enter-end="opacity-100" x-transition:leave="transition ease-in duration-200"
+                        x-transition:leave-start="opacity-100" x-transition:leave-end="opacity-0"
+                        class="fixed inset-0 z-[9999] flex items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+
+                        <div @click.away="showDeleteModal = false"
+                            class="bg-[#1a1a1a] rounded-2xl border border-[#333333] w-full max-w-md p-6 shadow-2xl animate-fade-in-up">
+
+                            <h2 class="text-xl font-bold text-[#D4AF37] font-serif mb-2">Hapus Undangan?</h2>
+                            <p class="text-[#A0A0A0] text-sm mb-4">
+                                Tindakan ini tidak dapat dibatalkan. Semua data undangan akan dihapus secara permanen.
+                            </p>
+                            <p class="text-[#E0E0E0] text-sm mb-2">
+                                Ketik <span class="text-red-500 font-bold">delete</span> untuk konfirmasi.
+                            </p>
+
+                            <input type="text" wire:model="deleteConfirmation"
+                                class="w-full bg-[#0d0d0d] border border-[#333333] rounded-xl px-4 py-2 text-[#E0E0E0] focus:border-[#D4AF37] focus:ring-1 focus:ring-[#D4AF37] mb-2 outline-none"
+                                placeholder="Type delete">
+
+                            @error('deleteConfirmation')
+                                <p class="text-red-500 text-xs mb-4">{{ $message }}</p>
+                            @enderror
+
+                            <div class="flex justify-end gap-3 mt-4">
+                                <button @click="showDeleteModal = false"
+                                    class="px-4 py-2 rounded-xl border border-[#333333] text-[#A0A0A0] hover:text-[#E0E0E0] hover:bg-[#252525] transition text-xs font-bold uppercase">
+                                    Batal
                                 </button>
-                                <audio id="inv-audio" src="{{ $musicUrl }}" preload="none"></audio>
+                                <button wire:click="deleteInvitation"
+                                    class="px-4 py-2 rounded-xl bg-red-900/20 border border-red-900/50 text-red-500 hover:bg-red-900/40 transition text-xs font-bold uppercase">
+                                    Hapus
+                                </button>
                             </div>
-                        @endif
-                    @endif
+                        </div>
+                    </div>
                 </div>
             </div>
 
@@ -101,7 +117,9 @@
             </div>
             <div class="bg-[#1a1a1a] p-4 rounded-xl border border-[#333333] text-center">
                 <p class="text-[9px] text-[#A0A0A0] uppercase">Template</p>
-                <p class="text-xs font-bold text-[#E0E0E0] uppercase">{{ $invitation->theme_template }}</p>
+                <p class="text-xs font-bold text-[#E0E0E0] uppercase">
+                    {{ $invitation->template->name ?? $invitation->theme_template }}
+                </p>
             </div>
         </div>
 
@@ -167,7 +185,7 @@
                         @foreach ($menus as $menu)
                                             <button wire:click="openModal('{{ $menu['id'] }}')"
                                                 class="flex flex-col items-center justify-center gap-3 p-4 rounded-2xl transition-all duration-300 border border-[#1a1a1a]
-                                                                                                                                                                                                                {{ $activeTab === $menu['id']
+                                                                                                                                                                                                                                                                            {{ $activeTab === $menu['id']
                             ? 'bg-[#1a1a1a] text-arvaya-400 shadow-[inset_5px_5px_10px_#0d0d0d,inset_-5px_-5px_10px_#272727]'
                             : 'bg-[#1a1a1a] text-arvaya-400 shadow-[5px_5px_10px_#0d0d0d,-5px_-5px_10px_#272727] hover:text-[#D4AF37] hover:shadow-[inset_5px_5px_10px_#0d0d0d,inset_-5px_-5px_10px_#272727] hover:translate-y-0.5' }}">
                                                 <div class="text-xl transition-all duration-300 transform group-hover:scale-110">

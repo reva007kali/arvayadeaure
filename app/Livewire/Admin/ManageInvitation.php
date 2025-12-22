@@ -25,8 +25,13 @@ class ManageInvitation extends Component
     public function render()
     {
         $invitations = Invitation::with('user') // Eager load user
-            ->where('title', 'like', '%' . $this->search . '%')
-            ->orWhere('slug', 'like', '%' . $this->search . '%')
+            ->whereHas('user', function ($q) {
+                $q->where('role', '!=', 'admin');
+            })
+            ->where(function ($query) {
+                $query->where('title', 'like', '%' . $this->search . '%')
+                    ->orWhere('slug', 'like', '%' . $this->search . '%');
+            })
             ->latest()
             ->paginate(10);
 
