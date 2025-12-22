@@ -1,0 +1,47 @@
+{
+  "name": "Arvaya De Aure",
+  "short_name": "Arvaya",
+  "start_url": "/?source=pwa",
+  "scope": "/",
+  "display": "standalone",
+  "theme_color": "#1a1a1a",
+  "background_color": "#121212",
+  "orientation": "any",
+  "icons": [
+    {
+      "src": "/logo.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "/logo.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Dashboard",
+      "url": "/dashboard",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Undangan Saya",
+      "url": "/dashboard/invitations",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192", "type": "image/png" }]
+    },
+    {
+      "name": "Pesan & Ucapan",
+      "url": "/dashboard/messages",
+      "icons": [{ "src": "/logo.png", "sizes": "192x192", "type": "image/png" }]
+    }
+  ]
+}

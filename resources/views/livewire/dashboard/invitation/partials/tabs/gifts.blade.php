@@ -75,14 +75,15 @@
                         Rekening</label>
                     <input type="number" wire:model="gifts.{{ $index }}.account_number"
                         class="w-full rounded-xl bg-[#121212] border-[#333333] text-sm py-2 font-mono text-[#E0E0E0] focus:border-[#D4AF37] focus:ring-[#D4AF37]"
-                        placeholder="0000...">
+                        placeholder="0000 0000 0000" aria-label="Nomor rekening atau akun e-wallet">
                 </div>
                 <div>
                     <label class="text-[10px] font-bold text-[#A0A0A0] uppercase mb-1 block">Atas
                         Nama</label>
                     <input type="text" wire:model="gifts.{{ $index }}.account_name"
                         class="w-full rounded-xl bg-[#121212] border-[#333333] text-sm py-2 text-[#E0E0E0] focus:border-[#D4AF37] focus:ring-[#D4AF37]"
-                        placeholder="Nama Pemilik">
+                        placeholder="Nama Pemilik" aria-describedby="gift-help-{{ $index }}">
+                    <p id="gift-help-{{ $index }}" class="text-[10px] text-[#666] mt-1">Pastikan sesuai dengan nama pada rekening/akun.</p>
                 </div>
             </div>
         </div>

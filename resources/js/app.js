@@ -99,6 +99,32 @@ document.addEventListener("DOMContentLoaded", () => {
         once: true,
         offset: "0px 0px -50px 0px",
     });
+
+    // PWA install prompt handling
+    let deferredPrompt = null;
+    const btn = document.getElementById("pwa-install-btn");
+
+    window.addEventListener("beforeinstallprompt", (e) => {
+        e.preventDefault();
+        deferredPrompt = e;
+        if (btn) btn.style.display = "inline-flex";
+    });
+
+    if (btn) {
+        btn.addEventListener("click", async () => {
+            if (!deferredPrompt) return;
+            deferredPrompt.prompt();
+            const { outcome } = await deferredPrompt.userChoice;
+            deferredPrompt = null;
+            btn.style.display = "none";
+            console.log("PWA install", outcome);
+        });
+    }
+
+    window.addEventListener("appinstalled", () => {
+        if (btn) btn.style.display = "none";
+        console.log("PWA installed");
+    });
 });
 
 document.addEventListener("alpine:init", () => {

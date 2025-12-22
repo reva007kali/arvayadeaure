@@ -76,7 +76,7 @@
                     @enderror
 
                     {{-- File Input --}}
-                    <input type="file" wire:model="{{ $newVar }}" class="absolute inset-0 opacity-0 cursor-pointer z-10">
+                    <input type="file" wire:model="{{ $newVar }}" accept="image/*" class="absolute inset-0 opacity-0 cursor-pointer z-10" aria-label="Unggah gambar {{ $label }}">
 
                     {{-- Progress Bar Overlay --}}
                     <div x-show="isUploading"

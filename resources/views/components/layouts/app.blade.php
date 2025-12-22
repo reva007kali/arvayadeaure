@@ -295,6 +295,10 @@
                         <rect x="13" y="13" width="10" height="10" rx="3" fill="white" />
                     </svg>
                 </button>
+                <button id="pwa-install-btn" style="display:none"
+                    class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#D4AF37] text-[#121212] hover:bg-[#B4912F] transition">
+                    <i class="fa-solid fa-download"></i> Install App
+                </button>
             </div>
         </header>
 

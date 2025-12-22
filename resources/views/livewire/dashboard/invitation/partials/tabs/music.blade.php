@@ -12,10 +12,11 @@
             class="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none text-red-500">
             <i class="fa-solid fa-play"></i>
         </span>
-        <input type="text" wire:model="theme.music_url"
+        <input type="text" wire:model="theme.music_url" aria-label="Link YouTube untuk musik latar"
             placeholder="https://www.youtube.com/watch?v=..."
             class="w-full pl-10 py-3 rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0]">
     </div>
+    <p class="text-[10px] text-[#666] mt-2">Tempelkan tautan video YouTube. Musik diputar otomatis di undangan.</p>
 
     @if (!empty($theme['music_url']))
         <div

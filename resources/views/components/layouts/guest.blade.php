@@ -39,6 +39,12 @@
             })
         }
     </script>
+    <div class="fixed bottom-4 right-4 z-50">
+        <button id="pwa-install-btn" style="display:none"
+            class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#D4AF37] text-[#121212] hover:bg-[#B4912F] transition shadow">
+            <i class="fa-solid fa-download"></i> Install App
+        </button>
+    </div>
 </body>
 
 </html>

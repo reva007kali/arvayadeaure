@@ -76,6 +76,10 @@
                         Buat Undangan
                     </a>
                 @endauth
+                <button id="pwa-install-btn" style="display:none"
+                    class="px-3 py-2 rounded-lg text-xs font-bold text-arvaya-bg bg-arvaya-400 hover:bg-arvaya-300 transition">
+                    <i class="fa-solid fa-download"></i> Install App
+                </button>
             </div>
         </div>
     </nav>
@@ -132,7 +136,7 @@
 <script>
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
-            navigator.serviceWorker.login('/service-worker.js')
+            navigator.serviceWorker.register('/service-worker.js')
                 .catch(function (e) { console.warn('SW registration failed', e) })
         })
     }

@@ -7,12 +7,12 @@
         
         {{-- Toggle Enable/Disable --}}
         <div class="flex items-center gap-3">
-            <span class="text-xs font-bold {{ $dressCode['enabled'] ? 'text-[#D4AF37]' : 'text-[#555]' }}">
-                {{ $dressCode['enabled'] ? 'Aktif' : 'Nonaktif' }}
+            <span class="text-xs font-bold {{ ($dressCode['enabled'] ?? true) ? 'text-[#D4AF37]' : 'text-[#555]' }}">
+                {{ ($dressCode['enabled'] ?? true) ? 'Aktif' : 'Nonaktif' }}
             </span>
             <button wire:click="$toggle('dressCode.enabled')" 
-                class="w-12 h-6 rounded-full p-1 transition-colors duration-300 {{ $dressCode['enabled'] ? 'bg-[#D4AF37]' : 'bg-[#333]' }}">
-                <div class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 {{ $dressCode['enabled'] ? 'translate-x-6' : '' }}"></div>
+                class="w-12 h-6 rounded-full p-1 transition-colors duration-300 {{ ($dressCode['enabled'] ?? true) ? 'bg-[#D4AF37]' : 'bg-[#333]' }}">
+                <div class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 {{ ($dressCode['enabled'] ?? true) ? 'translate-x-6' : '' }}"></div>
             </button>
         </div>
     </div>
@@ -29,7 +29,7 @@
                 Lihat Paket Upgrade
             </button>
         </div>
-    @elseif(!$dressCode['enabled'])
+    @elseif(!($dressCode['enabled'] ?? true))
         <div class="bg-[#1a1a1a] border border-[#333] rounded-xl p-8 text-center opacity-50">
             <p class="text-sm text-[#A0A0A0]">Fitur Dress Code dinonaktifkan. Aktifkan toggle di atas untuk mulai mengedit.</p>
         </div>
@@ -66,7 +66,7 @@
                             <i class="fa-solid fa-plus"></i>
                         </button>
                     </div>
-                    <p class="text-[10px] text-[#666]">Klik kotak warna untuk mengubah.</p>
+                    <p class="text-[10px] text-[#666]">Klik kotak warna untuk mengubah. Gunakan 2–5 warna.</p>
                 </div>
             </div>
 

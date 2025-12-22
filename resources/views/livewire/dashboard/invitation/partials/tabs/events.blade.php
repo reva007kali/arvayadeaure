@@ -6,17 +6,19 @@
 
     {{-- Toggle Enable/Disable --}}
     <div class="flex items-center gap-3">
-        <span class="text-xs font-bold {{ $theme['events_enabled'] ? 'text-[#D4AF37]' : 'text-[#555]' }}">
-            {{ $theme['events_enabled'] ? 'Aktif' : 'Nonaktif' }}
+        <span class="text-xs font-bold {{ ($theme['events_enabled'] ?? true) ? 'text-[#D4AF37]' : 'text-[#555]' }}">
+            {{ ($theme['events_enabled'] ?? true) ? 'Aktif' : 'Nonaktif' }}
         </span>
         <button wire:click="$toggle('theme.events_enabled')"
-            class="w-12 h-6 rounded-full p-1 transition-colors duration-300 {{ $theme['events_enabled'] ? 'bg-[#D4AF37]' : 'bg-[#333]' }}">
-            <div class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 {{ $theme['events_enabled'] ? 'translate-x-6' : '' }}"></div>
+            class="w-12 h-6 rounded-full p-1 transition-colors duration-300 {{ ($theme['events_enabled'] ?? true) ? 'bg-[#D4AF37]' : 'bg-[#333]' }}">
+            <div
+                class="w-4 h-4 bg-white rounded-full shadow-md transform transition-transform duration-300 {{ ($theme['events_enabled'] ?? true) ? 'translate-x-6' : '' }}">
+            </div>
         </button>
     </div>
 </div>
 
-@if(!$theme['events_enabled'])
+@if(!($theme['events_enabled'] ?? true))
     <div class="bg-[#1a1a1a] border border-[#333] rounded-xl p-8 text-center opacity-50">
         <p class="text-sm text-[#A0A0A0]">Bagian Acara dinonaktifkan. Aktifkan toggle di atas untuk mulai mengedit.</p>
     </div>
@@ -28,7 +30,7 @@
         </button>
     </div>
 
-    <div class="space-y-6">
+    <div class="space-y-6 max-w-sm">
         @foreach ($events as $index => $event)
             {{-- Existing Event Card Content --}}
             <div
@@ -39,30 +41,30 @@
                         <i class="fa-solid fa-trash-can"></i>
                     </button>
                 </div>
-    
+
                 <div class="flex items-center gap-3 mb-4">
                     <span
                         class="bg-[#2d2d2d] text-[#D4AF37] w-8 h-8 rounded-lg flex items-center justify-center font-bold text-sm">{{ $loop->iteration }}</span>
-                    <span
-                        class="font-bold text-[#E0E0E0] text-lg">{{ $event['title'] ?: 'Acara Baru' }}</span>
+                    <span class="font-bold text-[#E0E0E0] text-lg">{{ $event['title'] ?: 'Acara Baru' }}</span>
                 </div>
-    
-                <div class="grid md:grid-cols-2 gap-5">
-                    <div>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-5">
+                    <div class="md:col-span-2">
                         <label class="text-xs font-bold text-[#A0A0A0] uppercase mb-1 block">Nama
                             Acara</label>
-                        <input type="text" wire:model="events.{{ $index }}.title"
-                            placeholder="Contoh: Akad Nikah"
+                        <input type="text" wire:model="events.{{ $index }}.title" placeholder="Contoh: Akad Nikah"
                             class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all">
                     </div>
-                    <div>
+                    <div class="md:col-span-2">
                         <label class="text-xs font-bold text-[#A0A0A0] uppercase mb-1 block">Waktu
                             & Tanggal</label>
-                        <div class="flex gap-2">
+                        <div class="grid grid-cols-3 gap-2">
                             <input type="datetime-local" wire:model="events.{{ $index }}.date"
-                                class="w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all">
+                                class="col-span-2 w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all"
+                                aria-label="Tanggal dan waktu acara">
                             <select wire:model="events.{{ $index }}.timezone"
-                                class="w-24 rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all font-bold">
+                                class="w-full col-span-1 rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all font-bold"
+                                aria-label="Zona waktu">
                                 <option value="WIB">WIB</option>
                                 <option value="WITA">WITA</option>
                                 <option value="WIT">WIT</option>
@@ -88,8 +90,11 @@
                             class="relative flex items-center gap-x-2 bg-[#252525] rounded border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] transition-all">
                             <span class="text-[#D4AF37]"><i class="fa-solid fa-map-location-dot"></i></span>
                             <input type="text" wire:model="events.{{ $index }}.map_link"
-                                class="w-fullrounded-xl border-none bg-transparent text-[#E0E0E0]">
+                                class="w-full rounded-xl border-none bg-transparent text-[#E0E0E0]"
+                                placeholder="Tempel tautan Google Maps"
+                                aria-describedby="map-help-{{ $index }}">
                         </div>
+                        <p id="map-help-{{ $index }}" class="text-[10px] text-[#666] mt-1">Klik kanan lokasi di Google Maps → Salin tautan.</p>
                     </div>
                 </div>
             </div>
