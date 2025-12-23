@@ -13,11 +13,11 @@
     </div>
 
     {{-- GRID TEMPLATES --}}
-    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 xl:grid-cols-6 gap-4">
+    <div class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-4 gap-4">
         @foreach ($templates as $item)
             <div class="group rounded-xl overflow-hidden border border-[#333333] bg-[#1a1a1a] cursor-pointer hover:border-[#D4AF37] transition-all"
                 wire:click="edit({{ $item->id }})">
-                <div class="relative aspect-[9/16]">
+                <div class="relative aspect-[3/4]">
                     @if ($item->thumbnail)
                         <img src="{{ asset('storage/' . $item->thumbnail) }}"
                             class="w-full h-full object-cover transition duration-700 group-hover:scale-105">

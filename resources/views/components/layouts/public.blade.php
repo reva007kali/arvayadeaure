@@ -76,10 +76,6 @@
                         Buat Undangan
                     </a>
                 @endauth
-                <button id="pwa-install-btn" style="display:none"
-                    class="px-3 py-2 rounded-lg text-xs font-bold text-arvaya-bg bg-arvaya-400 hover:bg-arvaya-300 transition">
-                    <i class="fa-solid fa-download"></i> Install App
-                </button>
             </div>
         </div>
     </nav>
@@ -131,6 +127,12 @@
             </div>
         </div>
     </footer>
+    <div class="fixed top-4 right-4 z-50">
+        <button id="pwa-install-btn" style="display:none"
+            class="px-3 py-1.5 rounded-lg text-xs font-bold bg-[#D4AF37] text-[#121212] hover:bg-[#B4912F] transition shadow">
+            <i class="fa-solid fa-download"></i>
+        </button>
+    </div>
 </body>
 
 <script>

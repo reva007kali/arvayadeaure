@@ -201,6 +201,7 @@ class Edit extends Component
             'dressCode.description' => 'nullable|string|max:500',
             'dressCode.note' => 'nullable|string|max:255',
             'newPaletteImage' => 'nullable|image|max:5120', // Max 5MB
+            'theme.video_url' => 'nullable|string|url|max:255',
         ];
 
         if ($this->category === 'Wedding' || $this->category === 'Engagement') {
@@ -278,7 +279,8 @@ class Edit extends Component
     {
         $q = Template::query()
             ->select(['id', 'name', 'slug', 'thumbnail', 'tier', 'price', 'is_active'])
-            ->where('is_active', true);
+            ->where('is_active', true)
+            ->where('category', $this->category);
         if (!empty($this->search)) {
             $term = trim($this->search);
             $q->where(function ($qq) use ($term) {
@@ -395,6 +397,8 @@ class Edit extends Component
                 'music_url' => '',
                 'events_enabled' => true,
                 'gifts_enabled' => true,
+                'video_enabled' => true,
+                'video_url' => '',
             ],
             $this->invitation->theme_config ?? []
         );

@@ -30,7 +30,7 @@
         </button>
     </div>
 
-    <div class="space-y-6 max-w-sm">
+    <div class="space-y-6 max-w-3xl mx-auto">
         @foreach ($events as $index => $event)
             {{-- Existing Event Card Content --}}
             <div
@@ -58,7 +58,7 @@
                     <div class="md:col-span-2">
                         <label class="text-xs font-bold text-[#A0A0A0] uppercase mb-1 block">Waktu
                             & Tanggal</label>
-                        <div class="grid grid-cols-3 gap-2">
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
                             <input type="datetime-local" wire:model="events.{{ $index }}.date"
                                 class="col-span-2 w-full rounded-xl bg-[#252525] border border-[#333333] focus:bg-[#2d2d2d] focus:border-[#D4AF37] focus:ring-[#D4AF37] text-[#E0E0E0] transition-all"
                                 aria-label="Tanggal dan waktu acara">

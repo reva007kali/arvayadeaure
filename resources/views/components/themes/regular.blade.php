@@ -3,593 +3,525 @@
 @php
     $groom = $invitation->couple_data['groom'] ?? [];
     $bride = $invitation->couple_data['bride'] ?? [];
-    $gifts = $invitation->gifts_data ?? [];
     $theme = $invitation->theme_config ?? [];
     $galleryData = $invitation->gallery_data ?? [];
 
-    // Fallback Images
-    $defaultCover =
-        'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
-    $defaultProfile = 'https://ui-avatars.com/api/?background=f3f4f6&color=333&size=200&name=';
+    // Fallback Images - Ensure high contrast or BW in CSS
+    $defaultCover = 'https://images.unsplash.com/photo-1519741497674-611481863552?ixlib=rb-1.2.1&auto=format&fit=crop&w=1350&q=80';
+    $defaultProfile = 'https://ui-avatars.com/api/?background=000000&color=ffffff&size=200&name=';
 
     $coverImage = $galleryData['cover'] ?? ($galleryData[0] ?? $defaultCover);
     $groomImage = $galleryData['groom'] ?? $defaultProfile . urlencode($groom['nickname'] ?? 'Groom');
     $brideImage = $galleryData['bride'] ?? $defaultProfile . urlencode($bride['nickname'] ?? 'Bride');
     $moments = $galleryData['moments'] ?? [];
+
     if (isset($galleryData[0]) && empty($moments)) {
         $moments = $galleryData;
     }
 
-    // Date Parsing
-    $eventDate = isset($invitation->event_data[0]['date']) ? \Carbon\Carbon::parse($invitation->event_data[0]['date']) : null;
+    $event = $invitation->event_data[0] ?? [];
+    $eventDate = isset($event['date']) ? \Carbon\Carbon::parse($event['date']) : null;
 @endphp
 
 @slot('head')
-<title>{{ $groom['nickname'] ?? 'Groom' }} & {{ $bride['nickname'] ?? 'Bride' }} - The Wedding</title>
+<title>{{ $groom['nickname'] ?? 'Groom' }} & {{ $bride['nickname'] ?? 'Bride' }} - Swiss Style</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<!-- Fonts: Cinzel (Serif), Great Vibes (Script), Lato (Body) -->
-<link
-    href="https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600;800&family=Great+Vibes&family=Lato:wght@300;400;700&display=swap"
-    rel="stylesheet">
+{{-- Inter Font for that Neo-Grotesque Swiss Look --}}
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;900&display=swap" rel="stylesheet">
 @endslot
 
 <style>
     :root {
-        /* PREMIUM WHITE PALETTE */
-        --c-bg-main: #EFEFEF;
-        --c-bg-card: #FFFFFF;
-        --c-text-main: #333333;
-        --c-text-muted: #666666;
-        --c-accent: #8B5CF6;
-        /* Purple Accent */
-        --c-accent-light: #DDD6FE;
-
-        --font-main: 'Cinzel', serif;
-        --font-script: 'Great Vibes', cursive;
-        --font-body: 'Lato', sans-serif;
+        --font-main: 'Inter', sans-serif;
+        --c-black: #000000;
+        --c-white: #FFFFFF;
+        --c-gray: #F4F4F4;
     }
 
     body {
-        background-color: var(--c-bg-main);
-        color: var(--c-text-main);
-        font-family: var(--font-body);
-        overflow-x: hidden;
-    }
-
-    /* Floral Texture Background */
-    .bg-floral-texture {
-        background-color: #EFEFEF;
-        background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ffffff' fill-opacity='0.4'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
-    }
-
-    .font-main {
         font-family: var(--font-main);
+        background-color: var(--c-white);
+        color: var(--c-black);
+        -webkit-font-smoothing: antialiased;
     }
 
-    .font-script {
-        font-family: var(--font-script);
+    .theme-bg {
+        background-color: var(--c-black);
     }
 
-    .font-body {
-        font-family: var(--font-body);
+    /* Swiss Typography Utilities */
+    .swiss-title {
+        font-weight: 900;
+        letter-spacing: -0.04em;
+        line-height: 0.85;
+        text-transform: uppercase;
     }
 
-    /* Vertical Text Utility */
-    .writing-vertical {
-        writing-mode: vertical-rl;
-        text-orientation: mixed;
-        transform: rotate(180deg);
+    .swiss-subtitle {
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        font-size: 0.75rem;
+    }
+
+    .swiss-body {
+        font-weight: 300;
+        font-size: 0.95rem;
+        line-height: 1.6;
+    }
+
+    /* Brutalist / Minimal Inputs */
+    input, textarea, select {
+        background: transparent !important;
+        border: none !important;
+        border-bottom: 2px solid black !important;
+        border-radius: 0 !important;
+        padding: 10px 0 !important;
+        color: black !important;
+        font-weight: 600;
+        font-family: var(--font-main);
+        outline: none !important;
+        box-shadow: none !important;
+    }
+    
+    input::placeholder, textarea::placeholder {
+        color: #999;
+        font-weight: 300;
+        text-transform: uppercase;
+        font-size: 0.8rem;
+    }
+
+    input:focus, textarea:focus {
+        border-bottom: 4px solid black !important;
     }
 
     /* Custom Scrollbar */
-    ::-webkit-scrollbar {
-        width: 6px;
-    }
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: #fff; }
+    ::-webkit-scrollbar-thumb { background: #000; }
 
-    ::-webkit-scrollbar-track {
-        background: #f1f1f1;
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background: #ccc;
-        border-radius: 3px;
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background: #999;
-    }
-
-    /* Floating Animation */
-    @keyframes floating {
-        0% {
-            transform: translateY(0px);
-        }
-
-        50% {
-            transform: translateY(-5px);
-        }
-
-        100% {
-            transform: translateY(0px);
-        }
-    }
-
-    .animate-float {
-        animation: floating 3s ease-in-out infinite;
-        will-change: transform;
-    }
-
-    /* Paper Shadow */
-    .paper-shadow {
-        box-shadow: 0 10px 20px -5px rgba(0, 0, 0, 0.1);
-        transform: translateZ(0);
+    /* Loading Screen Animation */
+    @keyframes slideUp {
+        0% { transform: translateY(0); }
+        100% { transform: translateY(-100%); }
     }
 </style>
 
 {{-- ======================================================================= --}}
-{{-- LOADING SCREEN --}}
+{{-- SWISS LOADING SCREEN --}}
 {{-- ======================================================================= --}}
-<div id="loading-overlay"
-    class="fixed inset-0 z-[9999] bg-[#EFEFEF] flex flex-col items-center justify-center transition-opacity duration-1000">
-    <div class="relative w-24 h-24 mb-6">
-        <div class="absolute inset-0 border-t-2 border-b-2 border-gray-300 rounded-full animate-spin"></div>
-        <div class="absolute inset-0 flex items-center justify-center text-[#333] font-main font-bold text-xl">
-            {{ substr($groom['nickname'] ?? 'G', 0, 1) }}&{{ substr($bride['nickname'] ?? 'B', 0, 1) }}
-        </div>
+<div id="loading-overlay" class="fixed inset-0 z-[9999] bg-black text-white flex flex-col justify-between p-8 transition-all duration-1000 ease-[cubic-bezier(0.76,0,0.24,1)]">
+    <!-- Top Left Date -->
+    <div class="flex justify-between items-start border-b border-white/20 pb-4">
+        <span class="text-xs font-bold uppercase tracking-widest">Wedding<br>Invitation</span>
+        <span class="text-xs font-mono">{{ date('Y') }}</span>
     </div>
-    <p class="text-[#666] font-main text-xs tracking-[0.4em] uppercase">Loading Invitation</p>
 
-    <button id="open-invitation-btn"
-        class="hidden mt-10 px-8 py-2 bg-[#E0E0E0] text-[#333] rounded-full font-main font-bold uppercase tracking-widest hover:bg-[#D1D1D1] transition shadow-sm text-xs">
-        Open
-    </button>
+    <!-- Center Counter -->
+    <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-full text-center">
+        <div class="text-[12rem] md:text-[18rem] font-black leading-none tracking-tighter" id="loading-counter">
+            00
+        </div>
+        <div class="mt-4 text-sm uppercase tracking-[0.5em] animate-pulse">Loading Invitation</div>
+    </div>
+
+    <!-- Bottom Action -->
+    <div class="flex justify-between items-end border-t border-white/20 pt-4">
+        <div class="text-xs max-w-[150px]">
+            To: {{ $guest->name ?? 'Guest' }}
+        </div>
+        
+        <button id="open-invitation-btn" class="hidden group relative px-8 py-3 bg-white text-black text-xs font-black uppercase tracking-widest hover:bg-gray-200 transition-colors">
+            <span class="relative z-10">Open Invitation</span>
+        </button>
+    </div>
 </div>
 
 <script>
     document.body.style.overflow = 'hidden';
     window.addEventListener('load', function () {
+        const counter = document.getElementById('loading-counter');
         const btn = document.getElementById('open-invitation-btn');
-        setTimeout(() => {
-            btn.classList.remove('hidden');
-        }, 1000);
+        const overlay = document.getElementById('loading-overlay');
+        
+        let count = 0;
+        const interval = setInterval(() => {
+            count += Math.floor(Math.random() * 5) + 1;
+            if(count > 100) count = 100;
+            counter.innerText = count < 10 ? `0${count}` : count;
+            
+            if(count === 100) {
+                clearInterval(interval);
+                setTimeout(() => {
+                    btn.classList.remove('hidden');
+                }, 200);
+            }
+        }, 30);
 
         btn.addEventListener('click', function () {
-            document.getElementById('loading-overlay').style.opacity = '0';
+            // Curtain effect
+            overlay.style.transform = 'translateY(-100%)';
             document.body.style.overflow = 'auto';
-            setTimeout(() => {
-                document.getElementById('loading-overlay').remove();
-            }, 1000);
             window.dispatchEvent(new CustomEvent('play-music'));
+            
+            setTimeout(() => {
+                overlay.remove();
+            }, 1000);
         });
     });
 </script>
 
-<div class="relative bg-floral-texture min-h-screen">
+
+<div class="relative bg-white min-h-screen max-w-md mx-auto border-x border-gray-200 shadow-2xl" data-anim-stagger="0.1s">
 
     {{-- MUSIC PLAYER --}}
     @if (!empty($theme['music_url']))
         <div x-data="youtubePlayer('{{ $theme['music_url'] }}')" x-init="initPlayer()" @play-music.window="playMusic()"
-            class="fixed bottom-6 right-6 z-[900] print:hidden">
+            class="fixed top-6 right-6 z-[900] mix-blend-difference print:hidden">
             <button @click="togglePlay"
-                class="w-10 h-10 bg-white/90 border border-gray-200 rounded-full flex items-center justify-center text-[#333] hover:bg-white transition-all shadow-md">
-                <i class="fa-solid" :class="isPlaying ? 'fa-pause' : 'fa-music'"></i>
+                class="flex items-center gap-2 text-white font-bold uppercase text-[10px] tracking-widest hover:opacity-70 transition">
+                <span x-text="isPlaying ? 'PAUSE' : 'PLAY'"></span>
+                <div class="w-2 h-2 bg-white" :class="isPlaying ? 'animate-pulse' : ''"></div>
             </button>
+            <div class="hidden"><div id="yt-player-container"></div></div>
         </div>
     @endif
 
-    {{-- HERO SECTION --}}
-    <section
-        class="relative min-h-screen w-full flex flex-col justify-center items-center text-center px-6 overflow-hidden">
-        <!-- Corner Floral Decoration (CSS Shapes/Images) -->
-        <div
-            class="absolute top-0 left-0 w-full h-32 bg-[url('https://www.transparenttextures.com/patterns/flower-trail.png')] opacity-30 pointer-events-none">
-        </div>
-        <div
-            class="absolute bottom-0 left-0 w-full h-32 bg-[url('https://www.transparenttextures.com/patterns/flower-trail.png')] opacity-30 pointer-events-none rotate-180">
+    {{-- 1. HERO SECTION --}}
+    <section class="min-h-screen flex flex-col pt-12 border-b-4 border-black relative" data-anim-stagger="0.1s">
+        <!-- Header -->
+        <div class="px-6 mb-8 flex justify-between items-end" data-anim="fade-up">
+            <p class="swiss-subtitle">The<br>Wedding<br>Celebration</p>
+            <p class="swiss-subtitle text-right">No. 01<br>{{ date('Y') }}</p>
         </div>
 
-        <div class="relative z-10 space-y-6" data-anim="fade-up">
-            <p class="font-main text-[#666] font-bold tracking-[0.1em] text-sm uppercase">The Wedding of</p>
-
-            <div class="py-4">
-                <h1 class="font-script text-6xl md:text-7xl lg:text-8xl text-[#111] leading-tight drop-shadow-sm">
-                    {{ $groom['nickname'] }}
-                    <span class="block text-4xl my-2">&</span>
-                    {{ $bride['nickname'] }}
-                </h1>
-            </div>
-
-            <!-- Bird Icon -->
-            <div class="text-[#9ca3af] text-3xl opacity-50 animate-float">
-                <i class="fa-solid fa-dove"></i>
-            </div>
-
-            @if($eventDate)
-                <div class="mt-8 font-main text-[#333] tracking-widest text-sm">
-                    {{ $eventDate->translatedFormat('l, d F Y') }}
-                </div>
-            @endif
-
-            @if ($guest)
-                <div class="mt-12">
-                    <p class="text-[#888] text-[10px] uppercase tracking-widest mb-2">Special Guest</p>
-                    <div class="inline-block px-6 py-2 border-b border-gray-300">
-                        <h3 class="text-[#333] font-main text-lg">{{ $guest->name }}</h3>
-                    </div>
-                </div>
-            @endif
+        <!-- Big Type -->
+        <div class="px-6 mb-8" data-anim="fade-up">
+            <h1 class="swiss-title text-5xl md:text-6xl break-words" data-anim="fade-up">
+                {{ strtoupper($groom['nickname'] ?? 'G') }}<br>
+                <span class="text-transparent text-stroke-2" style="-webkit-text-stroke: 2px black;">&</span><br>
+                {{ strtoupper($bride['nickname'] ?? 'B') }}
+            </h1>
         </div>
 
-        <div class="absolute bottom-12 animate-bounce text-[#999]">
-            <i class="fa-solid fa-chevron-down text-xs"></i>
-        </div>
-    </section>
-
-    {{-- QUOTE SECTION --}}
-    @if($invitation->theme_config['quote_enabled'] ?? true)
-        <section class="py-20 px-6 relative">
-            <div class="max-w-2xl mx-auto text-center">
-                @php $qs = $invitation->couple_data['quote_structured'] ?? null; @endphp
-                <div class="mb-6 text-[#ccc]">
-                    <i class="fa-solid fa-quote-left text-2xl"></i>
-                </div>
-
-                @if ($qs && ($qs['type'] ?? '') === 'quran')
-                    <p class="font-main text-xl text-[#333] mb-3">{{ $qs['arabic'] ?? '' }}</p>
-                    <p class="font-body text-sm text-[#555] italic">{{ $qs['translation'] ?? '' }}</p>
-                    <p class="font-main text-xs font-bold text-[#888] mt-4 uppercase tracking-widest">{{ $qs['source'] ?? '' }}
-                    </p>
-                @elseif ($qs && ($qs['type'] ?? '') === 'bible')
-                    <p class="font-body text-base text-[#333] italic mb-2">"{{ $qs['verse_text'] ?? '' }}"</p>
-                    @if (!empty($qs['translation']))
-                        <p class="font-body text-sm text-[#555]">{{ $qs['translation'] }}</p>
-                    @endif
-                    <p class="font-main text-xs font-bold text-[#888] mt-4 uppercase tracking-widest">{{ $qs['source'] ?? '' }}
-                    </p>
-                @else
-                    <p class="font-script text-3xl text-[#333] leading-relaxed">
-                        "{{ $invitation->couple_data['quote'] ?? 'Two souls, one heart.' }}"
-                    </p>
-                @endif
-            </div>
-        </section>
-    @endif
-
-    {{-- COUPLE PROFILE --}}
-    <section class="py-20 px-4">
-        <div class="max-w-4xl mx-auto">
-            <div class="flex flex-col gap-24">
-
-                <!-- Groom -->
-                <div class="flex flex-col md:flex-row items-center justify-center gap-8 relative" data-anim="fade-up">
-                    <!-- Vertical Text -->
-                    <div class="hidden md:block absolute -left-12 top-0 h-full">
-                        <span
-                            class="writing-vertical font-script text-5xl text-[#333] opacity-80 h-full flex items-center">Groom</span>
-                    </div>
-                    <!-- Mobile Title -->
-                    <h2 class="md:hidden font-script text-4xl text-[#333] mb-2">Groom</h2>
-
-                    <!-- Photo -->
-                    <div class="relative w-64 h-72">
-                        <div class="absolute inset-0 border-[3px] border-[#9333EA] translate-x-3 translate-y-3 z-0">
-                        </div>
-                        <img src="{{ $groomImage }}"
-                            class="relative w-full h-full object-cover grayscale z-10 shadow-lg bg-white" alt="Groom">
-                    </div>
-
-                    <!-- Details -->
-                    <div class="text-center md:text-left">
-                        <h3 class="font-main text-2xl font-bold text-[#333] uppercase tracking-widest mb-4">
-                            {{ $groom['fullname'] }}</h3>
-                        <div class="text-[#666] font-body text-sm leading-relaxed">
-                            <p class="font-bold text-xs uppercase tracking-wide mb-1 text-[#888]">Son of:</p>
-                            <p>{{ $groom['father'] }}</p>
-                            <p>{{ $groom['mother'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- Bride -->
-                <div class="flex flex-col md:flex-row-reverse items-center justify-center gap-8 relative"
-                    data-anim="fade-up">
-                    <!-- Vertical Text -->
-                    <div class="hidden md:block absolute -right-12 top-0 h-full">
-                        <span
-                            class="writing-vertical font-script text-5xl text-[#333] opacity-80 h-full flex items-center rotate-180">Bride</span>
-                    </div>
-                    <!-- Mobile Title -->
-                    <h2 class="md:hidden font-script text-4xl text-[#333] mb-2">Bride</h2>
-
-                    <!-- Photo -->
-                    <div class="relative w-64 h-72">
-                        <div class="absolute inset-0 border-[3px] border-[#9333EA] -translate-x-3 translate-y-3 z-0">
-                        </div>
-                        <img src="{{ $brideImage }}"
-                            class="relative w-full h-full object-cover grayscale z-10 shadow-lg bg-white" alt="Bride">
-                    </div>
-
-                    <!-- Details -->
-                    <div class="text-center md:text-right">
-                        <h3 class="font-main text-2xl font-bold text-[#333] uppercase tracking-widest mb-4">
-                            {{ $bride['fullname'] }}</h3>
-                        <div class="text-[#666] font-body text-sm leading-relaxed">
-                            <p class="font-bold text-xs uppercase tracking-wide mb-1 text-[#888]">Daughter of:</p>
-                            <p>{{ $bride['father'] }}</p>
-                            <p>{{ $bride['mother'] }}</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </section>
-
-    {{-- EVENT DETAILS --}}
-    @if($invitation->theme_config['events_enabled'] ?? true)
-        <section class="py-20 px-6 bg-white/50">
-            <div class="max-w-3xl mx-auto text-center" data-anim="fade-up">
-                <h2 class="font-main text-2xl text-[#333] uppercase tracking-[0.2em] mb-12">Save The Date</h2>
-
-                <div class="bg-white p-8 md:p-12 shadow-[0_20px_40px_-15px_rgba(0,0,0,0.1)] relative overflow-hidden">
-                    <!-- Top Floral Accent -->
-                    <div
-                        class="absolute -top-10 -right-10 w-32 h-32 bg-[url('https://www.transparenttextures.com/patterns/flower-trail.png')] opacity-10 rotate-45 pointer-events-none">
-                    </div>
-
-                    @if($eventDate)
-                        <div class="mb-10">
-                            <p class="font-script text-4xl text-[#333] mb-2">The Wedding Day</p>
-                            <div class="flex items-center justify-center gap-4 text-[#333] font-main text-xl mt-6">
-                                <span class="border-b border-gray-300 pb-1">{{ $eventDate->translatedFormat('l') }}</span>
-                                <span class="text-4xl font-bold">{{ $eventDate->format('d') }}</span>
-                                <span class="border-b border-gray-300 pb-1">{{ $eventDate->translatedFormat('F') }}</span>
-                            </div>
-                            <p class="mt-4 text-sm text-[#888] tracking-widest">{{ $eventDate->format('Y') }}</p>
-                        </div>
-
-                        <div class="w-12 h-px bg-gray-300 mx-auto my-8"></div>
-
-                        <div class="mb-8">
-                            <p class="font-bold text-xs text-[#9333EA] uppercase tracking-widest mb-2">Venue</p>
-                            <h3 class="font-main text-lg text-[#333]">
-                                {{ $invitation->event_data[0]['location'] ?? 'Location TBA' }}</h3>
-                            <p class="text-sm text-[#666] mt-2 max-w-sm mx-auto">
-                                {{ $invitation->event_data[0]['address'] ?? '' }}</p>
-                        </div>
-
-                        @if (!empty($invitation->event_data[0]['map_link']))
-                            <a href="{{ $invitation->event_data[0]['map_link'] }}" target="_blank"
-                                class="inline-block px-8 py-3 bg-[#333] text-white text-xs font-bold uppercase tracking-widest hover:bg-black transition shadow-lg">
-                                View Location
-                            </a>
-                        @endif
-                    @endif
-                </div>
-
-                <!-- Countdown -->
+        <!-- Image Block -->
+        <div class="flex-1 w-full bg-gray-100 relative mt-auto border-t-2 border-black">
+            <img src="{{ $coverImage }}" class="absolute inset-0 w-full h-full object-cover object-top grayscale contrast-125" alt="Cover">
+            
+            <!-- Sticky Note Style Date -->
+            <div class="absolute top-0 right-0 bg-black text-white p-4 min-w-[120px]">
                 @if($eventDate)
-                    <div x-data="countdown('{{ $eventDate->toIso8601String() }}')" x-init="start()"
-                        class="flex justify-center gap-8 mt-12 text-[#333]">
-                        <div class="text-center">
-                            <span class="block text-2xl font-main font-bold" x-text="days">0</span>
-                            <span class="text-[9px] uppercase tracking-widest text-[#888]">Days</span>
-                        </div>
-                        <div class="text-center">
-                            <span class="block text-2xl font-main font-bold" x-text="hours">0</span>
-                            <span class="text-[9px] uppercase tracking-widest text-[#888]">Hours</span>
-                        </div>
-                        <div class="text-center">
-                            <span class="block text-2xl font-main font-bold" x-text="minutes">0</span>
-                            <span class="text-[9px] uppercase tracking-widest text-[#888]">Mins</span>
-                        </div>
+                    <div class="text-center">
+                        <span class="block text-4xl font-black leading-none">{{ $eventDate->format('d') }}</span>
+                        <span class="block text-xs uppercase tracking-widest border-t border-white/30 pt-1 mt-1">{{ $eventDate->format('M') }}</span>
                     </div>
                 @endif
             </div>
-        </section>
+
+            <!-- Guest Name Badge -->
+            <div class="absolute bottom-0 left-0 bg-white border-t-2 border-r-2 border-black p-4">
+                <p class="text-[10px] uppercase tracking-widest text-gray-500 mb-1">Invited Guest</p>
+                <p class="font-bold text-lg leading-none">{{ $guest->name ?? 'Tamu Undangan' }}</p>
+            </div>
+        </div>
+    </section>
+
+    {{-- 2. QUOTE SECTION (Typographic) --}}
+    <section class="py-20 px-6 border-b border-black" data-anim-stagger="0.1s">
+        <div class="max-w-xs mx-auto text-center">
+            <div data-anim="fade-up" class="w-1 h-12 bg-black mx-auto mb-8"></div>
+            @php $qs = $invitation->couple_data['quote_structured'] ?? null; @endphp
+            
+            <div data-anim="fade-up" class="text-2xl font-light italic leading-tight mb-6">
+                @if ($qs && ($qs['type'] ?? '') === 'quran')
+                    "{{ $qs['translation'] ?? '' }}"
+                @elseif ($qs && ($qs['type'] ?? '') === 'bible')
+                    "{{ $qs['verse_text'] ?? '' }}"
+                @else
+                    "{{ $invitation->couple_data['quote'] ?? 'Two souls, one heart.' }}"
+                @endif
+            </div>
+            
+            <p data-anim="fade-up" class="swiss-subtitle text-gray-500">{{ $qs['source'] ?? 'Ref.' }}</p>
+        </div>
+    </section>
+
+    {{-- 3. COUPLE PROFILE --}}
+    <section class="bg-black text-white" data-anim-stagger="0.1s">
+        <!-- Groom -->
+        <div class="grid grid-cols-2 border-b border-white/20">
+            <div data-anim="fade-up" class="aspect-[4/5] relative border-r border-white/20">
+                <img src="{{ asset($groomImage) }}" class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700">
+            </div>
+            <div data-anim="fade-up" class="p-6 flex flex-col justify-center">
+                <span class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">01 / The Groom</span>
+                <h2 class="text-3xl font-black uppercase leading-none mb-4 break-words">{{ $groom['fullname'] }}</h2>
+                <div class="mt-auto text-sm font-light text-gray-400">
+                    <p>Son of:</p>
+                    <p class="text-white">{{ $groom['father'] }}</p>
+                    <p class="text-white">& {{ $groom['mother'] }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bride -->
+        <div class="grid grid-cols-2">
+            <div data-anim="fade-up" class="p-6 flex flex-col justify-center text-right border-r border-white/20">
+                <span class="text-[10px] uppercase tracking-widest text-gray-400 mb-2">02 / The Bride</span>
+                <h2 class="text-3xl font-black uppercase leading-none mb-4 break-words">{{ $bride['fullname'] }}</h2>
+                <div class="mt-auto text-sm font-light text-gray-400">
+                    <p>Daughter of:</p>
+                    <p class="text-white">{{ $bride['father'] }}</p>
+                    <p class="text-white">& {{ $bride['mother'] }}</p>
+                </div>
+            </div>
+            <div data-anim="fade-up" class="aspect-[4/5] relative">
+                <img src="{{ asset($brideImage) }}" class="absolute inset-0 w-full h-full object-cover grayscale hover:grayscale-0 transition duration-700">
+            </div>
+        </div>
+    </section>
+
+    {{-- 4. EVENT DETAILS --}}
+    @if($invitation->theme_config['events_enabled'] ?? true)
+    <section class="py-24 px-6 relative bg-gray-50" data-anim-stagger="0.1s">
+        <!-- Vertical Line -->
+        <div data-anim="fade-up" class="absolute left-6 top-0 bottom-0 w-px bg-black hidden md:block"></div>
+
+        <div class="md:pl-12">
+            <h2 class="swiss-title text-5xl mb-12">Schedule<br>of Events</h2>
+
+            @foreach($invitation->event_data as $index => $event)
+                @php $eDate = \Carbon\Carbon::parse($event['date']); @endphp
+                <div class="mb-12 last:mb-0 border-l-4 border-black pl-6 ml-1 md:ml-0" data-anim="fade-up">
+                    <span class="swiss-subtitle bg-black text-white px-2 py-1 inline-block mb-4">Event 0{{ $index + 1 }}</span>
+                    
+                    <h3 class="text-3xl font-bold uppercase mb-2">{{ $event['title'] }}</h3>
+                    
+                    <!-- Grid Info -->
+                    <div class="grid grid-cols-2 gap-y-4 gap-x-8 border-t border-b border-black py-4 mb-4">
+                        <div>
+                            <span class="text-[10px] uppercase text-gray-500 block">Date</span>
+                            <span class="font-bold">{{ $eDate->translatedFormat('l, d M Y') }}</span>
+                        </div>
+                        <div>
+                            <span class="text-[10px] uppercase text-gray-500 block">Time</span>
+                            <span class="font-bold">{{ $eDate->format('H:i') }} WIB</span>
+                        </div>
+                        <div class="col-span-2">
+                            <span class="text-[10px] uppercase text-gray-500 block">Location</span>
+                            <span class="font-bold">{{ $event['location'] }}</span>
+                            <p class="text-sm font-normal text-gray-600 mt-1">{{ $event['address'] }}</p>
+                        </div>
+                    </div>
+
+                    @if(!empty($event['map_link']))
+                        <a href="{{ $event['map_link'] }}" target="_blank" class="inline-flex items-center gap-2 text-xs font-black uppercase border-b-2 border-black pb-1 hover:text-gray-600 transition">
+                            View On Google Maps <i class="fa-solid fa-arrow-right -rotate-45"></i>
+                        </a>
+                    @endif
+                </div>
+            @endforeach
+        </div>
+
+        {{-- Simple Countdown --}}
+        @if(isset($eventDate))
+            <div data-anim-stagger="0.2s" x-data="countdown('{{ $eventDate->toIso8601String() }}')" x-init="start()" class="mt-20 border-2 border-black p-6 bg-white">
+                <p class="swiss-subtitle text-center mb-6">Countdown to Ceremony</p>
+                <div class="flex justify-between items-center text-center">
+                    <div data-anim="fade-up" class="flex-1"><span class="text-3xl font-black block" x-text="days">00</span><span class="text-[9px] uppercase">Days</span></div>
+                    <div class="w-px h-8 bg-black"></div>
+                    <div data-anim="fade-up" class="flex-1"><span class="text-3xl font-black block" x-text="hours">00</span><span class="text-[9px] uppercase">Hrs</span></div>
+                    <div data-anim="fade-up" class="w-px h-8 bg-black"></div>
+                    <div data-anim="fade-up" class="flex-1"><span class="text-3xl font-black block" x-text="minutes">00</span><span class="text-[9px] uppercase">Min</span></div>
+                </div>
+            </div>
+        @endif
+    </section>
     @endif
 
-    {{-- DRESS CODE (New Feature) --}}
-    @php
-        $dressCode = $invitation->dress_code_data ?? [];
-        $isDressCodeEnabled = $invitation->hasFeature('dress_code') && ($dressCode['enabled'] ?? false);
-    @endphp
-    @if($isDressCodeEnabled)
-        <section class="py-20 px-6">
-            <div class="max-w-2xl mx-auto text-center" data-anim="fade-up">
-                <h2 class="font-main text-2xl text-[#333] uppercase tracking-[0.2em] mb-8">
-                    {{ $dressCode['title'] ?? 'Dress Code' }}</h2>
+    {{-- DRESS CODE --}}
+    @php $dressCode = $invitation->dress_code_data ?? []; @endphp
+    @if($invitation->hasFeature('dress_code') && ($dressCode['enabled'] ?? false))
+    <section class="border-t-4 border-black py-16 px-6 bg-white text-center" data-anim-stagger="0.1s">
+        <h2 data-anim="fade-up" class="swiss-subtitle mb-8 decoration-wavy underline decoration-2">Dress Code</h2>
+        <p data-anim="fade-up" class="text-xl font-bold mb-6 max-w-xs mx-auto leading-tight">{{ $dressCode['description'] ?? 'Formal Attire' }}</p>
+        
+        @if(!empty($dressCode['colors']))
+            <div data-anim="fade-up" class="flex justify-center gap-4 mb-6">
+                @foreach($dressCode['colors'] as $color)
+                    <div class="group relative">
+                        <div class="w-12 h-12 border-2 border-black rounded-none shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] transition-transform group-hover:-translate-y-1" style="background-color: {{ $color }}"></div>
+                    </div>
+                @endforeach
+            </div>
+        @endif
+        
+        @if(!empty($dressCode['notes']))
+            <p data-anim="fade-up" class="text-xs font-mono bg-gray-100 inline-block px-3 py-1">NOTE: {{ $dressCode['notes'] }}</p>
+        @endif
+    </section>
+    @endif
 
-                <div class="bg-white p-8 border border-gray-100 shadow-lg">
-                    <p class="font-body text-[#555] mb-8">{{ $dressCode['description'] ?? '' }}</p>
-
-                    @if(!empty($dressCode['colors']))
-                        <div class="flex flex-wrap justify-center gap-4 mb-8">
-                            @foreach($dressCode['colors'] as $color)
-                                <div class="flex flex-col items-center gap-2">
-                                    <div class="w-12 h-12 rounded-full shadow-md border-4 border-white"
-                                        style="background-color: {{ $color }}"></div>
-                                </div>
-                            @endforeach
-                        </div>
-                    @endif
-
-                    @if(!empty($dressCode['image']))
-                        <div
-                            class="mt-6 p-2 bg-white shadow-md inline-block transform -rotate-2 hover:rotate-0 transition duration-500">
-                            <img src="{{ asset($dressCode['image']) }}"
-                                class="max-w-[200px] object-cover filter grayscale hover:grayscale-0 transition">
-                        </div>
-                    @endif
-
-                    @if(!empty($dressCode['notes']))
-                        <p class="mt-6 text-xs text-[#888] italic">* {{ $dressCode['notes'] }}</p>
-                    @endif
+    {{-- VIDEO --}}
+    @if($invitation->theme_config['video_enabled'] ?? true)
+        @php 
+            $videoUrl = trim($invitation->theme_config['video_url'] ?? '');
+            $videoId = '';
+            if ($videoUrl) {
+                if (preg_match('/[?&]v=([^&]+)/', $videoUrl, $m)) {
+                    $videoId = $m[1];
+                } elseif (preg_match('#youtu\.be/([^?&/]+)#', $videoUrl, $m)) {
+                    $videoId = $m[1];
+                } elseif (preg_match('#youtube\.com/embed/([^?&/]+)#', $videoUrl, $m)) {
+                    $videoId = $m[1];
+                }
+            }
+        @endphp
+        @if(!empty($videoId))
+        <section class="bg-black p-6" data-anim-stagger="0.1s">
+            <div data-anim="zoom-in" class="border border-white/30 p-1">
+                <div class="aspect-video w-full bg-gray-900">
+                    <iframe src="https://www.youtube.com/embed/{{ $videoId }}" class="w-full h-full" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen></iframe>
                 </div>
             </div>
         </section>
+        @endif
     @endif
 
-    {{-- GALLERY --}}
+    {{-- GALLERY (Grid) --}}
     @if (!empty($moments) && ($invitation->gallery_data['enabled'] ?? true))
-        <section class="py-20 bg-white" x-data="{ photoOpen: false, photoSrc: '' }"
-            @keydown.escape.window="photoOpen = false">
-            <div class="max-w-7xl mx-auto px-4">
-                <h2 class="font-main text-2xl text-center text-[#333] mb-12 uppercase tracking-widest">Captured Moments</h2>
-                <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-                    @foreach ($moments as $photo)
-                        <div class="aspect-[3/4] overflow-hidden cursor-pointer group"
-                            @click="photoOpen = true; photoSrc = '{{ asset($photo) }}'">
-                            <img src="{{ asset($photo) }}"
-                                class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition-transform duration-300 hover:scale-105"
-                                style="will-change: transform, filter;"
-                                loading="lazy" alt="Moment">
-                        </div>
-                    @endforeach
+    <section class="border-t border-black">
+        <div data-anim="fade-up" class="py-4 px-6 border-b border-black flex justify-between items-center bg-gray-50">
+            <h2 class="swiss-subtitle">Visual Records</h2>
+            <span class="text-xs font-mono">({{ count($moments) }})</span>
+        </div>
+        
+        <div data-anim-stagger="0.1s" class="grid grid-cols-2 md:grid-cols-3" x-data="{ photoOpen: false, photoSrc: '' }">
+            @foreach ($moments as $photo)
+                <div data-anim="zoom-in" class="aspect-square relative group bdataanir-r border-b border-black cursor-zoom-in overflow-hidden"
+                     @click="photoOpen = true; photoSrc = '{{ asset($photo) }}'">
+                    <img src="{{ asset($photo) }}" class="w-full h-full object-cover grayscale group-hover:grayscale-0 transition duration-500 group-hover:scale-110">
+                    <div class="absolute inset-0 bg-black/50 opacity-0 group-hover:opacity-100 transition flex items-center justify-center">
+                        <span class="text-white font-mono text-xs">[VIEW]</span>
+                    </div>
                 </div>
-            </div>
+            @endforeach
 
             <!-- Modal -->
-            <div x-show="photoOpen" x-transition.opacity
-                class="fixed inset-0 z-[9999] flex items-center justify-center p-4">
-                <div class="absolute inset-0 bg-white/90 backdrop-blur-sm" @click="photoOpen = false"></div>
-                <div class="relative max-w-4xl w-full max-h-[90vh]">
-                    <button @click="photoOpen = false"
-                        class="absolute -top-10 right-0 text-[#333] text-2xl hover:text-black">
-                        <i class="fa-solid fa-xmark"></i>
-                    </button>
-                    <img :src="photoSrc" class="w-full h-full object-contain shadow-2xl">
+            <div x-show="photoOpen" class="fixed inset-0 z-[9999] bg-white flex flex-col" x-transition.opacity>
+                <div class="flex justify-between items-center p-4 border-b-2 border-black">
+                    <span class="swiss-subtitle">Image Viewer</span>
+                    <button @click="photoOpen = false" class="text-2xl hover:rotate-90 transition">&times;</button>
+                </div>
+                <div class="flex-1 flex items-center justify-center p-4 bg-gray-100">
+                    <img :src="photoSrc" class="max-w-full max-h-full border-2 border-black shadow-[10px_10px_0px_0px_rgba(0,0,0,1)]">
                 </div>
             </div>
-        </section>
+        </div>
+    </section>
     @endif
 
-    {{-- RSVP & GIFTS (Paper Card Style) --}}
+    {{-- GIFTS & RSVP --}}
     @php
-        $hasRsvp = $invitation->hasFeature('rsvp') && ($invitation->theme_config['rsvp_enabled'] ?? true);
+        $hasRsvp = $invitation->hasFeature('rsvp');
         $hasGifts = $invitation->theme_config['gifts_enabled'] ?? true;
+        $gifts = $invitation->gifts_data ?? [];
     @endphp
 
     @if($hasRsvp || $hasGifts)
-        <section class="py-24 px-4 bg-floral-texture overflow-hidden relative">
-            <!-- Floating Elements -->
-            <div class="absolute top-20 left-10 text-6xl text-gray-200 rotate-12 z-0">
-                <i class="fa-solid fa-envelope-open"></i>
-            </div>
-
-            <div class="max-w-2xl mx-auto relative z-10">
-
-                {{-- RSVP CARD --}}
-                @if($hasRsvp)
-                    <div class="bg-[#F5F5F5] p-2 md:p-12 paper-shadow transform mb-16 relative" data-anim="fade-up">
-                        <!-- Paper texture overlay -->
-                        <div
-                            class="absolute inset-0 opacity-50 bg-[url('https://www.transparenttextures.com/patterns/paper.png')] pointer-events-none">
+    <section class="py-24 px-6 bg-white relative" data-anim-stagger="0.1s">
+        
+        {{-- GIFTS --}}
+        @if($hasGifts && !empty($gifts))
+            <div class="mb-20">
+                <h2 data-anim="zoom-in" class="swiss-title text-4xl mb-8">Gift<br>Registry</h2>
+                
+                <div class="space-y-6">
+                    @foreach ($gifts as $gift)
+                    <div data-anim="zoom-in" class="border-2 border-black p-6 bg-white shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:translate-x-1 hover:translate-y-1 hover:shadow-none transition-all duration-200">
+                        <div class="flex justify-between items-start mb-4">
+                            <h3 class="font-black text-xl uppercase">{{ $gift['bank_name'] }}</h3>
+                            <i class="fa-solid fa-credit-card text-xl"></i>
                         </div>
-
-                        <h2 class="font-main text-2xl text-center text-[#333] mb-8 uppercase tracking-[0.2em]">RSVP Form</h2>
-
-                        <!-- Custom Form Styling -->
-                        <div
-                            class="relative z-10 font-body text-[#333]
-                            [&_input]:bg-white [&_input]:border-b-2 [&_input]:border-gray-200 [&_input]:text-[#333] [&_input]:w-full [&_input]:px-3 [&_input]:py-2 [&_input]:mb-6 [&_input]:focus:border-[#333] [&_input]:outline-none [&_input]:transition
-                            [&_select]:bg-white [&_select]:border-b-2 [&_select]:border-gray-200 [&_select]:text-[#333] [&_select]:w-full [&_select]:px-3 [&_select]:py-2 [&_select]:mb-6 [&_select]:focus:border-[#333] [&_select]:outline-none
-                            [&_textarea]:bg-white [&_textarea]:border-b-2 [&_textarea]:border-gray-200 [&_textarea]:text-[#333] [&_textarea]:w-full [&_textarea]:px-3 [&_textarea]:py-2 [&_textarea]:mb-6 [&_textarea]:focus:border-[#333] [&_textarea]:outline-none
-                            [&_label]:text-[#888] [&_label]:text-[10px] [&_label]:uppercase [&_label]:tracking-widest
-                            [&_button]:w-full [&_button]:py-3 [&_button]:bg-[#E0E0E0] [&_button]:text-[#333] [&_button]:font-bold [&_button]:uppercase [&_button]:tracking-widest [&_button]:rounded-full [&_button]:shadow-sm [&_button]:hover:bg-[#d5d5d5] [&_button]:transition">
-
-                            @livewire('frontend.rsvp-form', ['invitation' => $invitation, 'guest' => $guest])
+                        <div class="font-mono text-lg tracking-wider mb-2 border-b border-dashed border-black pb-2">
+                            {{ $gift['account_number'] }}
+                        </div>
+                        <div class="flex justify-between items-end">
+                            <div>
+                                <span class="text-[10px] uppercase text-gray-500">Beneficiary</span>
+                                <p class="font-bold uppercase text-sm">{{ $gift['account_name'] }}</p>
+                            </div>
+                            <button onclick="navigator.clipboard.writeText('{{ $gift['account_number'] }}'); alert('Copied')" 
+                                    class="bg-black text-white px-4 py-2 text-xs font-bold uppercase hover:bg-gray-800">
+                                Copy
+                            </button>
                         </div>
                     </div>
-                @endif
-
-                {{-- GIFT SECTION --}}
-                @if(!empty($gifts) && $hasGifts)
-                    <div class="text-center" data-anim="fade-up">
-                        <h2 class="font-main text-2xl text-[#333] uppercase tracking-[0.2em] mb-8">Wedding Gift</h2>
-
-                        <!-- Illustration (2 Cards) -->
-                        <div class="flex justify-center items-center mb-8 relative h-32">
-                            <!-- Card 1 -->
-                            <div
-                                class="absolute w-24 h-36 border-2 border-[#333] bg-white rounded-lg transform -rotate-12 -translate-x-6 flex items-center justify-center shadow-sm">
-                                <span class="font-main text-xs font-bold text-[#333]">Other<br>Gift</span>
-                            </div>
-                            <!-- Card 2 -->
-                            <div
-                                class="absolute w-24 h-36 border-2 border-[#333] bg-white rounded-lg transform rotate-6 translate-x-4 flex items-center justify-center shadow-md z-10">
-                                <span class="font-main text-xs font-bold text-[#333]">Card<br>Now</span>
-                            </div>
-                        </div>
-
-                        <div class="flex flex-col items-center gap-6">
-                            @foreach ($gifts as $gift)
-                                <div class="bg-transparent text-center">
-                                    <p class="font-bold text-[#333] uppercase tracking-widest text-sm mb-1">{{ $gift['bank_name'] }}
-                                    </p>
-                                    <p class="font-main text-lg text-[#333] mb-1">{{ $gift['account_name'] }}</p>
-                                    <div class="flex items-center justify-center gap-2">
-                                        <span class="font-mono text-[#555] tracking-widest">{{ $gift['account_number'] }}</span>
-                                        <button
-                                            onclick="navigator.clipboard.writeText('{{ $gift['account_number'] }}'); alert('Copied!')"
-                                            class="text-xs text-[#9333EA] hover:underline">
-                                            <i class="fa-regular fa-copy"></i>
-                                        </button>
-                                    </div>
-                                </div>
-                            @endforeach
-
-                            @if (!empty($theme['gift_address']))
-                                <button onclick="alert('{{ $theme['gift_address'] }}')"
-                                    class="mt-4 px-6 py-2 bg-[#F5F5F5] rounded-full text-xs font-bold text-[#555] hover:bg-[#E0E0E0] transition shadow-sm">
-                                    Other Gift / Address
-                                </button>
-                            @endif
-                        </div>
-                    </div>
-                @endif
-
-            </div>
-        </section>
-    @endif
-
-    @if($invitation->hasFeature('guestbook') && ($invitation->theme_config['guest_book_enabled'] ?? true))
-        <section class="py-20 px-6 bg-white">
-            <div class="max-w-2xl mx-auto text-center">
-                <h2 class="font-script text-4xl text-[#333] mb-8">Wishes & Prayers</h2>
-                <div class="bg-[#F9FAFB] p-6 rounded-xl border border-gray-100 shadow-inner max-h-[500px] overflow-y-auto">
-                    @livewire('frontend.guest-book', ['invitation' => $invitation, 'guest' => $guest])
+                    @endforeach
                 </div>
             </div>
-        </section>
+        @endif
+
+        {{-- RSVP --}}
+        @if($hasRsvp)
+            <div class="border-t-4 border-black pt-12">
+                <h2 class="swiss-title text-4xl mb-8">RSVP<br>Form</h2>
+                
+                <form class="space-y-8">
+                    @livewire('frontend.rsvp-form', ['invitation' => $invitation, 'guest' => $guest])
+                </form>
+            </div>
+        @endif
+    </section>
     @endif
 
-    {{-- THANK YOU --}}
-    <section class="py-24 bg-floral-texture text-center px-6">
-        <h2 class="font-main text-xl text-[#333] uppercase tracking-[0.2em] mb-4">Thank You</h2>
-        <p class="font-script text-3xl text-[#666] mb-8">Xavier & Yuna</p>
-        <p class="text-xs text-[#999] tracking-widest uppercase">Arvaya De Aure Premium Template</p>
+    {{-- GUESTBOOK --}}
+    @if($invitation->hasFeature('guestbook') && ($invitation->theme_config['guest_book_enabled'] ?? true))
+    <section class="py-16 px-2 bg-zinc-200 border-t border-white/20" data-anim-stagger="0.1s">
+        <h2 class="text-xl font-bold uppercase mb-8 text-center">Digital Guestbook</h2>
+        <div class="border-2 p-4 border-blackk bg-white">
+             {{-- Styling for livewire component children via CSS --}}
+            @livewire('frontend.guest-book', ['invitation' => $invitation, 'guest' => $guest])
+        </div>
     </section>
+    @endif
+
+    {{-- FOOTER --}}
+    <footer class="py-12 px-6 border-t border-black text-center bg-gray-50">
+        <h1 class="swiss-title text-3xl mb-4">THANK YOU</h1>
+        <p class="swiss-body text-sm text-gray-600 mb-8 max-w-xs mx-auto">
+            "{{ $invitation->theme_config['thank_you_message'] ?? 'We look forward to celebrating with you.' }}"
+        </p>
+        
+        <div class="inline-block border border-black px-4 py-2">
+            <p class="text-[10px] font-mono uppercase tracking-widest">
+                Created by Arvaya &copy; {{ date('Y') }}
+            </p>
+        </div>
+    </footer>
 
 </div>
 
-{{-- SCRIPTS --}}
 <script>
-    function countdown(eventDate) {
+    function countdown(date) {
         return {
-            eventTime: new Date(eventDate).getTime(),
-            now: Date.now(),
+            target: new Date(date).getTime(),
+            now: new Date().getTime(),
+            days: '00', hours: '00', minutes: '00',
             start() {
                 setInterval(() => {
-                    this.now = Date.now()
-                }, 1000)
-            },
-            get diff() { return Math.max(this.eventTime - this.now, 0) },
-            get days() { return Math.floor(this.diff / (1000 * 60 * 60 * 24)) },
-            get hours() { return Math.floor((this.diff / (1000 * 60 * 60)) % 24) },
-            get minutes() { return Math.floor((this.diff / (1000 * 60)) % 60) },
-            get seconds() { return Math.floor((this.diff / 1000) % 60) }
+                    this.now = new Date().getTime();
+                    const d = this.target - this.now;
+                    if (d > 0) {
+                        this.days = String(Math.floor(d / (1000 * 60 * 60 * 24))).padStart(2, '0');
+                        this.hours = String(Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60))).padStart(2, '0');
+                        this.minutes = String(Math.floor((d % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
+                    }
+                }, 1000);
+            }
         }
     }
 </script>

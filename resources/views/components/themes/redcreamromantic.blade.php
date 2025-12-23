@@ -164,9 +164,11 @@
     </div>
 </div>
 
-{{-- MAIN CONTENT --}}
+
+<div class="overflow-hidden">
+
 <div
-    class="text-[#5C2828] bg-white min-h-screen overflow-hidden selection:bg-[#c51e1e] selection:text-white font-sans relative max-w-sm mx-auto shadow-2xl">
+    class="text-[#5C2828] bg-white min-h-screen selection:bg-[#c51e1e] selection:text-white font-sans relative max-w-sm mx-auto shadow-2xl">
 
     {{-- MUSIC PLAYER --}}
     @if (!empty($theme['music_url']))
@@ -297,12 +299,14 @@
                 <img class="grayscale-100 object-cover max-h-[330px] w-full aspect-[3/4] bg-white/90 px-3 pt-3 pb-10 shadow-xl rounded"
                     src="{{ asset($coverImage) }}" alt="Cover">
             </div>
-            @if ($guest)
+            
                 <div data-anim="fade-up" class="origin-top w-full">
                     <p class="text-[10px] uppercase tracking-wider mb-2">Kepada Yth. Bapak/Ibu/Saudara/i:</p>
-                    <h3 class="font-serif font-bold text-2xl md:text-3xl">{{ $guest->name ?? 'Tamu Undangan' }}</h3>
+                    @if ($guest)
+                        <h3 class="font-serif font-bold text-2xl md:text-3xl">{{ $guest->name ?? 'Tamu Undangan' }}</h3>
+                    @endif
                 </div>
-            @endif
+            
         </div>
     </section>
 
@@ -450,6 +454,28 @@
                 @endif
             </div>
         </section>
+    @endif
+
+        {{-- VIDEO --}}
+    @php
+        $videoEnabled = $invitation->theme_config['video_enabled'] ?? true;
+        $videoUrl = $invitation->theme_config['video_url'] ?? '';
+        $videoId = $videoUrl ? preg_replace('/.*[?&]v=([^&]+).*/', '$1', $videoUrl) : '';
+    @endphp
+    @if($videoEnabled && !empty($videoId))
+        <div class="bg-[#FFFBF2] py-16 px-6">
+            <div class="text-center mb-6" data-anim="fade-up">
+                <h2 class="font-title text-4xl theme-text">Our Story</h2>
+                <p class="font-serif text-sm text-[#7A4B4B]">Watch a glimpse of our journey</p>
+            </div>
+            <div class="max-w-sm mx-auto border theme-border p-3 bg-white overflow-hidden shadow-lg" data-anim="zoom-in">
+                <div class="aspect-video bg-black">
+                    <iframe src="https://www.youtube.com/embed/{{ $videoId }}" title="YouTube video" frameborder="0"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                        allowfullscreen class="w-full h-full"></iframe>
+                </div>
+            </div>
+        </div>
     @endif
 
     {{-- 5. GALLERY SECTION --}}
@@ -642,6 +668,7 @@
         </div>
     @endif
 
+
     {{-- 8. CLOSING / THANK YOU --}}
     <div class="bg-[#FDFBF7] py-16 px-6 font-sans text-[#333]">
         <div class="space-y-8" data-anim="fade-up" data-duration="1s">
@@ -667,16 +694,17 @@
                 </h1>
             </div>
 
-            <div
-                class="relative bg-[#fcf6ef] shadow-md p-6 pt-10 pb-8 rotate-[1deg] transform transition hover:rotate-0 duration-500">
+            @php
+                $thanks = $invitation->theme_config['thank_you_message'] ?? 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kami.';
+            @endphp
+            <div class="relative bg-[#fcf6ef] shadow-md p-6 pt-10 pb-8 rotate-[1deg] transform transition hover:rotate-0 duration-500">
                 <div class="absolute inset-0 w-full h-full pointer-events-none"
                     style="background-image: repeating-linear-gradient(transparent, transparent 31px, #9ca3af 32px); background-position: 0 24px;">
                 </div>
                 <div class="absolute top-0 bottom-0 left-8 w-[1px] bg-red-300/60 h-full z-0"></div>
                 <div class="relative z-10 font-['Nanum_Pen_Script'] text-2xl text-[#b04030] leading-[32px] pl-6">
-                    <p class="mb-6">for being part of our lives and supporting us through our journey.</p>
-                    <p class="mb-6">We were so blessed to have you celebrate and be a part of our wedding day.</p>
-                    <div class="text-right">See you!</div>
+                    <p class="mb-6">{{ $thanks }}</p>
+                    <div class="text-right">{{ ($groom['nickname'] ?? 'Groom') . ' & ' . ($bride['nickname'] ?? 'Bride') }}</div>
                     <div class="mt-4 flex justify-end">
                         <div class="w-24 h-1 bg-gray-600/20 rounded-full skew-x-12"></div>
                     </div>
@@ -710,6 +738,9 @@
     </footer>
 
 </div>
+</div>
+{{-- MAIN CONTENT --}}
+
 
 <script>
     function countdown(eventDate) {

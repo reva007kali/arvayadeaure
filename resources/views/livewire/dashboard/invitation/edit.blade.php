@@ -177,6 +177,7 @@
                                 ['id' => 'gifts', 'icon' => 'fa-gift', 'label' => 'Kado'],
                                 ['id' => 'theme', 'icon' => 'fa-palette', 'label' => 'Tema'],
                                 ['id' => 'music', 'icon' => 'fa-music', 'label' => 'Musik'],
+                                ['id' => 'video', 'icon' => 'fa-video', 'label' => 'Video'],
                                 ['id' => 'dress_code', 'icon' => 'fa-shirt', 'label' => 'Dress Code'],
                                 ['id' => 'closing', 'icon' => 'fa-signature', 'label' => 'Kata Penutup'],
                             ];
@@ -295,6 +296,11 @@
                         {{-- TAB: MUSIC --}}
                         @if ($activeTab === 'music')
                             @include('livewire.dashboard.invitation.partials.tabs.music')
+                        @endif
+
+                        {{-- TAB: VIDEO --}}
+                        @if ($activeTab === 'video')
+                            @include('livewire.dashboard.invitation.partials.tabs.video')
                         @endif
 
                         {{-- TAB: GIFTS --}}

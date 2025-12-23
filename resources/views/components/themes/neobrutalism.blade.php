@@ -208,29 +208,29 @@
         @auth
             @if(auth()->user()->role === 'admin')
                 <div x-data="{
-                    scrolling: false,
-                    rafId: null,
-                    speed: 8, // px per frame (~75 px/s at 60fps)
-                    toggleScroll() {
-                        this.scrolling ? this.stopScroll() : this.startScroll();
-                    },
-                    startScroll() {
-                        this.scrolling = true;
-                        const step = () => {
-                            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
-                                this.stopScroll();
-                            } else {
-                                window.scrollBy(0, this.speed);
+                            scrolling: false,
+                            rafId: null,
+                            speed: 8, // px per frame (~75 px/s at 60fps)
+                            toggleScroll() {
+                                this.scrolling ? this.stopScroll() : this.startScroll();
+                            },
+                            startScroll() {
+                                this.scrolling = true;
+                                const step = () => {
+                                    if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+                                        this.stopScroll();
+                                    } else {
+                                        window.scrollBy(0, this.speed);
+                                        this.rafId = requestAnimationFrame(step);
+                                    }
+                                };
                                 this.rafId = requestAnimationFrame(step);
+                            },
+                            stopScroll() {
+                                this.scrolling = false;
+                                cancelAnimationFrame(this.rafId);
                             }
-                        };
-                        this.rafId = requestAnimationFrame(step);
-                    },
-                    stopScroll() {
-                        this.scrolling = false;
-                        cancelAnimationFrame(this.rafId);
-                    }
-                }" class="fixed bottom-24 right-6 z-[995] print:hidden">
+                        }" class="fixed bottom-24 right-6 z-[995] print:hidden">
                     <button @click="toggleScroll"
                         class="w-8 h-8 bg-black text-[#FFE66D] border-[3px] border-white shadow-[4px_4px_0px_0px_rgba(0,0,0,0.5)] flex items-center justify-center hover:scale-110 transition-transform rounded-full"
                         :class="scrolling ? 'animate-pulse' : ''" title="Auto Scroll (Admin Only)">
@@ -395,66 +395,66 @@
 
         {{-- 3. EVENT INFO --}}
         @if($invitation->theme_config['events_enabled'] ?? true)
-        <section class="py-20 px-4 bg-[#4ECDC4] border-t-[4px] border-black">
-            <div class="w-full">
-                <div class="bg-white border-[4px] border-black shadow-[12px_12px_0px_0px_#1A1A1A]" data-anim="fade-up">
-                    <div class="bg-[#FFE66D] border-b-[4px] border-black p-3 flex items-center justify-between">
-                        <h2 class="font-head text-xl">EVENT_DETAILS.TXT</h2>
-                        <div class="w-5 h-5 bg-[#FF6B6B] border-[3px] border-black rounded-full"></div>
-                    </div>
+            <section class="py-20 px-4 bg-[#4ECDC4] border-t-[4px] border-black">
+                <div class="w-full">
+                    <div class="bg-white border-[4px] border-black shadow-[12px_12px_0px_0px_#1A1A1A]" data-anim="fade-up">
+                        <div class="bg-[#FFE66D] border-b-[4px] border-black p-3 flex items-center justify-between">
+                            <h2 class="font-head text-xl">EVENT_DETAILS.TXT</h2>
+                            <div class="w-5 h-5 bg-[#FF6B6B] border-[3px] border-black rounded-full"></div>
+                        </div>
 
-                    <div class="p-6 text-center">
-                        <h3 class="font-sub text-2xl mb-6 underline decoration-[6px] decoration-[#FF6B6B]">
-                            {{ $event['title'] ?? 'The Wedding' }}
-                        </h3>
+                        <div class="p-6 text-center">
+                            <h3 class="font-sub text-2xl mb-6 underline decoration-[6px] decoration-[#FF6B6B]">
+                                {{ $event['title'] ?? 'The Wedding' }}
+                            </h3>
 
-                        @if($eventDate)
-                            <div class="inline-flex flex-col bg-white border-[3px] border-black mb-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)]"
-                                data-anim="zoom-in" data-delay="0.1s">
-                                <div
-                                    class="bg-[#FF6B6B] text-white font-head text-lg py-2 px-6 border-b-[3px] border-black">
-                                    {{ $eventDate->translatedFormat('F') }}
-                                </div>
-                                <div class="font-head text-5xl py-4">{{ $eventDate->format('d') }}</div>
-                                <div class="bg-black text-white font-mono py-1">{{ $eventDate->translatedFormat('l') }}
-                                </div>
-                            </div>
-
-                            <div class="font-mono text-base mb-8" data-anim="fade-up" data-delay="0.2s">
-                                <p class="bg-[#FFE66D] inline-block px-2 border border-black transform -rotate-1 text-sm">
-                                    TIME: {{ $eventDate->format('H:i') }} {{ $event['timezone'] ?? 'WIB' }}
-                                </p>
-                                <div class="mt-4">
-                                    <p class="font-bold text-lg">{{ $event['location'] ?? 'TBA' }}</p>
-                                    <p class="text-xs max-w-md mx-auto mt-2">{{ $event['address'] ?? '' }}</p>
-                                </div>
-                            </div>
-                        @endif
-
-                        @if (!empty($event['map_link']))
-                            <a href="{{ $event['map_link'] }}" target="_blank"
-                                class="brutal-btn bg-white hover:bg-black hover:text-white text-xs">
-                                <i class="fa-solid fa-map-pin mr-2"></i> GET DIRECTIONS
-                            </a>
-                        @endif
-
-                        @if($eventDate)
-                            <div x-data="countdown('{{ $eventDate->toIso8601String() }}')" x-init="start()"
-                                class="grid grid-cols-4 gap-2 mt-12 border-t-[3px] border-black pt-8"
-                                data-anim-stagger="0.1">
-                                @foreach (['Days', 'Hours', 'Minutes', 'Seconds'] as $label)
-                                    <div class="bg-black text-[#4ECDC4] p-1 border-[3px] border-transparent hover:border-[#FF6B6B]"
-                                        data-anim="fade-up">
-                                        <span class="block font-head text-xl" x-text="{{ strtolower($label) }}">0</span>
-                                        <span class="font-mono text-[10px] uppercase">{{ $label }}</span>
+                            @if($eventDate)
+                                <div class="inline-flex flex-col bg-white border-[3px] border-black mb-8 shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)]"
+                                    data-anim="zoom-in" data-delay="0.1s">
+                                    <div
+                                        class="bg-[#FF6B6B] text-white font-head text-lg py-2 px-6 border-b-[3px] border-black">
+                                        {{ $eventDate->translatedFormat('F') }}
                                     </div>
-                                @endforeach
-                            </div>
-                        @endif
+                                    <div class="font-head text-5xl py-4">{{ $eventDate->format('d') }}</div>
+                                    <div class="bg-black text-white font-mono py-1">{{ $eventDate->translatedFormat('l') }}
+                                    </div>
+                                </div>
+
+                                <div class="font-mono text-base mb-8" data-anim="fade-up" data-delay="0.2s">
+                                    <p class="bg-[#FFE66D] inline-block px-2 border border-black transform -rotate-1 text-sm">
+                                        TIME: {{ $eventDate->format('H:i') }} {{ $event['timezone'] ?? 'WIB' }}
+                                    </p>
+                                    <div class="mt-4">
+                                        <p class="font-bold text-lg">{{ $event['location'] ?? 'TBA' }}</p>
+                                        <p class="text-xs max-w-md mx-auto mt-2">{{ $event['address'] ?? '' }}</p>
+                                    </div>
+                                </div>
+                            @endif
+
+                            @if (!empty($event['map_link']))
+                                <a href="{{ $event['map_link'] }}" target="_blank"
+                                    class="brutal-btn bg-white hover:bg-black hover:text-white text-xs">
+                                    <i class="fa-solid fa-map-pin mr-2"></i> GET DIRECTIONS
+                                </a>
+                            @endif
+
+                            @if($eventDate)
+                                <div x-data="countdown('{{ $eventDate->toIso8601String() }}')" x-init="start()"
+                                    class="grid grid-cols-4 gap-2 mt-12 border-t-[3px] border-black pt-8"
+                                    data-anim-stagger="0.1">
+                                    @foreach (['Days', 'Hours', 'Minutes', 'Seconds'] as $label)
+                                        <div class="bg-black text-[#4ECDC4] p-1 border-[3px] border-transparent hover:border-[#FF6B6B]"
+                                            data-anim="fade-up">
+                                            <span class="block font-head text-xl" x-text="{{ strtolower($label) }}">0</span>
+                                            <span class="font-mono text-[10px] uppercase">{{ $label }}</span>
+                                        </div>
+                                    @endforeach
+                                </div>
+                            @endif
+                        </div>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
         @endif
 
         {{-- STATIC LOVE QUOTE --}}
@@ -477,6 +477,33 @@
                 </div>
             </div>
         </section>
+
+        {{-- VIDEO --}}
+        @php
+            $videoEnabled = $invitation->theme_config['video_enabled'] ?? true;
+            $videoUrl = $invitation->theme_config['video_url'] ?? '';
+            $videoId = $videoUrl ? preg_replace('/.*[?&]v=([^&]+).*/', '$1', $videoUrl) : '';
+        @endphp
+        @if($videoEnabled && !empty($videoId))
+            <section class="py-20 px-4 bg-[#FFFDF5] border-t-[4px] border-black">
+                <div class="w-full">
+                    <div class="bg-white border-[4px] border-black shadow-[10px_10px_0px_0px_#FF6B6B] p-4 text-center"
+                        data-anim="fade-up">
+                        <h2
+                            class="font-head text-3xl mb-4 bg-[#FFE66D] inline-block px-3 py-1 border-[3px] border-black shadow-[4px_4px_0px_0px_black] transform -rotate-1">
+                            WATCH THIS!
+                        </h2>
+                        <div class="aspect-video border-[4px] border-black bg-black p-2 shadow-[6px_6px_0px_0px_#4ECDC4]">
+                            <iframe src="https://www.youtube.com/embed/{{ $videoId }}" title="YouTube video" frameborder="0"
+                                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                                allowfullscreen class="w-full h-full border-[2px] border-white"></iframe>
+                        </div>
+                        <p class="font-mono text-xs mt-3 bg-black text-white inline-block px-2 py-1">Our Story in 60 Seconds
+                        </p>
+                    </div>
+                </div>
+            </section>
+        @endif
 
         {{-- 4. GALLERY --}}
         @if (!empty($moments) && ($invitation->gallery_data['enabled'] ?? true))
@@ -589,13 +616,15 @@
 
                         <div class="p-6 text-center">
                             <h3 class="font-head text-3xl mb-4">{{ $dressCode['title'] ?? 'DRESS CODE' }}</h3>
-                            <p class="font-mono text-sm mb-8 leading-relaxed max-w-lg mx-auto">{{ $dressCode['description'] ?? '' }}</p>
+                            <p class="font-mono text-sm mb-8 leading-relaxed max-w-lg mx-auto">
+                                {{ $dressCode['description'] ?? '' }}</p>
 
                             @if(!empty($dressCode['colors']))
                                 <div class="flex flex-wrap justify-center gap-4 mb-8">
                                     @foreach($dressCode['colors'] as $color)
                                         <div class="flex flex-col items-center">
-                                            <div class="w-12 h-12 rounded-full border-[3px] border-black shadow-[3px_3px_0px_0px_black]" style="background-color: {{ $color }}"></div>
+                                            <div class="w-12 h-12 rounded-full border-[3px] border-black shadow-[3px_3px_0px_0px_black]"
+                                                style="background-color: {{ $color }}"></div>
                                             <span class="font-mono text-[10px] mt-1">{{ $color }}</span>
                                         </div>
                                     @endforeach
@@ -603,14 +632,17 @@
                             @endif
 
                             @if(!empty($dressCode['image']))
-                                <div class="mb-8 p-2 bg-white border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)] inline-block transform rotate-1">
-                                    <img src="{{ asset($dressCode['image']) }}" class="max-w-full md:max-w-sm max-h-[400px] object-cover border-[2px] border-black grayscale hover:grayscale-0 transition-all">
+                                <div
+                                    class="mb-8 p-2 bg-white border-[3px] border-black shadow-[6px_6px_0px_0px_rgba(0,0,0,0.2)] inline-block transform rotate-1">
+                                    <img src="{{ asset($dressCode['image']) }}"
+                                        class="max-w-full md:max-w-sm max-h-[400px] object-cover border-[2px] border-black grayscale hover:grayscale-0 transition-all">
                                 </div>
                             @endif
 
                             @if(!empty($dressCode['notes']))
-                                 <div class="bg-[#FFFDF5] border-[3px] border-black p-4 inline-block transform -rotate-1">
-                                    <p class="font-bold font-mono text-xs bg-black text-white inline-block px-2 py-1 mb-2">IMPORTANT NOTE:</p>
+                                <div class="bg-[#FFFDF5] border-[3px] border-black p-4 inline-block transform -rotate-1">
+                                    <p class="font-bold font-mono text-xs bg-black text-white inline-block px-2 py-1 mb-2">
+                                        IMPORTANT NOTE:</p>
                                     <p class="font-mono text-sm">{{ $dressCode['notes'] }}</p>
                                 </div>
                             @endif
@@ -626,34 +658,54 @@
             $hasGuestbook = $invitation->hasFeature('guestbook');
         @endphp
         @if($hasRsvp || $hasGuestbook)
-        <section class="py-20 px-4 bg-[#FFFDF5] border-t-[4px] border-black">
-            <div class="w-full">
-                <div class="bg-white border-[4px] border-black p-4 shadow-[10px_10px_0px_0px_#FF6B6B]"
-                    data-anim="fade-up">
-                    
-                    @if($hasRsvp)
-                        <h2 class="font-head text-3xl mb-8 text-center bg-black text-white py-2 transform -rotate-2">ARE YOU
-                            COMING?</h2>
-                        <div class="mb-12">
-                            @livewire('frontend.rsvp-form', ['invitation' => $invitation, 'guest' => $guest])
-                        </div>
-                    @endif
+            <section class="py-20 px-4 bg-[#FFFDF5] border-t-[4px] border-black">
+                <div class="w-full">
+                    <div class="bg-white border-[4px] border-black p-4 shadow-[10px_10px_0px_0px_#FF6B6B]"
+                        data-anim="fade-up">
 
-                    @if($hasGuestbook)
-                        <div class="{{ $hasRsvp ? 'border-t-[4px] border-dashed border-black pt-8' : '' }}">
-                            <h2 class="font-head text-2xl mb-6 text-center" data-anim="fade-up">DROP A WISH</h2>
-                            <div class="bg-[#4ECDC4] p-1 border-[3px] border-black" data-anim="zoom-in">
-                                @livewire('frontend.guest-book', ['invitation' => $invitation, 'guest' => $guest])
+                        @if($hasRsvp)
+                            <h2 class="font-head text-3xl mb-8 text-center bg-black text-white py-2 transform -rotate-2">ARE YOU
+                                COMING?</h2>
+                            <div class="mb-12">
+                                @livewire('frontend.rsvp-form', ['invitation' => $invitation, 'guest' => $guest])
                             </div>
-                        </div>
-                    @endif
+                        @endif
+
+                        @if($hasGuestbook)
+                            <div class="{{ $hasRsvp ? 'border-t-[4px] border-dashed border-black pt-8' : '' }}">
+                                <h2 class="font-head text-2xl mb-6 text-center" data-anim="fade-up">DROP A WISH</h2>
+                                <div class="bg-[#4ECDC4] p-1 border-[3px] border-black" data-anim="zoom-in">
+                                    @livewire('frontend.guest-book', ['invitation' => $invitation, 'guest' => $guest])
+                                </div>
+                            </div>
+                        @endif
+                    </div>
+                </div>
+            </section>
+        @endif
+
+        {{-- CLOSING / THANK YOU --}}
+        @php
+            $thanks = $invitation->theme_config['thank_you_message'] ?? 'Merupakan suatu kehormatan dan kebahagiaan bagi kami apabila Bapak/Ibu/Saudara/i berkenan hadir untuk memberikan doa restu kepada kami.';
+        @endphp
+        <section class="py-20 px-4 bg-white border-t-[4px] border-black">
+            <div class="w-full" data-anim="fade-up">
+                <div
+                    class="bg-white border-[4px] border-black shadow-[10px_10px_0px_0px_#4ECDC4] p-6 text-center transform rotate-1">
+                    <h2
+                        class="font-head text-3xl mb-4 bg-[#FFE66D] inline-block px-4 py-1 border-[3px] border-black shadow-[4px_4px_0px_0px_black]">
+                        THANK YOU
+                    </h2>
+                    <p class="font-mono text-sm leading-relaxed max-w-xl mx-auto">{{ $thanks }}</p>
+                    <div class="mt-6 font-head text-2xl">
+                        {{ $groom['nickname'] ?? 'Groom' }} & {{ $bride['nickname'] ?? 'Bride' }}
+                    </div>
                 </div>
             </div>
         </section>
-        @endif
 
         {{-- FOOTER --}}
-        <footer class="bg-black text-white py-12 border-t-[4px] border-white text-center font-mono">
+        <footer class="bg-black text-white py-12 border-t-[4px] border:white text-center font-mono">
             <h2 class="font-head text-3xl text-[#FFE66D] mb-4">WE HOPE YOU ENJOY YOUR DAY!</h2>
             <p class="text-xs text-gray-400">THANK YOU FOR JOINING US.</p>
             <div class="mt-8">

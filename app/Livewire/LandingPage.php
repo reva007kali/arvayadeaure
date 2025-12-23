@@ -5,6 +5,7 @@ namespace App\Livewire;
 use Livewire\Component;
 use Livewire\Attributes\Layout;
 use App\Models\Template;
+use App\Models\Invitation;
 
 #[Layout('components.layouts.public')]
 
@@ -31,8 +32,17 @@ class LandingPage extends Component
             ->take(10)
             ->get();
 
+        $testimonials = Invitation::query()
+            ->select(['id', 'couple_data', 'gallery_data'])
+            ->with('user:id,role')
+            ->where('is_active', true)
+            ->whereHas('user', fn($q) => $q->where('role', 'user'))
+            ->orderBy('created_at', 'desc')
+            ->take(8)
+            ->get();
+
         $tiers = Template::TIERS;
 
-        return view('livewire.landing-page', compact('templates', 'tiers'));
+        return view('livewire.landing-page', compact('templates', 'tiers', 'testimonials'));
     }
 }

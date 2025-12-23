@@ -170,6 +170,40 @@
         </div>
     </section>
 
+    <!-- TESTIMONIALS -->
+    <section id="testimonials" class="py-24 bg-arvaya-bg">
+        <div class="max-w-6xl mx-auto px-6">
+            <div class="text-center mb-12" data-anim="fade-up">
+                <h2 class="font-serif text-3xl md:text-4xl font-bold mb-2 text-arvaya-100">Cerita Pengguna</h2>
+                <p class="text-arvaya-200">Cuplikan undangan dari pengguna kami</p>
+            </div>
+            <div class="grid grid-cols-2 lg:grid-cols-4 gap-6" data-anim-stagger="0.12">
+                @foreach ($testimonials as $item)
+                    @php
+                        $cover = data_get($item->gallery_data, 'cover');
+                        $groom = data_get($item->couple_data, 'groom.nickname', 'Groom');
+                        $bride = data_get($item->couple_data, 'bride.nickname', 'Bride');
+                    @endphp
+                    <div class="rounded-2xl overflow-hidden border border-[#333333] bg-[#1a1a1a] shadow hover:shadow-lg transition" data-anim="fade-up">
+                        <div class="aspect-[3/4] bg-[#252525]">
+                            @if ($cover)
+                                <img src="{{ asset($cover) }}" class="w-full h-full object-cover">
+                            @else
+                                <div class="w-full h-full flex items-center justify-center text-[#666]">
+                                    <i class="fa-solid fa-image text-3xl"></i>
+                                </div>
+                            @endif
+                        </div>
+                        <div class="px-4 py-3 flex items-center justify-between">
+                            <p class="font-serif font-bold text-[#E0E0E0] text-sm truncate">{{ $groom }} & {{ $bride }}</p>
+                            <span class="text-[10px] text-arvaya-400 font-bold uppercase tracking-wider">User</span>
+                        </div>
+                    </div>
+                @endforeach
+            </div>
+        </div>
+    </section>
+
     <!-- THEMES SECTION -->
     <section id="themes" class="py-24 bg-arvaya-bg relative overflow-hidden">
         <div class="absolute inset-0 bg-gradient-to-b from-[#1a1a1a] to-arvaya-bg opacity-50"></div>

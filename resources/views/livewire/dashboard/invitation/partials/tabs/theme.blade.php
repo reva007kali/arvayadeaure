@@ -1,17 +1,30 @@
 {{-- Pricing Info --}}
-<div
-    class="bg-gradient-to-r from-[#1a1a1a] to-[#252525] rounded-3xl p-8 mb-8 text-white relative overflow-hidden shadow-xl">
+<div class="bg-gradient-to-r max-w-6xl mx-auto rounded-3xl p-8 mb-8 text-white relative overflow-hidden shadow-xl">
     <div
         class="absolute top-0 right-0 w-64 h-64 bg-[#D4AF37] rounded-full mix-blend-overlay filter blur-3xl opacity-20 -mr-16 -mt-16">
     </div>
     <div class="flex flex-col md:flex-row justify-between items-center gap-6 relative z-10">
         <div>
+            @php $selected = $availableTemplates->firstWhere('slug', $theme_template); @endphp
             <div class="flex items-center gap-2 mb-2">
                 <span
                     class="bg-[#D4AF37] text-[#121212] text-[10px] font-bold px-2 py-0.5 rounded uppercase tracking-wider">Active
                     Plan</span>
             </div>
             <h4 class="font-serif font-bold text-3xl mb-2">{{ $currentTierName }}</h4>
+            @if($selected)
+                <div class="flex items-center gap-3 mb-2">
+                    @if($selected->thumbnail)
+                        <img src="{{ asset('storage/' . $selected->thumbnail) }}"
+                            class="w-12 h-16 object-cover rounded border border-[#333333]">
+                    @endif
+                    <div>
+                        <p class="text-sm text-[#A0A0A0]">Template</p>
+                        <p class="font-bold text-[#E0E0E0] text-base">{{ $selected->name }}</p>
+                        <p class="text-[10px] text-[#666] font-mono">/{{ $selected->slug }}</p>
+                    </div>
+                </div>
+            @endif
             <div class="flex flex-wrap gap-2 text-xs text-[#E0E0E0]">
                 @foreach ($currentTierFeatures as $feat)
                     <span class="flex items-center gap-1 bg-white/10 px-2 py-1 rounded"><i
@@ -31,7 +44,7 @@
 </div>
 
 {{-- Template Grid --}}
-<div class="mb-8">
+<div class="mb-8 max-w-6xl mx-auto">
     <div class="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3 px-2 mb-4">
         <label class="font-bold text-[#E0E0E0] text-lg">Pilih Desain</label>
         <div class="w-full sm:w-80">
@@ -49,34 +62,20 @@
 
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
         @foreach ($availableTemplates as $tpl)
-            <div class="group cursor-pointer rounded-xl overflow-hidden"
-                wire:click="selectTemplate('{{ $tpl->slug }}')">
+            <div class="group cursor-pointer rounded-xl border border-[#333333] overflow-hidden" wire:click="selectTemplate('{{ $tpl->slug }}')">
                 <div
-                    class="aspect-[9/16] overflow-hidden relative border-2 transition-all
-                                                                                                                                                                                                                                {{ $theme_template == $tpl->slug ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/30 shadow-xl' : 'border-[#333333] hover:border-[#D4AF37]/50 hover:shadow-lg' }}">
+                    class="aspect-[3/4] overflow-hidden relative border-2 transition-all
+                                                                                                                                                                                                                                            {{ $theme_template == $tpl->slug ? 'border-[#D4AF37] ring-2 ring-[#D4AF37]/30 shadow-xl' : 'border-[#333333] hover:border-[#D4AF37]/50 hover:shadow-lg' }}">
                     @if ($tpl->thumbnail)
                         <img src="{{ asset('storage/' . $tpl->thumbnail) }}" loading="lazy"
                             class="w-full h-full object-cover group-hover:scale-[1.02] transition">
                     @else
-                        <div
-                            class="w-full h-full bg-[#252525] flex flex-col items-center justify-center text-[#888]">
+                        <div class="w-full h-full bg-[#252525] flex flex-col items-center justify-center text-[#888]">
                             <i class="fa-solid fa-image text-3xl mb-2"></i>
                             <span class="text-xs font-bold">No Preview</span>
                         </div>
                     @endif
-                    <div class="absolute top-2 left-2">
-                        <span
-                            class="text-[10px] font-bold uppercase tracking-wider px-2 py-1 rounded-full shadow-sm
-                                                                                                                                                                                                                                        {{ $tpl->tier == 'exclusive' ? 'bg-[#2D2418] text-[#D4AF37]' : ($tpl->tier == 'premium' ? 'bg-[#D4AF37] text-[#121212]' : 'bg-[#1a1a1a] text-[#E0E0E0]') }}">
-                            {{ $tpl->tier }}
-                        </span>
-                    </div>
-                    <div
-                        class="absolute bottom-0 left-0 right-0 bg-[#1a1a1a]/95 backdrop-blur-sm p-2 text-center border-t border-[#333333]">
-                        <p class="font-bold text-[#E0E0E0] text-xs">Rp
-                            {{ number_format($tpl->price, 0, ',', '.') }}
-                        </p>
-                    </div>
+
                     @if ($theme_template == $tpl->slug)
                         <div class="absolute inset-0 bg-[#D4AF37]/25 flex items-center justify-center">
                             <div
@@ -86,10 +85,20 @@
                         </div>
                     @endif
                 </div>
-                <div class="text-center mt-2">
+                <div class="text-center mt-2 py-2">
                     <p class="font-serif font-bold text-[#E0E0E0] text-sm">
                         {{ $tpl->name }}
                     </p>
+                    <div class="mt-1 flex items-center justify-center gap-2">
+                        <span
+                            class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full border
+                                    {{ $tpl->tier == 'exclusive' ? 'border-[#D4AF37] text-[#D4AF37]' : ($tpl->tier == 'premium' ? 'border-[#D4AF37] text-[#D4AF37]' : 'border-[#333333] text-[#A0A0A0]') }}">
+                            {{ $tpl->tier }}
+                        </span>
+                        <span class="text-[10px] font-bold px-2 py-0.5 rounded-full border border-[#333333] text-[#E0E0E0]">
+                            Rp {{ number_format($tpl->price, 0, ',', '.') }}
+                        </span>
+                    </div>
                 </div>
             </div>
         @endforeach
@@ -109,4 +118,3 @@
         @endunless
     </div>
 </div>
-

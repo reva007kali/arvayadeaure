@@ -3,10 +3,6 @@
     "file": "assets/masking-tape-red-Dw4T6Sxe.png",
     "src": "public/img/assets/masking-tape-red.png"
   },
-  "public/img/bg/navy-paper.jpg": {
-    "file": "assets/navy-paper-C2JJapM3.jpg",
-    "src": "public/img/bg/navy-paper.jpg"
-  },
   "public/img/bg/paper.png": {
     "file": "assets/paper-Ddt2i8jM.png",
     "src": "public/img/bg/paper.png"
@@ -16,7 +12,7 @@
     "src": "public/img/bg/paper2.png"
   },
   "resources/css/app.css": {
-    "file": "assets/app-DqJngeR_.css",
+    "file": "assets/app-Eesy2d00.css",
     "src": "resources/css/app.css",
     "isEntry": true,
     "names": [

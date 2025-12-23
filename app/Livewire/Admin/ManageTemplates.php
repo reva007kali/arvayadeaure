@@ -20,6 +20,7 @@ class ManageTemplates extends Component
     public $thumbnail, $preview_video;
     public $templateId = null;
     public $is_active = true;
+    public $category = 'Wedding';
 
     // Modal State
     public $isOpen = false;
@@ -35,7 +36,7 @@ class ManageTemplates extends Component
     {
         $this->resetValidation();
         // Reset form inputs termasuk price
-        $this->reset(['name', 'slug', 'description', 'tier', 'price', 'thumbnail', 'preview_video', 'templateId', 'is_active']);
+        $this->reset(['name', 'slug', 'description', 'tier', 'price', 'thumbnail', 'preview_video', 'templateId', 'is_active', 'category']);
         $this->isOpen = true;
         $this->isEdit = false;
     }
@@ -51,6 +52,7 @@ class ManageTemplates extends Component
         $this->tier = $t->tier;
         $this->price = $t->price; // Load harga
         $this->is_active = (bool) $t->is_active;
+        $this->category = $t->category ?: 'Wedding';
 
         $this->isOpen = true;
         $this->isEdit = true;
@@ -64,6 +66,7 @@ class ManageTemplates extends Component
             'tier' => 'required|in:basic,premium,exclusive',
             'price' => 'required|numeric|min:0', // Validasi harga
             'is_active' => 'boolean',
+            'category' => 'nullable|string|in:Wedding,Engagement,Birthday,Aqiqah,Khitan,Event,Other',
         ];
 
         if (!$this->isEdit) {
@@ -79,6 +82,7 @@ class ManageTemplates extends Component
             'tier' => $this->tier,
             'price' => $this->price, // Simpan harga
             'is_active' => (bool) $this->is_active,
+            'category' => $this->category,
         ];
 
         if ($this->thumbnail) {

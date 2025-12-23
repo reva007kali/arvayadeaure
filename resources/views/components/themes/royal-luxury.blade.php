@@ -143,15 +143,35 @@
     }
 </style>
 
+<div id="loading-overlay"
+    class="fixed inset-0 z-[9999] bg-[#151515] flex items-center justify-center transition-opacity duration-700">
+    <div class="text-center space-y-5">
+        <span class="font-title italic text-xl gold-gradient-text p-7">Wedding Invitation</span>
+        <h2 class="font-serif text-3xl gold-gradient-text mt-5">{{ $groom['nickname'] ?? 'Groom' }} &
+            {{ $bride['nickname'] ?? 'Bride' }}
+        </h2>
+        <div class="space-y-1">
+            <p class="text-white/70 font-sans text-sm">Kepada Yang Terhormat:</p>
+            <p class="font-sans text-sm text-white/70">{{ $guest->name ?? 'Tamu Undangan' }}</p>
+        </div>
+        <div class="w-64 mx-auto h-2 bg-[#222] rounded-full overflow-hidden border border-gold/30">
+            <div id="loading-progress-bar" class="h-full bg-gold" style="width: 0%"></div>
+        </div>
+        <div id="loading-progress-text" class="text-[10px] text-white/60 font-bold tracking-widest">0%</div>
+        <button id="open-invitation-btn"
+            class="mt-2 px-6 py-2 rounded-full bg-gold text-black font-bold text-xs tracking-wider hover:scale-105 transition-transform"
+            style="display:none">Buka Undangan</button>
+    </div>
+</div>
 
 {{-- MAIN CONTENT --}}
-<div class="bg-fixed bg-contain relative"
-    style="background-image: url('{{ isset($moments[1]) ? asset($moments[1]) : asset($coverImage) }}')">
+<div class="bg-fixed bg-contain relative bg-arvaya-300">
 
     <div class="absolute top-0 left-0 w-full h-full bg-radial from-black/40 via-black/70 to-black z-0">
     </div>
 
-    <div class="relative min-h-svh font-title lg:max-w-sm mx-auto shadow-xl shadow-black/80 overflow-hidden bg-zinc-900">
+    <div
+        class="relative min-h-svh font-title lg:max-w-sm mx-auto shadow-xl shadow-black/80 overflow-hidden bg-zinc-900">
 
         {{-- 1. COVER SECTION --}}
         <section class="min-h-svh relative bg-theme p-4">
@@ -233,7 +253,8 @@
             </div>
         </section>
         <div class="relative">
-            <img src="{{ isset($moments[0]) ? asset($moments[0]) : asset($coverImage) }}" alt="">
+            <img class="aspect-[3/4] object-cover"
+                src="{{ isset($moments[0]) ? asset($moments[0]) : asset($coverImage) }}" alt="">
             <div class="absolute top-0 left-0 w-full h-full bg-radial from-black/20 via-black/40 to-black/90 z-10">
             </div>
             <div class="absolute w-full bottom-10 left-1/2 -translate-x-1/2 -translate-y-1/2 z-20 text-center px-6"
@@ -337,12 +358,16 @@
                         @endif
                     @endforeach
                     {{-- Countdown --}}
-                    @if(isset($eventDate))
-                        <div class="mt-12" x-data="countdown('{{ $eventDate->toIso8601String() }}')" x-init="start()">
+                    @php
+                        $firstEvt = $invitation->event_data[0] ?? null;
+                        $firstDate = isset($firstEvt['date']) ? \Carbon\Carbon::parse($firstEvt['date']) : null;
+                    @endphp
+                    @if($firstDate)
+                        <div class="mt-12" x-data="countdown('{{ $firstDate->toIso8601String() }}')" x-init="start()">
                             <div class="grid grid-cols-4 gap-2">
                                 @foreach(['days', 'hours', 'minutes', 'seconds'] as $time)
                                     <div class="text-center p-3 glass-card rounded-lg border-t-2 border-t-[#BF953F]/50">
-                                        <span class="block text-2xl font-serif text-white mb-1" x-text="{{ $time }}">0</span>
+                                        <span class="block text-2xl font-serif text-white mb-1" x-text="{{ $time }}">00</span>
                                         <span class="text-[8px] uppercase tracking-widest text-[#BF953F]">{{ $time }}</span>
                                     </div>
                                 @endforeach
@@ -369,7 +394,7 @@
 
                 <div class="text-center max-w-lg mx-auto" data-anim="fade-up" data-duration="1.5s">
                     <div class="bg-zinc-900 border border-gold/20 p-8 rounded-gate shadow-inset relative">
-                        <div class="absolute -top-3 left-1/2 -translate-x-1/2 bg-zinc-900 px-4">
+                        <div class="absolute -top-8 left-1/2 -translate-x-1/2 bg-zinc-900 rounded-full border p-2">
                             <i class="fa-solid fa-shirt theme-text text-2xl"></i>
                         </div>
 
@@ -410,6 +435,25 @@
             </section>
         @endif
         {{-- 3.5 DRESS CODE SECTION --}}
+
+        {{-- VIDEO --}}
+        @php
+            $videoEnabled = $invitation->theme_config['video_enabled'] ?? true;
+            $videoUrl = $invitation->theme_config['video_url'] ?? '';
+            $videoId = $videoUrl ? preg_replace('/.*[?&]v=([^&]+).*/', '$1', $videoUrl) : '';
+        @endphp
+        @if($videoEnabled && !empty($videoId))
+            <div class="pt-10 p-6" data-anim="fade-up" data-duration="1.5s">
+                <h1 class="font-serif text-4xl text-center gold-gradient-text mb-8">Video</h1>
+                <div class="bg-zinc-900 p-2 rounded-2xl border-gold border overflow-hidden shadow-inner">
+                    <div class="aspect-video rounded-xl overflow-hidden">
+                        <iframe src="https://www.youtube.com/embed/{{ $videoId }}" title="YouTube video" frameborder="0"
+                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                            allowfullscreen class="w-full h-full"></iframe>
+                    </div>
+                </div>
+            </div>
+        @endif
 
         {{-- 4. GALLERY SECTION --}}
         @if (!empty($moments) && ($invitation->gallery_data['enabled'] ?? true))
@@ -511,7 +555,7 @@
                                                 <p class="text-[7px] text-[#BF953F] uppercase tracking-[0.2em] mb-1 opacity-80">Card
                                                     Holder</p>
                                                 <p
-                                                    class="font-sans font-bold text-white/90 uppercase tracking-widest text-xs md:text-sm drop-shadow-md">
+                                                    class="font-sans text-left font-bold text-white/90 uppercase tracking-widest text-xs drop-shadow-md">
                                                     {{ $gift['account_name'] }}
                                                 </p>
                                             </div>
@@ -560,6 +604,8 @@
             </div>
         @endif
 
+
+
         {{-- WISHES --}}
         @if($hasGuestbook)
             <div class="pt-10 p-6" data-anim="fade-up" data-duration="1.5s">
@@ -598,15 +644,16 @@
                 <div
                     class="w-24 h-[1px] bg-gradient-to-r from-transparent via-amber-500/50 to-transparent mx-auto mb-10">
                 </div>
+
+                <h2 class="font-serif text-3xl gold-gradient-text mb-2">{{ $groom['nickname'] }} &
+                    {{ $bride['nickname'] }}
+                </h2>
             </div>
         </section>
         {{-- 5. THANK YOU MESSAGE --}}
 
         {{-- 6. FOOTER --}}
-        <footer class="bg-black py-12 text-center border-t border-gold/20">
-            <h2 class="font-serif text-3xl gold-gradient-text mb-2">{{ $groom['nickname'] }} & {{ $bride['nickname'] }}
-            </h2>
-
+        <footer class="bg-zinc-900 py-8 text-center border-t border-gold">
             <a href="https://arvaya.id" target="_blank"
                 class="font-sans text-[10px] text-white/30 uppercaseatracking-[0.3em]">Powered By Arvaya.id</a>
             <div class="mt-4">
@@ -617,114 +664,42 @@
     </div>
 </div>
 
+<script>
+    document.body.style.overflow = 'hidden';
+    window.addEventListener('load', function () {
+        var btn = document.getElementById('open-invitation-btn');
+        var overlay = document.getElementById('loading-overlay');
+        var bar = document.getElementById('loading-progress-bar');
+        var txt = document.getElementById('loading-progress-text');
+        var p = 0;
+        var interval = setInterval(function () {
+            p = Math.min(p + 2, 100);
+            if (bar) bar.style.width = p + '%';
+            if (txt) txt.textContent = p + '%';
+            if (p >= 100) {
+                clearInterval(interval);
+                if (btn) btn.style.display = 'inline-block';
+            }
+        }, 40);
+        if (btn) {
+            btn.addEventListener('click', function () {
+                if (overlay) overlay.classList.add('opacity-0');
+                document.body.style.overflow = 'auto';
+                setTimeout(function () { if (overlay) overlay.style.display = 'none'; }, 700);
+            });
+        }
+    });
+</script>
+
 {{-- MUSIC PLAYER --}}
 @if (!empty($theme['music_url']))
     <div x-data="youtubePlayer('{{ $theme['music_url'] }}')" x-init="initPlayer()" @play-music.window="playMusic()"
-        class="fixed bottom-6 left-1/2 -translate-x-1/2 z-[990] w-full max-w-sm px-6 pointer-events-none print:hidden">
-
-        <div class="pointer-events-auto inline-block relative">
-
-            <button x-show="!isOpen" @click="isOpen = true" x-transition:enter="transition ease-out duration-300"
-                x-transition:enter-start="opacity-0 scale-50" x-transition:enter-end="opacity-100 scale-100"
-                class="w-14 h-14 bg-black/80 backdrop-blur-md text-[#BF953F] rounded-full shadow-[0_0_20px_rgba(191,149,63,0.4)] border border-[#BF953F]/50 flex items-center justify-center hover:scale-110 hover:border-[#BF953F] transition-all duration-300 animate-[spin_8s_linear_infinite]">
-                <div class="absolute inset-0 rounded-full border border-white/10"></div>
-                <i class="fa-solid fa-compact-disc text-3xl"></i>
-            </button>
-
-            <div x-show="isOpen" x-transition:enter="transition ease-out duration-500"
-                x-transition:enter-start="opacity-0 translate-y-10 scale-90"
-                x-transition:enter-end="opacity-100 translate-y-0 scale-100"
-                x-transition:leave="transition ease-in duration-300"
-                x-transition:leave-start="opacity-100 translate-y-0 scale-100"
-                x-transition:leave-end="opacity-0 translate-y-10 scale-90"
-                class="relative w-[300px] bg-[#0a0a0a]/95 rounded-3xl shadow-[0_20px_50px_rgba(0,0,0,0.8)] border border-[#BF953F]/30 overflow-hidden backdrop-blur-xl">
-
-                <button @click="isOpen = false"
-                    class="absolute top-4 right-4 text-white/30 hover:text-[#BF953F] z-20 transition duration-300">
-                    <i class="fa-solid fa-chevron-down text-lg"></i>
-                </button>
-
-                <div
-                    class="absolute inset-0 bg-gradient-to-b from-[#BF953F]/10 via-transparent to-black pointer-events-none">
-                </div>
-
-                <div class="relative z-10 p-6 flex flex-col items-center">
-
-                    <div class="relative w-[220px] h-[220px] mb-6 flex items-center justify-center">
-
-                        <div class="absolute top-0 -left-2 w-16 h-24 z-20 origin-top-left transition-transform duration-700 ease-in-out drop-shadow-lg"
-                            :class="isPlaying ? 'rotate-[-10deg]' : 'rotate-[23deg]'">
-                            <svg viewBox="0 0 50 100" class="w-full h-full">
-                                <path d="M5,5 C5,5 15,40 25,80 L35,85" stroke="#BF953F" stroke-width="4" fill="none"
-                                    stroke-linecap="round" class="drop-shadow-md" />
-                                <circle cx="5" cy="5" r="6" fill="#111" stroke="#BF953F" stroke-width="2" />
-                                <rect x="20" y="75" width="20" height="15" fill="#111" stroke="#BF953F" stroke-width="1"
-                                    rx="2" />
-                            </svg>
-                        </div>
-
-                        <div class="relative w-full h-full rounded-full shadow-[0_0_30px_rgba(0,0,0,0.8)] bg-[#050505] flex items-center justify-center border border-[#333]"
-                            :class="isPlaying ? 'animate-[spin_6s_linear_infinite]' : ''"
-                            style="background: repeating-radial-gradient(#111 0, #111 2px, #1a1a1a 3px, #1a1a1a 4px);">
-
-                            <div
-                                class="absolute inset-0 rounded-full bg-gradient-to-tr from-white/5 to-transparent pointer-events-none">
-                            </div>
-
-                            <div
-                                class="w-[50%] h-[50%] rounded-full overflow-hidden border-2 border-[#BF953F] relative shadow-inner">
-                                <img src="{{ isset($galleryData['cover']) ? asset($galleryData['cover']) : $defaultCover }}"
-                                    class="w-full h-full object-cover opacity-80 hover:opacity-100 transition duration-500">
-
-                                <div
-                                    class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-3 h-3 bg-black rounded-full border border-[#BF953F]">
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="absolute -bottom-4 w-[70%] h-4 bg-[#BF953F]/10 blur-xl rounded-full"></div>
-                    </div>
-
-                    <div class="text-center mb-6 w-full px-2">
-                        <div class="overflow-hidden w-full whitespace-nowrap mask-linear-fade">
-                            <h3
-                                class="font-serif text-2xl text-transparent bg-clip-text bg-gradient-to-r from-[#cfc09f] via-[#ffecb3] to-[#c4a04d] truncate drop-shadow-sm">
-                                The Wedding
-                            </h3>
-                        </div>
-                        <p class="font-sans text-[10px] text-white/50 tracking-[0.2em] uppercase mt-2">
-                            {{ $groom['nickname'] }} <span class="text-[#BF953F]">&bull;</span> {{ $bride['nickname'] }}
-                        </p>
-                    </div>
-
-                    <div class="w-full h-[2px] bg-white/10 rounded-full mb-8 relative overflow-hidden">
-                        <div class="h-full bg-gradient-to-r from-[#BF953F] to-[#FBF5B7] shadow-[0_0_10px_#BF953F]"
-                            :class="isPlaying ? 'w-full transition-all duration-[200s] ease-linear' : 'w-0'"></div>
-                    </div>
-
-                    <div class="flex items-center justify-between w-full px-6 text-[#BF953F]">
-                        <button @click="seek(-10)" class="hover:text-white transition hover:scale-110 active:scale-95">
-                            <i class="fa-solid fa-backward-step text-xl"></i>
-                        </button>
-
-                        <button @click="togglePlay"
-                            class="w-16 h-16 rounded-full flex items-center justify-center shadow-[0_0_20px_rgba(191,149,63,0.3)] border border-[#BF953F] hover:scale-105 active:scale-95 transition-all duration-300 relative overflow-hidden group">
-                            <div
-                                class="absolute inset-0 bg-gradient-to-br from-[#BF953F] to-[#AA771C] opacity-90 group-hover:opacity-100 transition">
-                            </div>
-                            <i class="fa-solid text-2xl text-black relative z-10 pl-1"
-                                :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
-                        </button>
-
-                        <button @click="seek(10)" class="hover:text-white transition hover:scale-110 active:scale-95">
-                            <i class="fa-solid fa-forward-step text-xl"></i>
-                        </button>
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <div class="absolute opacity-0 pointer-events-none w-0 h-0 overflow-hidden">
+        class="fixed bottom-6 z-[990] pointer-events-none w-full max-w-sm mx-auto left-0 right-0 flex justify-end px-6 print:hidden">
+        <button @click="togglePlay"
+            class="w-10 h-10 theme-bg rounded-full flex items-center justify-center pointer-events-auto">
+            <i class="fa-solid text-white text-xl" :class="isPlaying ? 'fa-pause' : 'fa-play'"></i>
+        </button>
+        <div class="hidden">
             <div id="yt-player-container"></div>
         </div>
     </div>
@@ -732,24 +707,35 @@
 
 
 
-
 <script>
     function countdown(date) {
         return {
             target: new Date(date).getTime(),
-            now: new Date().getTime(),
-            days: 0, hours: 0, minutes: 0, seconds: 0,
+            timerId: null,
+            days: '00', hours: '00', minutes: '00', seconds: '00',
             start() {
-                setInterval(() => {
-                    this.now = new Date().getTime();
-                    const d = this.target - this.now;
-                    if (d > 0) {
-                        this.days = Math.floor(d / (1000 * 60 * 60 * 24));
-                        this.hours = Math.floor((d % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-                        this.minutes = Math.floor((d % (1000 * 60 * 60)) / (1000 * 60));
-                        this.seconds = Math.floor((d % (1000 * 60)) / 1000);
+                const tick = () => {
+                    const now = Date.now();
+                    let diff = this.target - now;
+                    if (diff <= 0) {
+                        this.days = this.hours = this.minutes = this.seconds = '00';
+                        if (this.timerId) clearInterval(this.timerId);
+                        return;
                     }
-                }, 1000);
+                    const d = Math.floor(diff / (1000 * 60 * 60 * 24));
+                    diff -= d * (1000 * 60 * 60 * 24);
+                    const h = Math.floor(diff / (1000 * 60 * 60));
+                    diff -= h * (1000 * 60 * 60);
+                    const m = Math.floor(diff / (1000 * 60));
+                    diff -= m * (1000 * 60);
+                    const s = Math.floor(diff / 1000);
+                    this.days = String(d).padStart(2, '0');
+                    this.hours = String(h).padStart(2, '0');
+                    this.minutes = String(m).padStart(2, '0');
+                    this.seconds = String(s).padStart(2, '0');
+                };
+                tick();
+                this.timerId = setInterval(tick, 1000);
             }
         }
     }

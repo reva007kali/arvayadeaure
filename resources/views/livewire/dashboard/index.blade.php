@@ -91,7 +91,7 @@
     <div class="mb-6">
         <div class="relative w-full md:w-80">
             <input type="text" wire:model.live.debounce.300ms="search"
-                class="w-full pl-10 pr-4 py-2 rounded-full border border-[#333333] bg-[#1a1a1a] text-sm text-[#E0E0E0] focus:border-[#D4AF37] focus:ring-[#D4AF37] placeholder-[#666]"
+                class="w-full !pl-10 pr-4 py-2 rounded-full border border-[#333333] bg-[#1a1a1a] text-sm text-[#E0E0E0] focus:border-[#D4AF37] focus:ring-[#D4AF37] placeholder-[#666]"
                 placeholder="Cari undangan...">
             <div class="absolute left-3 top-2.5 text-[#D4AF37]">
                 <i class="fa-solid fa-magnifying-glass"></i>
@@ -110,32 +110,53 @@
                     $coverImage = asset($invitation->gallery_data['cover']);
                 }
             @endphp
-            <a href="{{ route('dashboard.invitation.edit', $invitation->id) }}"
-                class="block rounded-2xl border-2 border-[#333333] bg-[#1a1a1a] overflow-hidden shadow-xl hover:shadow-2xl transition">
-                <div class="h-40 relative bg-cover bg-center" style="background-image: url('{{ $coverImage }}')">
-                    <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
-                    <div class="flex justify-between items-end gap-1 shrink-0">
+            <div class="relative">
+                <a href="{{ route('dashboard.invitation.edit', $invitation->id) }}"
+                    class="block rounded-2xl border-2 border-[#333333] bg-[#1a1a1a] overflow-hidden shadow-xl hover:shadow-2xl transition">
+                    <div class="h-40 relative bg-cover bg-center" style="background-image: url('{{ $coverImage }}')">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/20"></div>
                         <div
-                            class="px-2 py-1 bg-arvaya-500 rounded-br-2xl text-[10px] text-white uppercase tracking-wider">
+                            class="absolute top-0 left-0 px-4 py-1 bg-arvaya-500/50 backdrop-blur-sm text-[10px] text-white uppercase tracking-wider rounded-br-full">
                             {{ $invitation->template->name ?? $invitation->theme_template }}
                         </div>
-                        <div
-                            class="px-2 py-1 rounded-full text-[10px] font-bold
-                                    {{ $invitation->payment_status === 'paid' ? 'bg-green-90text-green-500 border border-green-900/30' : ($invitation->payment_st === 'pending' ? 'bg-yellow-900/20 text-yellow-500 border border-yellow30' : ($invitation->payment_status === 'rejected' ? 'bg-red-90text-red-500 border border-red-900/30' : 'bg-[#252525] text-[#E0Eborder border-[#333333]')) }}">
-                            {{ ucfirst($invitation->payment_status) }}
+                        <div class="absolute top-0 right-0">
+                            <span class="px-2 py-1 rounded-full text-[10px] font-bold
+                                @if ($invitation->payment_status === 'paid')
+                                    bg-green-900/20 text-green-500 border border-green-900/30
+                                @elseif ($invitation->payment_status === 'pending')
+                                    bg-yellow-900/20 text-yellow-500 border border-yellow-900/30
+                                @elseif ($invitation->payment_status === 'rejected')
+                                    bg-red-900/20 text-red-500 border border-red-900/30
+                                @else
+                                    bg-[#252525] text-[#E0E0E0] border border-[#333333]
+                                @endif">
+                                {{ ucfirst($invitation->payment_status) }}
+                            </span>
                         </div>
                     </div>
-                </div>
-                <div class="p-4 flex items-center justify-between">
-                    <div class="min-w-0">
-                        <p class="font-serif font-bold text-lg text-[#E0E0E0] truncate">{{ $invitation->title }}</p>
-                        <p class="text-[#D4AF37] text-xs font-bold mt-1 flex items-center gap-2">
-                            <i class="fa-regular fa-calendar"></i>
-                            <span>{{ $eventDate ? $eventDate->translatedFormat('l, d F Y') : 'Tanggal belum ditentukan' }}</span>
-                        </p>
+                    <div class="p-4 flex items-center justify-between">
+                        <div class="min-w-0">
+                            <p class="font-serif font-bold text-lg text-[#E0E0E0] truncate">{{ $invitation->title }}</p>
+                            <p class="text-[#D4AF37] text-xs font-bold mt-1 flex items-center gap-2">
+                                <i class="fa-regular fa-calendar"></i>
+                                <span>{{ $eventDate ? $eventDate->translatedFormat('l, d F Y') : 'Tanggal belum ditentukan' }}</span>
+                            </p>
+                        </div>
                     </div>
-                </div>
-            </a>
+                </a>
+                <button type="button" wire:click.stop="startEdit({{ $invitation->id }})"
+                    class="absolute bottom-2 left-2 px-2 py-1 rounded-lg bg-[#252525] text-[#E0E0E0] border border-[#333333] text-[10px] font-bold hover:bg-[#333] transition z-10"
+                    title="Edit Judul & Slug">
+                    <i class="fa-solid fa-pen"></i>
+                </button>
+                @if (auth()->user()->role === 'admin')
+                <button type="button" wire:click.stop="duplicate({{ $invitation->id }})"
+                    class="absolute bottom-2 right-2 px-2 py-1 rounded-lg bg-[#252525] text-[#D4AF37] border border-[#333333] text-[10px] font-bold hover:bg-[#333] transition z-10"
+                    title="Duplicate">
+                    <i class="fa-solid fa-copy"></i>
+                </button>
+            @endif
+            </div>
 
 
         @empty
@@ -156,6 +177,45 @@
             </div>
         @endforelse
     </div>
+
+    @if ($isEditing)
+        <div class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm flex items-center justify-center px-4">
+            <div class="w-full max-w-md bg-[#1a1a1a] rounded-2xl border border-[#333333] shadow-2xl overflow-hidden">
+                <div class="p-4 border-b border-[#333333] flex items-center justify-between">
+                    <h3 class="font-serif font-bold text-lg text-[#E0E0E0]">Edit Undangan</h3>
+                    <button wire:click="cancelEdit" class="text-[#888] hover:text-red-500 transition"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <div class="p-6 space-y-4">
+                    <div>
+                        <label class="block text-xs font-bold text-[#A0A0A0] uppercase mb-1">Judul</label>
+                        <input type="text" wire:model.defer="editTitle"
+                            class="w-full rounded-xl bg-[#252525] border-[#333333] text-[#E0E0E0] text-sm focus:border-[#D4AF37] focus:ring-[#D4AF37]">
+                        @error('editTitle') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-[#A0A0A0] uppercase mb-1">Slug</label>
+                        <div class="flex items-center gap-2">
+                            <input type="text" wire:model.defer="editSlug"
+                                class="flex-1 rounded-xl bg-[#252525] border-[#333333] text-[#E0E0E0] text-sm focus:border-[#D4AF37] focus:ring-[#D4AF37] font-mono">
+                            <button type="button" wire:click="generateSlug"
+                                class="px-3 py-2 rounded-xl bg-[#252525] text-[#E0E0E0] border border-[#333333] text-[10px] font-bold hover:bg-[#333] transition">
+                                Generate
+                            </button>
+                        </div>
+                        @error('editSlug') <span class="text-red-500 text-xs">{{ $message }}</span> @enderror
+                    </div>
+                </div>
+                <div class="p-4 border-t border-[#333333] flex justify-end gap-2">
+                    <button wire:click="cancelEdit"
+                        class="px-4 py-2 text-xs font-bold text-[#888] hover:text-[#E0E0E0] transition">Batal</button>
+                    <button wire:click="saveEdit"
+                        class="px-6 py-2 bg-[#D4AF37] text-[#121212] rounded-xl text-xs font-bold hover:bg-[#B4912F] shadow-lg transition">
+                        Simpan
+                    </button>
+                </div>
+            </div>
+        </div>
+    @endif
 
     <script>
         document.addEventListener('livewire:navigated', () => {
