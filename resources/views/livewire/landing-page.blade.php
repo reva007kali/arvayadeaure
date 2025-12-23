@@ -74,7 +74,7 @@
             <div class="relative">
 
                 <div class="relative z-10">
-                    <img src="img/phone-mockup.png" alt="App Preview"
+                    <img src="img/phone-mockup.png" alt="App Preview" loading="lazy"
                         class="rounded-[2rem] mx-auto h-[300px] md:h-full object-cover object-center">
                 </div>
 
@@ -186,8 +186,8 @@
                     @endphp
                     <div class="rounded-2xl overflow-hidden border border-[#333333] bg-[#1a1a1a] shadow hover:shadow-lg transition" data-anim="fade-up">
                         <div class="aspect-[3/4] bg-[#252525]">
-                            @if ($cover)
-                                <img src="{{ asset($cover) }}" class="w-full h-full object-cover">
+                        @if ($cover)
+                                <img src="{{ asset($cover) }}" class="w-full h-full object-cover" loading="lazy" decoding="async">
                             @else
                                 <div class="w-full h-full flex items-center justify-center text-[#666]">
                                     <i class="fa-solid fa-image text-3xl"></i>
