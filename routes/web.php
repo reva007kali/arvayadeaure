@@ -34,10 +34,10 @@ use App\Livewire\Frontend\TemplateShowcase;
 */
 
 // 1. LANDING PAGE UTAMA (Halaman depan aplikasi SaaS kamu)
-Route::get('/', LandingPage::class)->name('home');
+Route::middleware(['cacheResponse:3600'])->get('/', LandingPage::class)->name('home');
 
 // 2. TEMPLATE SHOWCASE (Public)
-Route::get('/templates', TemplateShowcase::class)->name('templates.index');
+Route::middleware(['cacheResponse:3600'])->get('/templates', TemplateShowcase::class)->name('templates.index');
 
 Route::get('/invitation/inactive', function () {
     return view('errors.invitation-inactive');
