@@ -70,7 +70,7 @@
                     <label class="cursor-pointer relative">
                         <input type="radio" wire:model="rsvp_status" value="1" class="sr-only">
                         <div class="p-3 rounded-xl border text-center transition-all"
-                            :class="rsvp == 1 ? 'theme-bg text-white' : 'bg-white hover:bg-[#F9F7F2]'">
+                            :class="rsvp == 1 ? 'theme-bg text-white' : 'border-1 '">
                             <i class="fa-solid fa-circle-check mb-1 block text-lg"></i>
                             <span class="text-sm font-bold">Hadir</span>
                         </div>
@@ -80,7 +80,7 @@
                     <label class="cursor-pointer relative">
                         <input type="radio" wire:model="rsvp_status" value="2" class="sr-only">
                         <div class="p-3 rounded-xl border text-center transition-all"
-                            :class="rsvp == 2 ? 'theme-bg text-white' : 'bg-white hover:bg-[#F9F7F2]'">
+                            :class="rsvp == 2 ? 'theme-bg text-white' : 'border-1 '">
                             <i class="fa-solid fa-circle-xmark mb-1 block text-lg"></i>
                             <span class="text-sm font-bold">Berhalangan</span>
                         </div>
