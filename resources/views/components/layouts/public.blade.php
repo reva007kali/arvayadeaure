@@ -8,11 +8,26 @@
 
     <meta name="description"
         content="Platform undangan digital premium dengan fitur AI Assistant, manajemen tamu, dan desain elegan.">
+    <meta name="keywords" content="undangan digital, undangan pernikahan online, undangan website, wedding invitation, arvaya de aure">
+    <meta name="author" content="Arvaya De Aure">
     <meta name="theme-color" content="#1a1a1a">
+    
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="{{ url()->current() }}">
     <meta property="og:title" content="Arvaya De Aure | Undangan Digital Premium">
-    <meta property="og:description" content="Buat undangan pernikahan impianmu dengan Arvaya De Aure.">
-    <meta property="og:image" content="/logo.png">
+    <meta property="og:description" content="Buat undangan pernikahan impianmu dengan Arvaya De Aure. Desain elegan, fitur lengkap.">
+    <meta property="og:image" content="{{ asset('logo.png') }}">
 
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image">
+    <meta property="twitter:url" content="{{ url()->current() }}">
+    <meta property="twitter:title" content="Arvaya De Aure | Undangan Digital Premium">
+    <meta property="twitter:description" content="Buat undangan pernikahan impianmu dengan Arvaya De Aure. Desain elegan, fitur lengkap.">
+    <meta property="twitter:image" content="{{ asset('logo.png') }}">
+
+    <link rel="canonical" href="{{ url()->current() }}">
+    
     <link rel="manifest" href="/manifest.json">
     <link rel="icon" type="image/png" href="/logo.png">
     <link rel="apple-touch-icon" href="/logo.png">
@@ -100,17 +115,19 @@
                 <div>
                     <h4 class="font-bold text-arvaya-400 mb-4 text-sm uppercase tracking-wider">Menu</h4>
                     <ul class="space-y-2 text-sm text-arvaya-200">
-                        <li><a href="#features" class="hover:text-arvaya-400 transition">Fitur Unggulan</a></li>
-                        <li><a href="#themes" class="hover:text-arvaya-400 transition">Koleksi Tema</a></li>
-                        <li><a href="#pricing" class="hover:text-arvaya-400 transition">Paket Harga</a></li>
+                        <li><a href="{{ route('home') }}#features" class="hover:text-arvaya-400 transition">Fitur Unggulan</a></li>
+                        <li><a href="{{ route('templates.index') }}" class="hover:text-arvaya-400 transition">Koleksi Tema</a></li>
+                        <li><a href="{{ route('home') }}#pricing" class="hover:text-arvaya-400 transition">Paket Harga</a></li>
+                        <li><a href="{{ route('about') }}" class="hover:text-arvaya-400 transition">Tentang Kami</a></li>
                     </ul>
                 </div>
 
                 <div>
                     <h4 class="font-bold text-arvaya-400 mb-4 text-sm uppercase tracking-wider">Legal & Support</h4>
                     <ul class="space-y-2 text-sm text-arvaya-200">
-                        <li><a href="#" class="hover:text-arvaya-400 transition">Syarat & Ketentuan</a></li>
-                        <li><a href="#" class="hover:text-arvaya-400 transition">Kebijakan Privasi</a></li>
+                        <li><a href="{{ route('terms-and-conditions') }}" class="hover:text-arvaya-400 transition">Syarat & Ketentuan</a></li>
+                        <li><a href="{{ route('privacy-policy') }}" class="hover:text-arvaya-400 transition">Kebijakan Privasi</a></li>
+                        <li><a href="{{ route('data-deletion') }}" class="hover:text-arvaya-400 transition">Hapus Data</a></li>
                         <li><a href="https://wa.me/6282260894009" class="hover:text-arvaya-400 transition">Bantuan
                                 WhatsApp</a></li>
                     </ul>

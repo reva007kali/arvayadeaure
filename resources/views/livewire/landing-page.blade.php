@@ -171,7 +171,7 @@
     </section>
 
     <!-- TESTIMONIALS -->
-    <section id="testimonials" class="py-24 bg-arvaya-bg">
+    {{-- <section id="testimonials" class="py-24 bg-arvaya-bg">
         <div class="max-w-6xl mx-auto px-6">
             <div class="text-center mb-12" data-anim="fade-up">
                 <h2 class="font-serif text-3xl md:text-4xl font-bold mb-2 text-arvaya-100">Cerita Pengguna</h2>
@@ -202,7 +202,7 @@
                 @endforeach
             </div>
         </div>
-    </section>
+    </section> --}}
 
     <!-- THEMES SECTION -->
     <section id="themes" class="py-24 bg-arvaya-bg relative overflow-hidden">

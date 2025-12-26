@@ -36,7 +36,6 @@ use App\Livewire\Frontend\TemplateShowcase;
 // 1. LANDING PAGE UTAMA (Halaman depan aplikasi SaaS kamu)
 Route::get('/', LandingPage::class)->name('home');
 
-
 // 2. TEMPLATE SHOWCASE (Public)
 Route::get('/templates', TemplateShowcase::class)->name('templates.index');
 
@@ -47,7 +46,25 @@ Route::get('/invitation/inactive', function () {
 Route::get('/auth/google', [SocialiteController::class, 'redirect'])->name('auth.google');
 Route::get('/auth/google/callback', [SocialiteController::class, 'callback']);
 
+// Legal Pages
+Route::view('/privacy-policy', 'legal.privacy-policy')->name('privacy-policy');
+Route::view('/terms-and-conditions', 'legal.terms-and-conditions')->name('terms-and-conditions');
+Route::view('/data-deletion', 'legal.data-deletion')->name('data-deletion');
+Route::view('/about', 'about')->name('about');
 
+// Sitemap & Robots
+Route::get('/sitemap.xml', function () {
+    $templates = \App\Models\Template::where('is_active', true)->get();
+    
+    return response()->view('sitemap', [
+        'templates' => $templates
+    ])->header('Content-Type', 'text/xml');
+});
+
+Route::get('/robots.txt', function () {
+    return response("User-agent: *\nDisallow: /dashboard/\nDisallow: /admin/\nSitemap: " . url('/sitemap.xml'))
+        ->header('Content-Type', 'text/plain');
+});
 
 // 3. DASHBOARD USER (Area Tertutup / Protected)
 Route::middleware(['auth', 'verified'])->prefix('dashboard')->name('dashboard.')->group(function () {
